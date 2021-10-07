@@ -7,8 +7,8 @@ class Footer extends React.Component{
         super(props);
     }
     render(){
-        return <div>
-            底部
+        return <div className="bottom">
+            <p className="bottomTitle">copy right© 2018 kemeizhenduan</p>
         </div>;
     }
 }

@@ -11,30 +11,26 @@ import './assets/css/common.less'
 // import 'bootstrap/dist/js/bootstrap.js';
 
 import Navs from './component/Navs';
+import NavBread from './component/NavBread';
 import Footer from './component/Footer';
 import Home from './routes/Home';
 import Cart from './routes/Cart';
 import Personal from './routes/Personal';
 
 render(<Provider store={store}>
-    <div className='mainName'>
+    <HashRouter className='mainName'>
         <div>
             <Navs />
-            <div className='navBreadTitle'>
-                <p className='bTitle'>首页</p>
-            </div>
-            <HashRouter>
-                <Switch>
-                    <Route path='/' exact component={Home} />
-                    <Route path='/cart' component={Cart} />
-                    <Route path='/personal' component={Personal} />
-                    <Redirect to='/?lx=unsafe' />
-                </Switch>
-            </HashRouter>
-
+            <NavBread />
+            <Switch>
+                <Route path='/home' exact component={Home} />
+                <Route path='/cart' component={Cart} />
+                <Route path='/personal' component={Personal} />
+                {/* <Redirect to='/?lx=unsafe' /> */}
+            </Switch>
             <Footer />
         </div>
-    </div>
+    </HashRouter>
 </Provider>,document.getElementById('root'))
 
 
