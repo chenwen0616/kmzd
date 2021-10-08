@@ -28,7 +28,60 @@ html {
     width: 82%;
     margin: 0 auto;
   }
+  .nav-pills{
+    a{
+      font-size: 12px;
+      .badge{
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        padding: 3px;
+        background: #E60013;
+        color: #FFF;
+      }
+    }
+    .active{
+      a{
+        .badge{
+          background: #E60013;
+          color: #FFF;
+        }
+      }
+    }
+  }
+
+  .nav li{
+    height: 80px;
+  }
+  .nav{
+    li{
+      a{
+        font-size: 18px;
+        line-height: 60px;
+        color: #666;
+        padding: 10px 40px;
+        position: relative;
+      }
+    }
+    li.active{
+      a{
+        line-height: 60px;
+        border-bottom: 2px solid #004EA2;
+        background-color: #FFF !important;
+        color: #004EA2 !important;
+        border-radius: 0px;
+        font-size: 18px;
+        position: relative;
+      }
+      &:hover{
+        background-color: none;
+      }
+    }
+  }
 }
+
+
+
 
 .btn-primary{
   background-color: #004EA2;

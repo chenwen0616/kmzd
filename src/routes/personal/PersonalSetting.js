@@ -6,8 +6,14 @@ class PersonalSetting extends React.Component{
     super(props);
   }
   render(){
-    return (<div>
-      设置
+    return (<div className="personalR">
+      <div>
+        <a href="#" className="btn btn-primary personalBtn" role="button">修改密码</a> 
+      </div>
+      <div className="mTop">
+        <a href="#" className="btn btn-primary personalBtn" role="button">退出登录</a> 
+      </div>
+      
     </div>)
   }
 }
