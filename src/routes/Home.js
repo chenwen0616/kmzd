@@ -68,6 +68,7 @@ class Home extends React.Component{
                     <MenuItem eventKey="4">Separated link</MenuItem>
                 </DropdownButton>
             </div>
+
             <div className="cart_btn">
               <a href="#" className="btn btn-primary btnW" role="button">确定</a> 
             </div>

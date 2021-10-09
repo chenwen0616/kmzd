@@ -1,13 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {ButtonGroup, Button, Row, Col, Tab, Tabs, Table} from 'react-bootstrap';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css'
 
 class MyOrder extends React.Component{
   constructor(props){
     super(props);
   }
   render(){
-    return (<div>
+    return (<div className="discountStyle">
       <Row>
         <Col md={12}>
           <Tabs defaultActiveKey={1} id="uncontrolled-tab-example" className="tabStyle">
@@ -276,14 +278,10 @@ class MyOrder extends React.Component{
               </Table>
             </Tab>
           </Tabs>
-          <div>
-            日期
+          <div className="dateBox">
+            <DatePicker />
           </div>
         </Col>
-      </Row>
-
-      <Row>
-        
       </Row>
     </div>)
   }

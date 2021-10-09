@@ -23,10 +23,10 @@ render(<Provider store={store}>
             <Navs />
             <NavBread />
             <Switch>
-                <Route path='/home' exact component={Home} />
+                <Route path='/' exact component={Home} />
                 <Route path='/cart' component={Cart} />
                 <Route path='/personal' component={Personal} />
-                {/* <Redirect to='/?lx=unsafe' /> */}
+                <Redirect to='/?lx=unsafe' />
             </Switch>
             <Footer />
         </div>
