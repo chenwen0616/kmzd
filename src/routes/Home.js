@@ -2,6 +2,7 @@ import React from 'react';
 import {connect} from "react-redux";
 import {Route,Switch,Redirect} from 'react-router-dom'
 import { ButtonToolbar, DropdownButton, MenuItem, Dropdown, ControlLabel, Radio, FormGroup, FormControl, Pagination } from 'react-bootstrap';
+import { Icon } from 'antd';
 
 import '../assets/css/home.less';
 
@@ -15,7 +16,7 @@ class Home extends React.Component{
       <div className='mainHome'>
 
         <div className='col-md-3'>
-          <p className='selectFont'>筛选</p>
+          <p className='selectFont'><img src={process.env.PUBLIC_URL + '/img/shaixuan.png'} style={{width:'24px'}} />筛选</p>
           <div className='selectBox'>
             <div>
               <p className='selP'>产品系列</p>
