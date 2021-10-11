@@ -14,7 +14,7 @@ class Cart extends React.Component{
     return (<div className="cartBox">
       <div className="mainCart">
         <h2>购物车信息</h2>
-        <ul className="row">
+        <ul className="row cartUl">
           <li className="proList">
             <div className="proDiv">
               <div className="col-md-10 cartLeft">

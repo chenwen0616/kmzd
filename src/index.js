@@ -19,6 +19,7 @@ import Footer from './component/Footer';
 import Home from './routes/Home';
 import Cart from './routes/Cart';
 import Personal from './routes/Personal';
+import OrderDetail from './routes/personal/OrderDetail';
 
 render(<ConfigProvider locale={zhCN}>
     <Provider store={store}>
@@ -30,6 +31,7 @@ render(<ConfigProvider locale={zhCN}>
                     <Route path='/' exact component={Home} />
                     <Route path='/cart' component={Cart} />
                     <Route path='/personal' component={Personal} />
+                    <Route path='/orderDetail' component={OrderDetail} />
                     <Redirect to='/?lx=unsafe' />
                 </Switch>
                 <Footer />

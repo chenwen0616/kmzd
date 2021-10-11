@@ -8,10 +8,11 @@ import MyContract from './personal/MyContract'
 import MyDiscount from './personal/MyDiscount'
 import MyNews from './personal/MyNews'
 import MyOrder from './personal/MyOrder'
+
 import PersonalSetting from './personal/PersonalSetting'
-import { Row } from 'react-bootstrap'
 
 import '../assets/css/personal.less';
+
 
 class Personal extends React.Component{
   constructor(props){
