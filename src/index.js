@@ -10,8 +10,6 @@ import store from './store/index';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './assets/css/reset.min.css';
 import './assets/css/common.less'
-// import 'jquery/dist/jquery.js';
-// import 'bootstrap/dist/js/bootstrap.js';
 
 import Navs from './component/Navs';
 import NavBread from './component/NavBread';
