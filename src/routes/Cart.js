@@ -79,7 +79,7 @@ class Cart extends React.Component{
                     </div>
                   </Row>
                   <div className="del-box">
-                    <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} />
+                    <img alt='删除产品' src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} />
                   </div>
                 </Row>
                 

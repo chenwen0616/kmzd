@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {ListGroup, ListGroupItem, Col} from 'react-bootstrap'
+import {ListGroup, ListGroupItem} from 'react-bootstrap'
 
 class MyNews extends React.Component{
   constructor(props){

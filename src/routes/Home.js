@@ -1,7 +1,6 @@
 import React from 'react';
 import {connect} from "react-redux";
-import {Route,Switch,Redirect} from 'react-router-dom'
-import { ButtonToolbar, DropdownButton, MenuItem, Dropdown, ControlLabel, Radio, FormGroup, FormControl, Pagination, Col } from 'react-bootstrap';
+import { DropdownButton, MenuItem, ControlLabel, Radio, FormGroup, FormControl, Pagination, Col } from 'react-bootstrap';
 import { Icon } from 'antd';
 
 import '../assets/css/home.less';
@@ -17,7 +16,10 @@ class Home extends React.Component{
       <div className='mainHome'>
 
         <div className='col-md-3'>
-          <p className='selectFont'><img src={process.env.PUBLIC_URL + '/img/shaixuan.png'} style={{width:'24px'}} />筛选</p>
+          <p className='selectFont'>
+            <img src={process.env.PUBLIC_URL + '/img/shaixuan.png'} style={{width:'24px'}} alt='筛选' />
+            筛选
+          </p>
           <div className='selectBox'>
             <div>
               <p className='selP'>产品系列</p>
@@ -81,7 +83,7 @@ class Home extends React.Component{
           <div className="r_box">
             <div className="col-sm-6 col-md-4">
               <div className="thumbnail">
-                  <img src={process.env.PUBLIC_URL + '/img/cp1.png'} />
+                  <img src={process.env.PUBLIC_URL + '/img/cp1.png'} alt={'产品'} />
                   <div className="caption">
                       <h3 className="proTitle">诊断产品 LICA系列 series</h3>
                       <p className="proType">LiCA® 500</p>
@@ -113,7 +115,7 @@ class Home extends React.Component{
             </div>
             <div className="col-sm-6 col-md-4">
               <div className="thumbnail">
-                <img src={process.env.PUBLIC_URL + '/img/cp1.png'} />
+                <img src={process.env.PUBLIC_URL + '/img/cp1.png'} alt={'产品'} />
                 <div className="caption">
                     <h3 className="proTitle">诊断产品 LICA系列 series</h3>
                     <p className="proType">LiCA® 500</p>
@@ -145,7 +147,7 @@ class Home extends React.Component{
             </div>
             <div className="col-sm-6 col-md-4">
               <div className="thumbnail">
-                <img src={process.env.PUBLIC_URL + '/img/cp1.png'} />
+                <img src={process.env.PUBLIC_URL + '/img/cp1.png'} alt={'产品'} />
                 <div className="caption">
                     <h3 className="proTitle">诊断产品 LICA系列 series</h3>
                     <p className="proType">LiCA® 500</p>
@@ -175,19 +177,7 @@ class Home extends React.Component{
                 </div>
               </div>
             </div>
-            <div className="col-sm-6 col-md-4">
-              <div className="thumbnail">
-                  <img src={process.env.PUBLIC_URL + '/img/cp1.png'} />
-                  <div className="caption">
-                      <h3>Thumbnail label</h3>
-                      <p>...</p>
-                      <p>
-                          <a href="#" className="btn btn-primary" role="button">Button</a> 
-                          <a href="#" className="btn btn-default" role="button">Button</a>
-                      </p>
-                  </div>
-              </div>
-            </div>
+            
           </div>
 
           <div className="pageBox">
@@ -216,4 +206,4 @@ class Home extends React.Component{
     </div>
   }
 }
-export default Home
+export default connect()(Home)

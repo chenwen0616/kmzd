@@ -1,7 +1,7 @@
-import * as TYPES from '../action-types';
-export default personal=(state={
+// import * as TYPES from '../action-types';
+export default function personal(state={
     data:[],
-},action)=>{
+},action){
     state = JSON.parse(JSON.stringify(state));
     switch(action.type){
         // case

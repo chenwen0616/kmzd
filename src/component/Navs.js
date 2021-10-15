@@ -1,8 +1,7 @@
 import React from 'react';
-import ReactDOM, {render} from 'react-dom';
 import { connect } from 'react-redux';
 import {Nav, NavItem, Badge } from 'react-bootstrap'
-import {Link, NavLink, withRouter} from 'react-router-dom';
+import {Link,  withRouter} from 'react-router-dom';
 
 class Navs extends React.Component{
   constructor(props){
@@ -19,13 +18,16 @@ class Navs extends React.Component{
     return <div className='sNav'>
       <div className='nav navBox'>
         <div className='col-md-2' style={{height:'80px',display:'flex'}}>
-          <img src={process.env.PUBLIC_URL + '/img/logo2.png'} />
+          <img src={process.env.PUBLIC_URL + '/img/logo2.png'} alt='logo' />
         </div>
           <Nav bsStyle="pills" activeKey={navTag} onSelect={this.handleSelect}>
             <NavItem eventKey={1} href="#home">订购项目</NavItem>
             <NavItem eventKey={2} href="#cart" title="购物车">购物车<Badge>42</Badge></NavItem>
             <NavItem eventKey={3} href="#personal" title='个人中心'>个人中心</NavItem>
           </Nav>
+
+          <Link to='/login'>登录</Link>
+          <Link to='/register'>注册</Link>
       </div>
     </div>;
   }

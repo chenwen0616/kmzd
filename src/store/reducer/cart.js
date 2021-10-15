@@ -1,4 +1,4 @@
-import * as TYPES from '../action-types';
+// import * as TYPES from '../action-types';
 export default function cart (state={
     data:[],
 },action){

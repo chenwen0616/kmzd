@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {Route, Switch, Redirect, NavLink, Link} from 'react-router-dom';
+import {Route, Switch, Redirect, NavLink,} from 'react-router-dom';
 
 import BaseInfo from './personal/BaseInfo'
 import AddressManage from './personal/AddressManage'

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {Row, Col, Tabs, Tab, Well} from 'react-bootstrap'
+import {Row, Col, Tabs, Tab} from 'react-bootstrap'
 
 class AddressManage extends React.Component{
   constructor(props){
@@ -27,7 +27,7 @@ class AddressManage extends React.Component{
                   <p>电子邮箱：xx@163.com</p>
                 </div>
                 <div className="del-box">
-                  <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} />
+                  <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} alt={'删除'} />
                 </div>
                 <div className="edit-box">
                   <span className="edit-txt">编辑</span>
@@ -47,7 +47,7 @@ class AddressManage extends React.Component{
                   <p>电子邮箱：xx@163.com</p>
                 </div>
                 <div className="del-box">
-                  <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} />
+                  <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} alt={'删除'} />
                 </div>
                 <div className="edit-box">
                   <span className="edit-txt">编辑</span>
@@ -65,7 +65,7 @@ class AddressManage extends React.Component{
                   <p>电子邮箱：xx@163.com</p>
                 </div>
                 <div className="del-box">
-                  <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} />
+                  <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} alt={'删除'} />
                 </div>
                 <div className="edit-box">
                   <span className="edit-txt">设为默认</span>
@@ -86,7 +86,7 @@ class AddressManage extends React.Component{
                   <p>电子邮箱：xx@163.com</p>
                 </div>
                 <div className="del-box">
-                  <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} />
+                  <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} alt={'删除'} />
                 </div>
                 <div className="edit-box">
                   <span className="edit-txt">编辑</span>
@@ -106,7 +106,7 @@ class AddressManage extends React.Component{
                   <p>电子邮箱：xx@163.com</p>
                 </div>
                 <div className="del-box">
-                  <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} />
+                  <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} alt={'删除'} />
                 </div>
                 <div className="edit-box">
                   <span className="edit-txt">编辑</span>

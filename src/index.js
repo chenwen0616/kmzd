@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM, {render} from 'react-dom';
+import {render} from 'react-dom';
 import {HashRouter, Switch, Route, Redirect} from 'react-router-dom';
 import zhCN from 'antd/es/locale/zh_CN';
 import 'moment/locale/zh-cn';
@@ -18,6 +18,7 @@ import Home from './routes/Home';
 import Cart from './routes/Cart';
 import Personal from './routes/Personal';
 import OrderDetail from './routes/personal/OrderDetail';
+import Login from './component/Account/Login';
 
 render(<ConfigProvider locale={zhCN}>
     <Provider store={store}>
@@ -30,6 +31,7 @@ render(<ConfigProvider locale={zhCN}>
                     <Route path='/cart' component={Cart} />
                     <Route path='/personal' component={Personal} />
                     <Route path='/orderDetail' component={OrderDetail} />
+                    <Route path='/login' component={Login} />
                     <Redirect to='/?lx=unsafe' />
                 </Switch>
                 <Footer />
