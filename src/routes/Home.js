@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from "react-redux";
 import {Route,Switch,Redirect} from 'react-router-dom'
-import { ButtonToolbar, DropdownButton, MenuItem, Dropdown, ControlLabel, Radio, FormGroup, FormControl, Pagination } from 'react-bootstrap';
+import { ButtonToolbar, DropdownButton, MenuItem, Dropdown, ControlLabel, Radio, FormGroup, FormControl, Pagination, Col } from 'react-bootstrap';
 import { Icon } from 'antd';
 
 import '../assets/css/home.less';
@@ -12,6 +12,7 @@ class Home extends React.Component{
   }
 
   render(){
+    console.log(this.props, 'props');
     return <div className='homeBox'>
       <div className='mainHome'>
 
@@ -95,8 +96,17 @@ class Home extends React.Component{
                           <option value="other">...</option>
                         </FormControl>
                       </FormGroup>
-                      <div className="cart_btn">
-                        <a href="#" className="btn btn-primary" role="button">加入购物车</a> 
+                      <div className="cart_btn" style={{display:'flex'}}>
+                        <Col md={6} style={{paddingLeft:0,paddingRight:0,display:'flex'}}>
+                          <div className="cartNumBg"><Icon type="minus" style={{fontSize:14}} /></div>
+                          <div className="cartBg">
+                            <FormGroup><FormControl type="text" placeholder="" /></FormGroup>
+                          </div>
+                          <div className="cartNumBg"><Icon type="plus" /> </div>
+                        </Col>
+                        <Col md={6} style={{paddingRight:0,textAlign:'right'}}>
+                          <a href="#" className="btn btn-primary" role="button">加入购物车</a> 
+                        </Col>
                       </div>
                   </div>
               </div>
@@ -118,8 +128,17 @@ class Home extends React.Component{
                         <option value="other">...</option>
                       </FormControl>
                     </FormGroup>
-                    <div className="cart_btn">
-                      <a href="#" className="btn btn-primary" role="button">加入购物车</a> 
+                    <div className="cart_btn" style={{display:'flex'}}>
+                      <Col md={6} style={{paddingLeft:0,paddingRight:0,display:'flex'}}>
+                        <div className="cartNumBg"><Icon type="minus" style={{fontSize:14}} /></div>
+                        <div className="cartBg">
+                          <FormGroup><FormControl type="text" placeholder="" /></FormGroup>
+                        </div>
+                        <div className="cartNumBg"><Icon type="plus" /> </div>
+                      </Col>
+                      <Col md={6} style={{paddingRight:0,textAlign:'right'}}>
+                        <a href="#" className="btn btn-primary" role="button">加入购物车</a> 
+                      </Col>
                     </div>
                 </div>
               </div>
@@ -141,9 +160,18 @@ class Home extends React.Component{
                         <option value="other">...</option>
                       </FormControl>
                     </FormGroup>
-                    <div className="cart_btn">
-                      <a href="#" className="btn btn-primary" role="button">加入购物车</a> 
-                    </div>
+                    <div className="cart_btn" style={{display:'flex'}}>
+                        <Col md={6} style={{paddingLeft:0,paddingRight:0,display:'flex'}}>
+                          <div className="cartNumBg"><Icon type="minus" style={{fontSize:14}} /></div>
+                          <div className="cartBg">
+                            <FormGroup><FormControl type="text" placeholder="" /></FormGroup>
+                          </div>
+                          <div className="cartNumBg"><Icon type="plus" /> </div>
+                        </Col>
+                        <Col md={6} style={{paddingRight:0,textAlign:'right'}}>
+                          <a href="#" className="btn btn-primary" role="button">加入购物车</a> 
+                        </Col>
+                      </div>
                 </div>
               </div>
             </div>

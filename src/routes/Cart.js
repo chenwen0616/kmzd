@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {Checkbox, FormGroup, FormControl, Row, Col} from 'react-bootstrap';
+import { Icon } from 'antd';
 
 import '../assets/css/cart.less';
 
@@ -14,7 +15,7 @@ class Cart extends React.Component{
     return (<div className="cartBox">
       <div className="mainCart">
         <h2>购物车信息</h2>
-        <ul className="row">
+        <ul className="row cartUl">
           <li className="proList">
             <div className="proDiv">
               <div className="col-md-10 cartLeft">
@@ -66,17 +67,20 @@ class Cart extends React.Component{
               </div>
               <div className="col-md-2">
                 <Row className="proDiv">
-                  <Row className="show-grid">
-                    <Col xs={4} md={3} className="centerStyle">
-                      <span className="txt">-</span>
-                    </Col>
+                  <Row className="show-grid" style={{display:'flex'}}>
+                    <div className="centerStyle cBox">
+                      <span className="txt"><Icon type="minus" style={{fontSize:14}} /></span>
+                    </div>
                     <Col xs={4} md={4} className="numInput centerStyle inputW">
                       <FormGroup><FormControl type="text" placeholder="" /></FormGroup>
                     </Col>
-                    <Col xs={4} md={3} className="centerStyle">
-                      <span className="txt">+</span>
-                    </Col>
+                    <div className="centerStyle cBox">
+                      <span className="txt"><Icon type="plus" /></span>
+                    </div>
                   </Row>
+                  <div className="del-box">
+                    <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} />
+                  </div>
                 </Row>
                 
               </div>

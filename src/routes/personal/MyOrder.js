@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import {Link} from 'react-router-dom';
 import {ButtonGroup, Button, Row, Col, Tab, Tabs} from 'react-bootstrap';
 import { DatePicker, Table } from 'antd';
 
@@ -78,7 +79,7 @@ class MyOrder extends React.Component{
         render: ()=>{
           return(
             <div>
-              <a>查看详情</a>
+              <Link to={{pathname: '/orderDetail',search:'?id=1' }} target='_blank'>查看详情</Link>
             </div>
           )
         }
