@@ -1,6 +1,6 @@
 import axios from './index';
 
 // 登录
-export function login (){
-  return axios.post('/api/common/login/appLogin')
+export function apiLogin (payload){
+  return axios.post('/api/common/login/appLogin',payload)
 }
