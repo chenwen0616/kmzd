@@ -19,6 +19,7 @@ import Cart from './routes/Cart';
 import Personal from './routes/Personal';
 import OrderDetail from './routes/personal/OrderDetail';
 import Login from './component/Account/Login';
+import PlaceOrder from './routes/PlaceOrder';
 
 render(<ConfigProvider locale={zhCN}>
     <Provider store={store}>
@@ -32,6 +33,7 @@ render(<ConfigProvider locale={zhCN}>
                     <Route path='/personal' component={Personal} />
                     <Route path='/orderDetail' component={OrderDetail} />
                     <Route path='/login' component={Login} />
+                    <Route path='/placeorder' component={PlaceOrder} />
                     <Redirect to='/?lx=unsafe' />
                 </Switch>
                 <Footer />

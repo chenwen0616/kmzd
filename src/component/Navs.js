@@ -25,9 +25,10 @@ class Navs extends React.Component{
             <NavItem eventKey={2} href="#cart" title="购物车">购物车<Badge>42</Badge></NavItem>
             <NavItem eventKey={3} href="#personal" title='个人中心'>个人中心</NavItem>
           </Nav>
-
-          <Link to='/login'>登录</Link>
-          <Link to='/register'>注册</Link>
+          <div style={{display:'none'}}>
+            <Link to='/login'>登录</Link>
+            <Link to='/register'>注册</Link>
+          </div>
       </div>
     </div>;
   }

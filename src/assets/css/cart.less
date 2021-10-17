@@ -6,11 +6,61 @@
     .mainCart{
         width: 82%;
         margin: 0 auto;
+        .orderTable{
+            position: relative;
+            .ant-table-thead > tr > th,.ant-table-tbody > tr > td{
+                padding: 6px 16px !important;
+            }
+        }
+        .totalBox{
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            p{
+                margin-right: 20px;
+                .totalNum{
+                    font-weight: bold;
+                }
+            }
+            .ant-btn-primary{
+                background: #004EA2 !important;
+                border: 1px solid #004EA2 !important;
+            }
+        }
         h2{
             font-size: 0.34rem;
             margin: 40px 0;
         }
-        
+        .pOul{
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        // 下单页面
+        .addressInfo{
+            margin-top: 20px;
+            h3{
+                font-size: .24rem;
+            }
+            .selP{
+                font-size: .16rem;
+                line-height: 20px;
+            }
+            .tip{
+                font-size: 12px;
+                a{
+                    color: red
+                }
+            }
+            .addrMsg{
+                background: #F5F5F6;
+                padding: 10px;
+                margin-top: 15px;
+                h3{
+                    font-size: 16px
+                }
+            }
+        }
     }
 }
 .cartUl{

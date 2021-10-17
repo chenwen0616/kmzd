@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import {Link} from 'react-router-dom';
 import {Checkbox, FormGroup, FormControl, Row, Col} from 'react-bootstrap';
 import { Icon } from 'antd';
 
@@ -108,7 +109,11 @@ class Cart extends React.Component{
         </ul>
         <div className="cartBtnBox">
           {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-          <a href="#" className="btn btn-primary cartBuyBtn" role="button">下单</a> 
+          <Link 
+            to="/placeorder" 
+            className="btn btn-primary cartBuyBtn" 
+            role="button"
+          >下单</Link> 
         </div>
         
       </div>
