@@ -147,7 +147,7 @@ class ValidateRandomCode extends React.Component{
   }
 
   render() {
-    console.log(this.props, 'this.props login')
+    console.log(this.props, 'this.props validateCode')
     const {form:{ getFieldDecorator }} = this.props;
     const suffix =(
       <div>
@@ -161,7 +161,7 @@ class ValidateRandomCode extends React.Component{
     );
 
     return(
-      <Form.Item className='for-form codeForm' label="验证码" required={false}>
+      <Form.Item className='for-form codeForm' label="验证码" required={false} style={{marginBottom:5}}>
         {getFieldDecorator('sendcode', {
           rules: [
             { required: true, message: '请输入校验码!' },

@@ -21,6 +21,8 @@ import OrderDetail from './routes/personal/OrderDetail';
 import Login from './component/Account/Login';
 import PlaceOrder from './routes/PlaceOrder';
 
+import AuthRoute from './utils/AuthRoute';
+
 render(<ConfigProvider locale={zhCN}>
     <Provider store={store}>
         <HashRouter className='mainName'>
@@ -28,13 +30,13 @@ render(<ConfigProvider locale={zhCN}>
                 <Navs />
                 <NavBread />
                 <Switch>
-                    <Route path='/' exact component={Home} />
-                    <Route path='/cart' component={Cart} />
-                    <Route path='/personal' component={Personal} />
-                    <Route path='/orderDetail' component={OrderDetail} />
+                    <AuthRoute path='/home' component={Home} />
+                    <AuthRoute path='/cart' component={Cart} />
+                    <AuthRoute path='/personal' component={Personal} />
+                    <AuthRoute path='/orderDetail' component={OrderDetail} />
+                    <AuthRoute path='/placeorder' component={PlaceOrder} />
                     <Route path='/login' component={Login} />
-                    <Route path='/placeorder' component={PlaceOrder} />
-                    <Redirect to='/?lx=unsafe' />
+                    <Redirect to='/login' />
                 </Switch>
                 <Footer />
             </div>
