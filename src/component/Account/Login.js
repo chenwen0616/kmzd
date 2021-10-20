@@ -1,17 +1,18 @@
 import React from 'react';
+import axios from 'axios';
 import { connect } from 'react-redux';
-import {FormGroup, ControlLabel, FormControl,HelpBlock } from 'react-bootstrap';
-import {Button, Form, Input, message} from 'antd';
-import {Link,  withRouter} from 'react-router-dom';
+import { FormGroup, ControlLabel, FormControl, HelpBlock } from 'react-bootstrap';
+import { Button, Form, Input, message } from 'antd';
+import { Link, withRouter } from 'react-router-dom';
 
-import {apiLogin} from '../../api/person';
+import { apiLogin } from '../../api/person';
 
 import './login.less';
 
-class Login extends React.Component{
-  constructor(props){
+class Login extends React.Component {
+  constructor(props) {
     super(props);
-    this.state={
+    this.state = {
       loading: false,
 
       //验证码
@@ -43,7 +44,7 @@ class Login extends React.Component{
   // 生成一个随机数
   // eslint-disable-next-line arrow-body-style
   randomNum = (min, max) => {
-      return Math.floor(Math.random() * (max - min) + min)
+    return Math.floor(Math.random() * (max - min) + min)
   }
 
   drawPic = () => {
@@ -107,7 +108,7 @@ class Login extends React.Component{
   reloadPic = () => {
     this.drawPic()
     this.props.form.setFieldsValue({
-        sendcode: '',
+      sendcode: '',
     });
   }
 
@@ -115,15 +116,15 @@ class Login extends React.Component{
   changeCode = e => {
     if (e.target.value.toLowerCase() !== '' && e.target.value.toLowerCase() !== this.state.code.toLowerCase()) {
       this.setState({
-          showError: true
+        showError: true
       })
     } else if (e.target.value.toLowerCase() === '') {
       this.setState({
-          showError: false
+        showError: false
       })
     } else if (e.target.value.toLowerCase() === this.state.code.toLowerCase()) {
       this.setState({
-          showError: false
+        showError: false
       })
     }
   }
@@ -148,50 +149,51 @@ class Login extends React.Component{
       ctx.fillRect(0, 0, this.state.contentWidth, this.state.contentHeight)
       // 绘制文字
       for (let i = 0; i < this.state.code.length; i++) {
-          this.drawText(ctx, this.state.code[i], i)
+        this.drawText(ctx, this.state.code[i], i)
       }
       this.drawLine(ctx)
       this.drawDot(ctx)
     })
   }
 
-  handleLoginClick = (ev)=>{
+  handleLoginClick = (ev) => {
     ev.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        this.setState({loading:true})
-        let {phone,password} = values;
+        this.setState({ loading: true })
+        let { phone, password } = values;
         apiLogin({
           phone,
           password
-        }).then(res=>{
-          this.setState({loading:false})
-          if(res.data){
+        }).then(res => {
+          this.setState({ loading: false })
+          if (res.data) {
             // 跳转到home页
             const data = {
               userId: res.data.userId,
               userType: res.data.userType,
             };
             const jsonData = JSON.stringify(data)
-            localStorage.setItem('userInfo',jsonData);
-            localStorage.setItem('token',res.data.token)
+            localStorage.setItem('userInfo', jsonData);
+            localStorage.setItem('token', res.data.token);
+            axios.defaults.headers.common["token"] = res.data.token;
             message.success('成功！')
             this.props.history.push('/home');
-          }else{
+          } else {
             message.error(res.result.message);
           }
-        }).catch(err=>{
-          this.setState({loading:false})
+        }).catch(err => {
+          this.setState({ loading: false })
           console.log(err, 'err')
         })
       }
     });
   }
-  
-  render(){
-    const {form:{ getFieldDecorator }} = this.props;
+
+  render() {
+    const { form: { getFieldDecorator } } = this.props;
     const { loading } = this.state;
-    const suffix =(
+    const suffix = (
       <div>
         <canvas
           onClick={this.reloadPic}
@@ -201,87 +203,87 @@ class Login extends React.Component{
         </canvas>
       </div>
     );
-    return(<div className="loginBox">
+    return (<div className="loginBox">
       <div className='logoBox'>
         <img src={process.env.PUBLIC_URL + '/img/logo2.png'} alt='logo' />
       </div>
       <div className="loginB">
         <div className="loginMain">
-            <h2>用户登录</h2>
-            <Form.Item className='for-form' label="账号" required={false}>
-              {getFieldDecorator('phone', {
-                rules:[
-                  { required: true, message: '请输入账号!' },
-                ]
-              })(
-                <Input
-                  size="large"
-                  onChange={this.changeCode}
-                  placeholder="请输入账号"
-                />,
-              )}
-            </Form.Item>
-            <Form.Item className='for-form' label="密码" required={false}>
-              {getFieldDecorator('password', {
-                rules:[
-                  { required: false, message: '请输入密码!' },
-                ]
-              })(
-                <Input
-                  size="large"
-                  onChange={this.changeCode}
-                  placeholder="请输入密码"
-                />,
-              )}
-            </Form.Item>
-            
-            <Form.Item className='for-form codeForm' label="验证码" required={false}>
-              {getFieldDecorator('sendcode', {
-                rules: [
-                  { required: true, message: '请输入校验码!' },
-                  {
-                    validator: (rule, value, callback) => {
+          <h2>用户登录</h2>
+          <Form.Item className='for-form' label="账号" required={false}>
+            {getFieldDecorator('phone', {
+              rules: [
+                { required: true, message: '请输入账号!' },
+              ]
+            })(
+              <Input
+                size="large"
+                onChange={this.changeCode}
+                placeholder="请输入账号"
+              />,
+            )}
+          </Form.Item>
+          <Form.Item className='for-form' label="密码" required={false}>
+            {getFieldDecorator('password', {
+              rules: [
+                { required: false, message: '请输入密码!' },
+              ]
+            })(
+              <Input
+                size="large"
+                onChange={this.changeCode}
+                placeholder="请输入密码"
+              />,
+            )}
+          </Form.Item>
+
+          <Form.Item className='for-form codeForm' label="验证码" required={false}>
+            {getFieldDecorator('sendcode', {
+              rules: [
+                { required: true, message: '请输入校验码!' },
+                {
+                  validator: (rule, value, callback) => {
                     if (value) {
-                    if(value.toLowerCase()===this.state.code.toLowerCase()){
-                        callback()                                                                 		
+                      if (value.toLowerCase() === this.state.code.toLowerCase()) {
+                        callback()
                         this.setState({
-                            sendcode: value,
-                            showError: false
+                          sendcode: value,
+                          showError: false
                         })
-                    } else {
+                      } else {
                         callback('请输入正确的验证码')
                         this.setState({
                           showError: true
                         })
-                  }
-                  } else {
+                      }
+                    } else {
                       callback()
                     }
                   }
-                  }
-                ],
-                })(
-                  <Input
-                    size="large"
-                    // prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                    suffix={suffix}
-                    onChange={this.changeCode}
-                    placeholder="请输入校验码"
-                  />,
-                )}
-              </Form.Item>
-            
-            <Button 
-              loading={loading}
-              type='primary' 
-              onClick={this.handleLoginClick} 
-              style={{width:'100%',height:'40px',background:'#004EA2',border:"1px solid #004EA2"}}
-            >登录</Button>
+                }
+              ],
+            })(
+              <Input
+                size="large"
+                // prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                suffix={suffix}
+                onChange={this.changeCode}
+                placeholder="请输入校验码"
+              />,
+            )}
+          </Form.Item>
+
+          <Button
+            loading={loading}
+            type='primary'
+            onClick={this.handleLoginClick}
+            style={{ width: '100%', height: '40px', background: '#004EA2', border: "1px solid #004EA2" }}
+          >登录</Button>
         </div>
       </div>
     </div>)
   }
-} 
+}
 
 // function FieldGroup({ id, label, help, ...props }) {
 // return (

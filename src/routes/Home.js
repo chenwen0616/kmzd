@@ -1,40 +1,67 @@
 import React from 'react';
 import {connect} from "react-redux";
 import { DropdownButton, MenuItem, ControlLabel, Radio, FormGroup, FormControl, Pagination, Col } from 'react-bootstrap';
-import { Icon } from 'antd';
+import { Icon, Spin, Form, Select } from 'antd';
 
-import {goodsList, orderList} from '../api/home';
+import {goodsList, goodsTypeList} from '../api/home';
 
 import '../assets/css/home.less';
+
+const {Option} = Select;
 
 class Home extends React.Component{
   constructor(props){
     super(props);
+
+    this.state={
+      loading: false,
+      reagentTypeList: [], // 试剂类型
+      instrumentTypeList: [], // 仪器类型
+    }
   }
 
   componentDidMount(){
     const userInfo = localStorage.getItem('userInfo');
-    console.log(userInfo, 'userInfo')
+    const uInfo = JSON.parse(userInfo);
+    this.setState({ loading: true })
     goodsList({
-      agentId: userInfo.userId,
+      agentId: Number(uInfo.userId),
       pageSize: 1,
-      pageNum: 10
+      pageNum: 10,
+      instrumentTypeId: 0,
+      productSeries:'',
+      testItemId: 0
     }).then(res=>{
       console.log(res, '商品列表')
+      this.setState({ loading: false })
+    }).catch((err)=>{
+      this.setState({ loading: false })
     })
 
-    orderList({
-      agentId: userInfo.userId,
-      pageSize: 1,
-      pageNum: 10
+    this.getgoodsTypeList(uInfo);
+
+  }
+
+  getgoodsTypeList = (uInfo)=>{
+    goodsTypeList({
+      agentId: Number(uInfo.userId)
     }).then(res=>{
-      console.log(res, '订单列表')
+      if(res&&res.data&&res.result.code===200){
+        this.setState({
+          instrumentTypeList: res.data.instrumentTypeList,
+          reagentTypeList: res.data.reagentTypeList
+        })
+      }
+    }).catch(err=>{
+      console.log(err, 'err')
     })
   }
 
   render(){
-    console.log(this.props, 'props');
-    return <div className='homeBox'>
+    const {loading, instrumentTypeList} = this.state;
+    const { form:{getFieldDecorator} } = this.props;
+    console.log(instrumentTypeList, 'instrumentTypeList');
+    return <Spin spinning={loading}><div className='homeBox'>
       <div className='mainHome'>
 
         <div className='col-md-3'>
@@ -43,41 +70,47 @@ class Home extends React.Component{
             筛选
           </p>
           <div className='selectBox'>
-            <div>
-              <p className='selP'>产品系列</p>
-              <DropdownButton
-                bsStyle="default"
-                title="全部"
-                noCaret
-                id="dropdown-no-caret"
-                className="selBtn"
-              >
-                  <span>ss</span>
-                  <MenuItem eventKey="1">Action</MenuItem>
-                  <MenuItem eventKey="2">Another action</MenuItem>
-                  <MenuItem eventKey="3">Something else here</MenuItem>
-                  <MenuItem divider />
-                  <MenuItem eventKey="4">Separated link</MenuItem>
-              </DropdownButton>
-            </div>
-            <div>
-                <p className='selP'>试剂类型</p>
-                <DropdownButton
-                    bsStyle="default"
-                    title="全部"
-                    noCaret
-                    id="dropdown-no-caret"
-                    className="selBtn"
-                >
-                    <span>ss</span>
-                    <MenuItem eventKey="1">Action</MenuItem>
-                    <MenuItem eventKey="2">Another action</MenuItem>
-                    <MenuItem eventKey="3">Something else here</MenuItem>
-                    <MenuItem divider />
-                    <MenuItem eventKey="4">Separated link</MenuItem>
-                </DropdownButton>
-            </div>
-            <div>
+            <Form.Item className='for-form' label="产品系列" required={false}>
+              {getFieldDecorator('goodsType', {
+                rules: [
+                  { required: false, message: '请选择产品系列!' },
+                ]
+              })(
+                <Select size={"large"} style={{width:'100%'}} placeholder="请选择">
+                  <Option key={1}>{1}</Option>
+                  <Option key={2}>{2}</Option>
+                </Select>
+              )}
+            </Form.Item>
+            <Form.Item className='for-form' label="试剂类型" required={false}>
+              {getFieldDecorator('reagentType', {
+                rules: [
+                  { required: false, message: '请选择试剂类型!' },
+                ]
+              })(
+                <Select size={"large"} style={{width:'100%'}} placeholder="请选择">
+                  <Option key={1}>{1}</Option>
+                  <Option key={2}>{2}</Option>
+                </Select>
+              )}
+            </Form.Item>
+            <Form.Item className='for-form' label="仪器型号" required={false}>
+              {getFieldDecorator('instrumentType', {
+                rules: [
+                  { required: false, message: '请仪器型号!' },
+                ]
+              })(
+                <Select size={"large"} style={{width:'100%'}} placeholder="请选择">
+                  {
+                    instrumentTypeList.lengt>0 ? instrumentTypeList.map(item=>{
+                      console.log(item, 'item')
+                      return <Option key={item.instrumentTypeId}>{item.instrumentTypeName}</Option>
+                    }) : null
+                  }
+                </Select>
+              )}
+            </Form.Item>
+            {/* <div>
                 <p className='selP'>仪器型号</p>
                 <DropdownButton
                     bsStyle="default"
@@ -93,7 +126,7 @@ class Home extends React.Component{
                     <MenuItem divider />
                     <MenuItem eventKey="4">Separated link</MenuItem>
                 </DropdownButton>
-            </div>
+            </div> */}
 
             <div className="cart_btn">
               <a href="#" className="btn btn-primary btnW" role="button">确定</a> 
@@ -226,6 +259,7 @@ class Home extends React.Component{
 
       </div>
     </div>
+    </Spin>
   }
 }
-export default connect()(Home)
+export default Form.create()(connect()(Home))
