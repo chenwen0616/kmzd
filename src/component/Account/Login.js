@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import {FormGroup, ControlLabel, FormControl,HelpBlock } from 'react-bootstrap';
 import {Button, Form, Input, message} from 'antd';
 import {Link,  withRouter} from 'react-router-dom';
-// import axios from 'axios';
 
 import {apiLogin} from '../../api/person';
 
@@ -172,8 +171,9 @@ class Login extends React.Component{
             const data = {
               userId: res.data.userId,
               userType: res.data.userType,
-            }
-            localStorage.setItem('userInfo',data);
+            };
+            const jsonData = JSON.stringify(data)
+            localStorage.setItem('userInfo',jsonData);
             localStorage.setItem('token',res.data.token)
             message.success('成功！')
             this.props.history.push('/home');

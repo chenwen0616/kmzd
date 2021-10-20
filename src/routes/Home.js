@@ -3,11 +3,33 @@ import {connect} from "react-redux";
 import { DropdownButton, MenuItem, ControlLabel, Radio, FormGroup, FormControl, Pagination, Col } from 'react-bootstrap';
 import { Icon } from 'antd';
 
+import {goodsList, orderList} from '../api/home';
+
 import '../assets/css/home.less';
 
 class Home extends React.Component{
   constructor(props){
     super(props);
+  }
+
+  componentDidMount(){
+    const userInfo = localStorage.getItem('userInfo');
+    console.log(userInfo, 'userInfo')
+    goodsList({
+      agentId: userInfo.userId,
+      pageSize: 1,
+      pageNum: 10
+    }).then(res=>{
+      console.log(res, '商品列表')
+    })
+
+    orderList({
+      agentId: userInfo.userId,
+      pageSize: 1,
+      pageNum: 10
+    }).then(res=>{
+      console.log(res, '订单列表')
+    })
   }
 
   render(){
