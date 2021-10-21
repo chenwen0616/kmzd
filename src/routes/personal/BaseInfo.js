@@ -1,106 +1,95 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { FormGroup, ControlLabel, HelpBlock, FormControl, Row, Col } from 'react-bootstrap';
-import {Upload, Icon} from 'antd';
+import {Upload, Icon, Form, Input} from 'antd';
+
+import {agentDetail} from '../../api/person';
 
 class BaseInfo extends React.Component{
   constructor(props){
     super(props);
+    this.state={
+      agentDetail: {},
+    }
+  }
+
+  componentDidMount(){
+    this.getUserDetail();
+  }
+
+  getUserDetail =()=>{
+    agentDetail({agentId:16}).then(res=>{
+      if(res&&res.data&&res.data.agent){
+        this.setState({agentDetail:res.data.agent})
+      }
+    })
   }
   
   render(){
-    return (<div className="discountStyle m-left m-bottom">
+    const {agentDetail} = this.state;
+    console.log(agentDetail, '代理商详情')
+    return (<div className="discountStyle m-left m-bottom baseInfoBox">
       <form>
         <Row className="baseRow">
           <h2>公司信息</h2>
           <Row>
             <Col md={5}>
-              <FieldGroup
-                id="formControlsText"
-                type="text"
-                label="公司名称"
-                placeholder="请输入"
-              />
+              <Form.Item label="公司名称">
+                <Input value={agentDetail&&agentDetail.company ? agentDetail.company : '-'} />
+              </Form.Item>
             </Col>
             <Col md={5}>
-              <FieldGroup
-                id="formControlsText"
-                type="text"
-                label="注册地址"
-                placeholder="请输入"
-              />
+            <Form.Item label="注册地址">
+                <Input value={agentDetail&&agentDetail.company ? agentDetail.company : '-'} />
+              </Form.Item>
             </Col>
           </Row>
           <Row>
             <Col md={5}>
-              <FieldGroup
-                id="formControlsText"
-                type="text"
-                label="信用编码"
-                placeholder="请输入"
-              />
+              <Form.Item label="信用编码">
+                <Input value={agentDetail&&agentDetail.company ? agentDetail.company : '-'} />
+              </Form.Item>
             </Col>
             <Col md={5}>
-              <FieldGroup
-                id="formControlsText"
-                type="text"
-                label="法人"
-                placeholder="请输入"
-              />
+              <Form.Item label="法人">
+                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+              </Form.Item>
             </Col>
           </Row>
           <Row>
             <Col md={5}>
-              <FieldGroup
-                id="formControlsText"
-                type="text"
-                label="实际控制人"
-                placeholder="请输入"
-              />
+              <Form.Item label="实际控制人">
+                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+              </Form.Item>
             </Col>
             <Col md={5}>
-              <FieldGroup
-                id="formControlsText"
-                type="text"
-                label="联系人"
-                placeholder="请输入"
-              />
+              <Form.Item label="联系人">
+                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+              </Form.Item>
             </Col>
           </Row>
           <Row>
             <Col md={5}>
-              <FieldGroup
-                id="formControlsText"
-                type="text"
-                label="练习方式"
-                placeholder="请输入"
-              />
+              <Form.Item label="联系方式">
+                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+              </Form.Item>
             </Col>
             <Col md={5}>
-              <FieldGroup
-                id="formControlsText"
-                type="text"
-                label="注册资金"
-                placeholder="请输入"
-              />
+              <Form.Item label="注册资金">
+                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+              </Form.Item>
             </Col>
           </Row>
           <Row>
             <Col md={5}>
-              <FieldGroup
-                id="formControlsText"
-                type="text"
-                label="成立日期"
-                placeholder="请输入"
-              />
+              <Form.Item label="成立日期">
+                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+              </Form.Item>
             </Col>
             <Col md={5}>
-              <FieldGroup
-                id="formControlsText"
-                type="text"
-                label="法人"
-                placeholder="营业期限"
-              />
+              <Form.Item label="营业期限">
+                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+              </Form.Item>
             </Col>
           </Row>
         </Row>
@@ -125,48 +114,33 @@ class BaseInfo extends React.Component{
           <h2>开票信息</h2>
           <Row className="m-top">
             <Col md={5}>
-              <FieldGroup
-                id="formControlsText"
-                type="text"
-                label="公司名称"
-                placeholder="请输入"
-              />
+              <Form.Item label="公司名称">
+                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+              </Form.Item>
             </Col>
             <Col md={5}>
-              <FieldGroup
-                id="formControlsText"
-                type="text"
-                label="税号"
-                placeholder="请输入"
-              />
+              <Form.Item label="税号">
+                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+              </Form.Item>
             </Col>
           </Row>
           <Row>
             <Col md={5}>
-              <FieldGroup
-                id="formControlsText"
-                type="text"
-                label="公司地址"
-                placeholder="请输入"
-              />
+              <Form.Item label="公司地址">
+                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+              </Form.Item>
             </Col>
             <Col md={5}>
-              <FieldGroup
-                id="formControlsText"
-                type="text"
-                label="开户行"
-                placeholder="请输入"
-              />
+              <Form.Item label="开户行">
+                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+              </Form.Item>
             </Col>
           </Row>
           <Row>
             <Col md={5}>
-              <FieldGroup
-                id="formControlsText"
-                type="text"
-                label="账号"
-                placeholder="请输入"
-              />
+              <Form.Item label="账号">
+                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+              </Form.Item>
             </Col>
           </Row>
         </Row>
@@ -190,4 +164,4 @@ function FieldGroup({ id, label, help, ...props }) {
   );
 }
 
-export default connect()(BaseInfo);
+export default Form.create()(connect()(BaseInfo))

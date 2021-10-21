@@ -7,5 +7,5 @@ export function apiLogin (payload){
 
 // 经销商基础信息
 export function agentDetail(payload){
-  return axios.post('/api/seller/agent/detail',payload)
+  return axios.post('/api/seller/agent/detail?agentId='+payload.agentId)
 }

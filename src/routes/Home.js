@@ -124,14 +124,26 @@ class Home extends React.Component{
     const {form} = this.props;
     form.validateFields((err, values) => {
       if (!err) {
+        // const requestVo = {
+        //   agentId: 8,
+        //   type: '9',
+        //   // payType: values.payType,
+        //   payType: "string",
+        //   num: String(values.num),
+        //   hospitalId: Number(values.hospitalId),
+        //   instrumentTypeId: values.instrumentTypeId,
+        //   ...param,
+        // }
         const requestVo = {
           agentId: 8,
-          type: '9',
-          payType: values.payType,
-          num: String(values.num),
-          hospitalId: Number(values.hospitalId),
-          instrumentTypeId: values.instrumentTypeId,
-          ...param,
+          farePrice: 14,
+          goodsId:4,
+          hospitalId:0,
+          instrumentTypeId: 0,
+          lpPrice: 0,
+          num: '1',
+          payType: 'string',
+          type: 'string',
         }
         addCart(requestVo).then(res=>{
           console.log(res, 'res 添加购物车结果')
@@ -283,38 +295,6 @@ class Home extends React.Component{
               )
             }) : null}
             <div>
-            {/* <div className="col-sm-6 col-md-4">
-              <div className="thumbnail">
-                <img src={process.env.PUBLIC_URL + '/img/cp1.png'} alt={'产品'} />
-                <div className="caption">
-                    <h3 className="proTitle">诊断产品 LICA系列 series</h3>
-                    <p className="proType">LiCA® 500</p>
-                    <FormGroup className="radioStyle">
-                      <Radio name="radioGroup" inline>开票价：<span className="price">￥5789</span></Radio>
-                      <Radio name="radioGroup" inline>IP价：<span className="price">￥4500</span></Radio>
-                    </FormGroup>
-                    <FormGroup controlId="formControlsSelect">
-                      <ControlLabel>医院名称：</ControlLabel>
-                      <FormControl componentClass="select" placeholder="select">
-                        <option value="select">北京市同仁医院</option>
-                        <option value="other">...</option>
-                      </FormControl>
-                    </FormGroup>
-                    <div className="cart_btn" style={{display:'flex'}}>
-                      <Col md={6} style={{paddingLeft:0,paddingRight:0,display:'flex'}}>
-                        <div className="cartNumBg"><Icon type="minus" style={{fontSize:14}} /></div>
-                        <div className="cartBg">
-                          <FormGroup><FormControl type="text" placeholder="" /></FormGroup>
-                        </div>
-                        <div className="cartNumBg"><Icon type="plus" /> </div>
-                      </Col>
-                      <Col md={6} style={{paddingRight:0,textAlign:'right'}}>
-                        <a href="#" className="btn btn-primary" role="button">加入购物车</a> 
-                      </Col>
-                    </div>
-                </div>
-              </div>
-            </div> */}
           </div>
           </div>
 
