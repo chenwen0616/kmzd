@@ -15,11 +15,11 @@
             background: #F5F5F6;
             padding: 20px;
             margin-bottom: 20px;
-            .selP{
-                font-size: 14px;
-                color: #333336;
-                line-height: 32px;
-                margin-top: 10px;
+            .ant-form-item{
+                margin-bottom: 5px !important;
+            }
+            label{
+                margin-bottom: 0px !important;
             }
         }
     }
@@ -61,17 +61,36 @@
         height: 40px;
         margin-left: 10px;
         margin-right: 10px;
-        .form-control{
-            height: 38px;
-            line-height: 38px;
+        .ant-input{
+            height: 38px !important;
         }
     }
 }
 .pageBox{
     width: 100%;
-    .pagination{
-        display: flex;
-        justify-content: center;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+.goods_list{
+    label{
+        margin-bottom: 0px !important;
+    }
+    .ant-form-item-label{
+        line-height: 22px !important;
+    }
+    .ant-form-item{
+        margin-bottom: 8px !important;
+    }
+    .ant-radio-wrapper{
+        width: 100% !important;
+    }
+    .ant-radio-group{
+        margin: 12px 0;
+    }
+    .ant-radio-wrapper{
+        line-height: 2 !important;
     }
 }
 .thumbnail{
@@ -105,6 +124,11 @@
 }
 .cart_btn{
     margin-top: 15px;
+    .ant-btn-primary{
+        background-color: #004EA2 !important;
+        border-color: #004EA2 !important;
+        width: 100%;
+    }
 }
 .btnW{
     width: 100%;
