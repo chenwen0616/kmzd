@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import {Link} from 'react-router-dom';
 import {Checkbox, FormGroup, FormControl, Row, Col} from 'react-bootstrap';
 import { Icon } from 'antd';
+import {cartList} from '../api/cart'
 
 import '../assets/css/cart.less';
 
@@ -10,6 +11,14 @@ class Cart extends React.Component{
   // eslint-disable-next-line no-useless-constructor
   constructor(props){
     super(props);
+  }
+
+  componentDidMount(){
+    const userInfo = localStorage.getItem('userInfo');
+    const uInfo = JSON.parse(userInfo);
+    cartList({agetId: String(uInfo.roleId)}).then(res=>{
+      console.log(res, 'res 购物车列表')
+    })
   }
 
   render(){

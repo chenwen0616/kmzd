@@ -36,7 +36,7 @@ render(<ConfigProvider locale={zhCN}>
                     <AuthRoute path='/orderDetail' component={OrderDetail} />
                     <AuthRoute path='/placeorder' component={PlaceOrder} />
                     <Route path='/login' component={Login} />
-                    <Redirect to='/login' />
+                    <Redirect exact to='/login' />
                 </Switch>
                 <Footer />
             </div>

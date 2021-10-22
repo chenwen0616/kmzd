@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from "react-redux";
 import { ControlLabel, FormGroup, FormControl,  Col } from 'react-bootstrap';
-import { Icon, Spin, Form, Select, Pagination, Button, Input, Radio} from 'antd';
+import { Icon, Spin, Form, Select, Pagination, Button, Input, Radio, message} from 'antd';
 
 import {goodsList, goodsTypeList} from '../api/home';
 import {addCart} from '../api/cart';
@@ -40,8 +40,7 @@ class Home extends React.Component{
     const uInfo = JSON.parse(userInfo);
     this.setState({ loading: true })
     goodsList({
-      // agentId: Number(uInfo.userId),
-      agentId: 16,
+      agentId: Number(uInfo.roleId),
       pageSize: 15,
       pageNum: pNum ? pNum : 1,
       instrumentTypeId: 1,
@@ -64,8 +63,7 @@ class Home extends React.Component{
   }
   getgoodsTypeList = (uInfo)=>{
     goodsTypeList({
-      // agentId: Number(uInfo.userId)
-      agentId: 16
+      agentId: Number(uInfo.roleId)
     }).then(res=>{
       if(res&&res.data&&res.result.code===200){
         this.setState({
@@ -122,30 +120,23 @@ class Home extends React.Component{
 
   handleAddCart=(param)=>{
     const {form} = this.props;
+    const userInfo = localStorage.getItem('userInfo');
+    const uInfo = JSON.parse(userInfo);
     form.validateFields((err, values) => {
       if (!err) {
-        // const requestVo = {
-        //   agentId: 8,
-        //   type: '9',
-        //   // payType: values.payType,
-        //   payType: "string",
-        //   num: String(values.num),
-        //   hospitalId: Number(values.hospitalId),
-        //   instrumentTypeId: values.instrumentTypeId,
-        //   ...param,
-        // }
         const requestVo = {
-          agentId: 8,
-          farePrice: 14,
-          goodsId:4,
-          hospitalId:0,
-          instrumentTypeId: 0,
-          lpPrice: 0,
-          num: '1',
-          payType: 'string',
-          type: 'string',
+          agentId: Number(uInfo.roleId),
+          type: '9',
+          payType: values.payType,
+          num: String(values.num),
+          hospitalId: Number(values.hospitalId),
+          instrumentTypeId: values.instrumentTypeId,
+          ...param,
         }
         addCart(requestVo).then(res=>{
+          if(res&&res.code===200){
+            message.success('添加成功')
+          }
           console.log(res, 'res 添加购物车结果')
         })
         console.log(requestVo, 'form.values')
@@ -162,16 +153,6 @@ class Home extends React.Component{
     //   "payType": "string",
     //   "type": "string"
     // }
-
-    // agentId: 8
-    // farePrice: 15
-    // goodsId: 4
-    // hospitalId: 1
-    // instrumentTypeId: 1
-    // lpPrice: 10
-    // num: "3"
-    // payType: "lp"
-    // type: "9"
   }
 
   render(){
@@ -245,8 +226,8 @@ class Home extends React.Component{
                             initialValue: item.payType
                           })(
                             <Radio.Group onChange={this.onChangeRadioHospital} value={this.state.hospitalRadioVal}>
-                              <Radio value={'lp'}>开票价：<span className="price">￥{item.fare?item.fare:0}</span></Radio>
-                              <Radio value={'kp'}>LP价：<span className="price">￥{item.lp ? item.lp : 0}</span></Radio>
+                              <Radio value={2}>开票价：<span className="price">￥{item.fare?item.fare:0}</span></Radio>
+                              <Radio value={1}>LP价：<span className="price">￥{item.lp ? item.lp : 0}</span></Radio>
                             </Radio.Group>
                           )}
                         </Form.Item>

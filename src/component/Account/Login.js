@@ -172,6 +172,7 @@ class Login extends React.Component {
             const data = {
               userId: res.data.userId,
               userType: res.data.userType,
+              roleId: res.data.roleId,
             };
             const jsonData = JSON.stringify(data)
             localStorage.setItem('userInfo', jsonData);
