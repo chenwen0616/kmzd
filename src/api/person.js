@@ -9,3 +9,25 @@ export function apiLogin (payload){
 export function agentDetail(payload){
   return axios.post('/api/seller/agent/detail?agentId='+payload.agentId)
 }
+
+// 我的订单列表
+export function myOrderList(payload){
+  return axios.post('/api/agent/order/orderList',payload)
+}
+// 我的订单详情
+export function myOrderDetail(payload){
+  return axios.post('/api/agent/order/orderDetail',payload)
+}
+
+// 折扣列表
+export function agentDiscountList(payload){
+  return axios.post('/api/agent/discount/discountList',payload)
+}
+// 折扣详情
+export function agentDiscountDetail(payload){
+  return axios.post('/api/agent/discount/discountDetail',payload)
+}
+// 合同列表
+export function agentContractList(payload){
+  return axios.post('/api/agent/contract/contractList',payload)
+}

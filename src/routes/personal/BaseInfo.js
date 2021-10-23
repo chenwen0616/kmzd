@@ -40,7 +40,7 @@ class BaseInfo extends React.Component{
             </Col>
             <Col md={5}>
             <Form.Item label="注册地址">
-                <Input value={agentDetail&&agentDetail.company ? agentDetail.company : '-'} />
+                <Input value={agentDetail&&agentDetail.registerAddress ? agentDetail.registerAddress : '-'} />
               </Form.Item>
             </Col>
           </Row>
@@ -64,7 +64,7 @@ class BaseInfo extends React.Component{
             </Col>
             <Col md={5}>
               <Form.Item label="联系人">
-                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+                <Input value={agentDetail&&agentDetail.contactName ? agentDetail.contactName : '-'} />
               </Form.Item>
             </Col>
           </Row>

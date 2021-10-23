@@ -23,6 +23,8 @@ import PlaceOrder from './routes/PlaceOrder';
 
 import AuthRoute from './utils/AuthRoute';
 
+const token = localStorage.getItem('token')
+
 render(<ConfigProvider locale={zhCN}>
     <Provider store={store}>
         <HashRouter className='mainName'>
@@ -36,7 +38,7 @@ render(<ConfigProvider locale={zhCN}>
                     <AuthRoute path='/orderDetail' component={OrderDetail} />
                     <AuthRoute path='/placeorder' component={PlaceOrder} />
                     <Route path='/login' component={Login} />
-                    <Redirect exact to='/login' />
+                    {token ? <Redirect exact to='/home' /> : <Redirect exact to='/login' />}
                 </Switch>
                 <Footer />
             </div>

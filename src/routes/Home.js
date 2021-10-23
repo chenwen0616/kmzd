@@ -5,6 +5,7 @@ import { Icon, Spin, Form, Select, Pagination, Button, Input, Radio, message} fr
 
 import {goodsList, goodsTypeList} from '../api/home';
 import {addCart} from '../api/cart';
+import {getProducts} from '../api/common';
 
 import '../assets/css/home.less';
 
@@ -23,7 +24,8 @@ class Home extends React.Component{
       pageNum: 1,
       pageSize: 15,
       total: 0,
-      hospitalRadioVal: 'lp',
+      hospitalRadioVal: 1,
+      productsList: [], // 产品系列
     }
   }
 
@@ -32,9 +34,10 @@ class Home extends React.Component{
     const uInfo = JSON.parse(userInfo);
     this.getGoodsList();
     this.getgoodsTypeList(uInfo);
+    this.getProductList();
   }
   
-  // 获取数据
+  // 获取货品列表数据
   getGoodsList = (pNum,param)=>{
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
@@ -48,7 +51,6 @@ class Home extends React.Component{
       testItemId: 4
     }).then(res=>{
       this.setState({ loading: false })
-      console.log(res, 'res 商品列表')
       if(res&&res.data&&res.data.goodsList){
         this.setState({
           goodsList: res.data.goodsList,
@@ -73,6 +75,15 @@ class Home extends React.Component{
       }
     }).catch(err=>{
       console.log(err, 'err')
+    })
+  }
+  // 获取产品系列
+  getProductList = ()=>{
+    getProducts({dictType:'crm_reagent_product'}).then(res=>{
+      if(res&&res.data&&res.data.dictList&&res.data.dictList.length>0){
+        this.setState({productsList: res.data.dictList})
+      }
+      console.log(res, '产品系列')
     })
   }
 
@@ -131,10 +142,12 @@ class Home extends React.Component{
           num: String(values.num),
           hospitalId: Number(values.hospitalId),
           instrumentTypeId: values.instrumentTypeId,
+          name: values.name,
+          url: values.url,
           ...param,
         }
         addCart(requestVo).then(res=>{
-          if(res&&res.code===200){
+          if(res&&res.result&&res.result.code===200){
             message.success('添加成功')
           }
           console.log(res, 'res 添加购物车结果')
@@ -142,21 +155,10 @@ class Home extends React.Component{
         console.log(requestVo, 'form.values')
       }
     })
-    // {
-    //   "agentId": 0,
-    //   "farePrice": 0,
-    //   "goodsId": 0,
-    //   "hospitalId": 0,
-    //   "instrumentTypeId": 0,
-    //   "lpPrice": 0,
-    //   "num": "string",
-    //   "payType": "string",
-    //   "type": "string"
-    // }
   }
 
   render(){
-    const {loading, instrumentTypeList, goodsNum, reagentTypeList, goodsList} = this.state;
+    const {loading, instrumentTypeList, goodsNum, reagentTypeList, goodsList, productsList} = this.state;
     const { form:{getFieldDecorator} } = this.props;
     return <Spin spinning={loading}><div className='homeBox'>
       <div className='mainHome'>
@@ -169,8 +171,11 @@ class Home extends React.Component{
             <Form.Item className='for-form' label="产品系列" required={false}>
               {getFieldDecorator('productSeries')(
                 <Select size={"large"} style={{width:'100%'}} placeholder="请选择">
-                  <Option key={1}>{1}</Option>
-                  <Option key={2}>{2}</Option>
+                  {
+                    productsList.length>0 ? productsList.map(item=>{
+                      return <Option key={item.dictValue}>{item.dictLabel}</Option>
+                    }) : null
+                  }
                 </Select>
               )}
             </Form.Item>
@@ -186,7 +191,7 @@ class Home extends React.Component{
               )}
             </Form.Item>
             <Form.Item className='for-form' label="仪器型号" required={false}>
-              {getFieldDecorator('instrumentTypeId')(
+              {getFieldDecorator('instrumentTypeIds')(
                 <Select size={"large"} style={{width:'100%'}} placeholder="请选择">
                   {
                     instrumentTypeList.length>0 ? instrumentTypeList.map(item=>{
@@ -209,7 +214,11 @@ class Home extends React.Component{
               return (
                 <div className="col-sm-6 col-md-4">
                   <div className="thumbnail goods_list" key={index}>
-                    <img src={process.env.PUBLIC_URL + '/img/cp1.png'} alt={'产品'} />
+                    <Form.Item>
+                      {getFieldDecorator('url',{
+                        initialValue: item.url
+                      })(<img src={item.url} alt={'产品'} style={{width:'100%'}} />)}
+                    </Form.Item>
                     <div className="caption">
                         <Form.Item>
                           {getFieldDecorator('name',{
@@ -222,9 +231,7 @@ class Home extends React.Component{
                           })(<p className="proType">{item.instrumentTypeId ? item.instrumentTypeId : ''}</p>)}
                         </Form.Item>
                         <Form.Item>
-                          {getFieldDecorator('payType',{
-                            initialValue: item.payType
-                          })(
+                          {getFieldDecorator('payType')(
                             <Radio.Group onChange={this.onChangeRadioHospital} value={this.state.hospitalRadioVal}>
                               <Radio value={2}>开票价：<span className="price">￥{item.fare?item.fare:0}</span></Radio>
                               <Radio value={1}>LP价：<span className="price">￥{item.lp ? item.lp : 0}</span></Radio>
@@ -233,9 +240,7 @@ class Home extends React.Component{
                         </Form.Item>
                         
                         <Form.Item className='for-form' label="医院名称:" required={false}>
-                          {getFieldDecorator('hospitalId',{
-                            initialValue: item.hospitalId
-                          })(
+                          {getFieldDecorator('hospitalId')(
                             <Select size={"normal"} style={{width:'100%'}} placeholder="请选择">
                               {
                                 (item.hospitalList && item.hospitalList.length>0) ? item.hospitalList.map(hItem=>{
