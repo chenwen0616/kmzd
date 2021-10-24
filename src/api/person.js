@@ -31,3 +31,13 @@ export function agentDiscountDetail(payload){
 export function agentContractList(payload){
   return axios.post('/api/agent/contract/contractList',payload)
 }
+
+//地址相关信息（经销商）
+// 地址添加
+export function agentAddrAdd(payload){
+  return axios.post('/api/seller/agent/addressAdd',payload)
+}
+// 地址列表
+export function agentAddrList(payload){
+  return axios.post('/api/seller/agent/addressList',payload)
+}

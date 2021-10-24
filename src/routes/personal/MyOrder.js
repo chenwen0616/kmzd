@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom';
 import { Row, Col, Tab, Tabs} from 'react-bootstrap';
 import { DatePicker, Table } from 'antd';
 
+
 class MyOrder extends React.Component{
   constructor(props){
     super(props);
@@ -14,7 +15,9 @@ class MyOrder extends React.Component{
       endOpen: false,
     };
   }
-
+  componentDidMount(){
+    
+  }
   disabledStartDate = startValue => {
     const { endValue } = this.state;
     if (!startValue || !endValue) {
