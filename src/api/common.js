@@ -8,3 +8,8 @@ export function getProducts (payload){
 export function getRegion(payload){
   return axios.post('/api/common/region/list',payload)
 }
+
+// 消息列表接口
+export function getMessage(payload){
+  return axios.post('/api/common/message/list',payload)
+}

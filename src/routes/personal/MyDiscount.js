@@ -1,212 +1,153 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {ButtonGroup, Button, Row, Col, Tab, Tabs, Table, Modal} from 'react-bootstrap';
+import {ButtonGroup, Button, Row, Col, Tab, Tabs, Modal} from 'react-bootstrap';
+import { Table, DatePicker} from 'antd';
+
+import { agentDiscountList, agentDiscountDetail } from '../../api/person';
 
 class MyDiscount extends React.Component{
+  cloumns = [
+    {
+      title: '折扣券编号',
+      dataIndex: 'discountIssueId',
+    },
+    {
+      title: '已使用金券',
+      dataIndex: '',
+    },
+    {
+      title: '剩余金额',
+      dataIndex: 'balance',
+    },
+    {
+      title: '期限',
+      dataIndex: 'dateTime',
+      render: (test,record)=>{
+        return (<div>{record.startTime}-{record.endTime}</div>)
+      }
+    },
+    {
+      title: '状态',
+      dataIndex: 'status'
+    },
+    {
+      title: '操作',
+      dataIndex: 'options'
+    }
+  ];
   constructor(props){
     super(props);
 
     this.state={
-      data:[],
       detailModalVisible: false,
+      discountList: [],
+      startValue: null,
+      endValue: null,
+      endOpen: false,
     }
   }
+  componentDidMount(){
+    this.getList();
+  }
+
+  getList = ()=>{
+    const userInfo = localStorage.getItem('userInfo');
+    const uInfo = JSON.parse(userInfo);
+    agentDiscountList({
+      agentId: uInfo.roleId,
+      pageNum: 1,
+      pageSize: 10,
+      status: 1,
+    }).then(res=>{
+      console.log(res, 'res 折扣列表')
+      if(res&&res.data&&res.data.discountList&&res.data.discountList.length>0){
+        this.setState({discountList: res.data.discountList})
+      }
+    })
+  }
+
+  disabledStartDate = startValue => {
+    const { endValue } = this.state;
+    if (!startValue || !endValue) {
+      return false;
+    }
+    return startValue.valueOf() > endValue.valueOf();
+  };
+
+  disabledEndDate = endValue => {
+    const { startValue } = this.state;
+    if (!endValue || !startValue) {
+      return false;
+    }
+    return endValue.valueOf() <= startValue.valueOf();
+  };
+  onChange = (field, value) => {
+    this.setState({
+      [field]: value,
+    });
+  };
   
+  onStartChange = value => {
+    this.onChange('startValue', value);
+  };
+  
+  onEndChange = value => {
+    this.onChange('endValue', value);
+  };
+  
+  handleStartOpenChange = open => {
+    if (!open) {
+      this.setState({ endOpen: true });
+    }
+  };
+  
+  handleEndOpenChange = open => {
+    this.setState({ endOpen: open });
+  };
+
   render(){
-    return (<div className="discountStyle">
+    const {discountList, startValue, endOpen, endValue} = this.state;
+    return (<div className="discountStyle discountBox">
       <Row>
         <Col md={12}>
           <Tabs defaultActiveKey={1} id="uncontrolled-tab-example" className="tabStyle">
             <Tab eventKey={1} title="所有折扣" bsClass='b-radius'>
-              <Table responsive>
-                <thead>
-                  <tr>
-                    <th>折扣券编号</th>
-                    <th>已使用金券</th>
-                    <th>剩余金额</th>
-                    <th>期限</th>
-                    <th>状态</th>
-                    <th>操作</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>Table cell</td>
-                    <td>Table cell</td>
-                    <td>Table cell</td>
-                    <td>Table cell</td>
-                    <td>
-                      <a href="javascript:;" onClick={()=>this.handleCheckDetail(true)}>查看详情</a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td>Table cell</td>
-                    <td>Table cell</td>
-                    <td>Table cell</td>
-                    <td>Table cell</td>
-                    <td>
-                      <a>查看详情</a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td>Table cell</td>
-                    <td>Table cell</td>
-                    <td>Table cell</td>
-                    <td>Table cell</td>
-                    <td>
-                      <a>查看详情</a>
-                    </td>
-                  </tr>
-                </tbody>
-              </Table>
+              <Table columns={this.cloumns} dataSource={discountList} />
             </Tab>
             <Tab eventKey={2} title="使用中">
-            <Table responsive>
-              <thead>
-                <tr>
-                  <th>折扣券编号</th>
-                  <th>已使用金券</th>
-                  <th>剩余金额</th>
-                  <th>期限</th>
-                  <th>状态</th>
-                  <th>操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>
-                    <a>查看详情</a>
-                  </td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>
-                    <a>查看详情</a>
-                  </td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>
-                    <a>查看详情</a>
-                  </td>
-                </tr>
-              </tbody>
-            </Table>
+              <Table columns={this.cloumns} dataSource={[]} />
             </Tab>
             <Tab eventKey={3} title="已使用">
-            <Table responsive>
-              <thead>
-                <tr>
-                  <th>折扣券编号</th>
-                  <th>已使用金券</th>
-                  <th>剩余金额</th>
-                  <th>期限</th>
-                  <th>状态</th>
-                  <th>操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>
-                    <a>查看详情</a>
-                  </td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>
-                    <a>查看详情</a>
-                  </td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>
-                    <a>查看详情</a>
-                  </td>
-                </tr>
-              </tbody>
-            </Table>
+              <Table columns={this.cloumns} dataSource={[]} />
             </Tab>
             <Tab eventKey={4} title="已过期">
-            <Table responsive>
-              <thead>
-                <tr>
-                  <th>折扣券编号</th>
-                  <th>已使用金券</th>
-                  <th>剩余金额</th>
-                  <th>期限</th>
-                  <th>状态</th>
-                  <th>操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>
-                    <a>查看详情</a>
-                    <a>取消</a>
-                  </td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>
-                    <a>查看详情</a>
-                    <a>取消</a>
-                  </td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>
-                    <a>查看详情</a>
-                    <a>取消</a>
-                  </td>
-                </tr>
-              </tbody>
-            </Table>
+              <Table columns={this.cloumns} dataSource={[]} />
             </Tab>
           </Tabs>
-          <div>
-            日期
+          <div className="dateBox">
+            <Col md={5}>
+              <DatePicker
+                disabledDate={this.disabledStartDate}
+                format="YYYY-MM-DD"
+                value={startValue}
+                placeholder="开始"
+                onChange={this.onStartChange}
+                onOpenChange={this.handleStartOpenChange}
+              />
+            </Col>
+            <Col md={1}>-</Col>
+            <Col md={5}>
+              <DatePicker
+                disabledDate={this.disabledEndDate}
+                format="YYYY-MM-DD"
+                value={endValue}
+                placeholder="结束"
+                onChange={this.onEndChange}
+                open={endOpen}
+                onOpenChange={this.handleEndOpenChange}
+              />
+            </Col>
+            
           </div>
         </Col>
       </Row>

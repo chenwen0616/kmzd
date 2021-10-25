@@ -24,6 +24,8 @@ import PlaceOrder from './routes/PlaceOrder';
 import AuthRoute from './utils/AuthRoute';
 
 const token = localStorage.getItem('token')
+const userInfo = localStorage.getItem('userInfo');
+const uInfo = JSON.parse(userInfo);
 
 render(<ConfigProvider locale={zhCN}>
     <Provider store={store}>
@@ -34,7 +36,7 @@ render(<ConfigProvider locale={zhCN}>
                 <Switch>
                     <AuthRoute path='/home' component={Home} />
                     <AuthRoute path='/cart' component={Cart} />
-                    <AuthRoute path='/personal' component={Personal} />
+                    <AuthRoute path='/personal' component={Personal} uInfo={uInfo} />
                     <AuthRoute path='/orderDetail' component={OrderDetail} />
                     <AuthRoute path='/placeorder' component={PlaceOrder} />
                     <Route path='/login' component={Login} />

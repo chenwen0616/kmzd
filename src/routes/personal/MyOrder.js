@@ -138,7 +138,7 @@ class MyOrder extends React.Component{
                 disabledDate={this.disabledStartDate}
                 format="YYYY-MM-DD"
                 value={startValue}
-                placeholder="Start"
+                placeholder="开始"
                 onChange={this.onStartChange}
                 onOpenChange={this.handleStartOpenChange}
               />
@@ -149,7 +149,7 @@ class MyOrder extends React.Component{
                 disabledDate={this.disabledEndDate}
                 format="YYYY-MM-DD"
                 value={endValue}
-                placeholder="End"
+                placeholder="结束"
                 onChange={this.onEndChange}
                 open={endOpen}
                 onOpenChange={this.handleEndOpenChange}

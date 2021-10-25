@@ -31,56 +31,31 @@ p{
     width: 82%;
     margin: 0 auto;
   }
-  .nav-pills{
+  .navTop{
     a{
-      font-size: 12px;
+      display: inline-block;
+      height: 80px;
+      line-height: 80px;
+      color: #004EA2;
+      margin: 0 40px;
+      position: relative;
+      font-size: 18px;
+      text-decoration: none;
       .badge{
         position: absolute;
         top: 20px;
-        right: 20px;
+        right: -15px;
         padding: 3px;
         background: #E60013;
         color: #FFF;
       }
     }
     .active{
-      a{
-        .badge{
-          background: #E60013;
-          color: #FFF;
-        }
-      }
+      line-height: 80px;
+      border-bottom: 2px solid #004EA2;
     }
   }
 
-  .nav li{
-    height: 80px;
-  }
-  .nav{
-    li{
-      a{
-        font-size: 18px;
-        line-height: 60px;
-        color: #666;
-        padding: 10px 40px;
-        position: relative;
-      }
-    }
-    li.active{
-      a{
-        line-height: 60px;
-        border-bottom: 2px solid #004EA2;
-        background-color: #FFF !important;
-        color: #004EA2 !important;
-        border-radius: 0px;
-        font-size: 18px;
-        position: relative;
-      }
-      &:hover{
-        background-color: none;
-      }
-    }
-  }
 }
 
 .btn-primary{
