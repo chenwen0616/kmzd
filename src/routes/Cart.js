@@ -40,7 +40,7 @@ class Cart extends React.Component{
                 <div className="proDiv">
                   <div className="col-md-10 cartLeft">
                     <Checkbox></Checkbox> 
-                    <div className="imgBox"></div>
+                    <div className="imgBox"><img src={item.url} alt='' style={{width:'97%'}} /></div>
                     <div className="proParameter">
                       <div>
                         <p className="proTitle">{item.name ? item.name : ''}诊断产品 LICA系列 series</p>

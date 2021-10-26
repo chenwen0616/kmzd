@@ -137,7 +137,6 @@ class Home extends React.Component{
       if (!err) {
         const requestVo = {
           agentId: Number(uInfo.roleId),
-          type: '9',
           payType: values.payType,
           num: String(values.num),
           hospitalId: Number(values.hospitalId),
@@ -272,7 +271,7 @@ class Home extends React.Component{
                             
                           </Col>
                           <Col md={6} style={{paddingRight:0,textAlign:'right'}}>
-                            <Button type='primary' size="large" onClick={()=>this.handleAddCart({goodsId:item.goodsId,farePrice:item.fare,lpPrice:item.lp})}>加入购物车</Button>
+                            <Button type='primary' size="large" onClick={()=>this.handleAddCart({goodsId:item.goodsId,farePrice:item.fare,lpPrice:item.lp, type:item.type})}>加入购物车</Button>
                           </Col>
                         </div>
                     </div>

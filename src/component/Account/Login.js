@@ -230,7 +230,7 @@ class Login extends React.Component {
                 { required: false, message: '请输入密码!' },
               ]
             })(
-              <Input
+              <Input.Password
                 size="large"
                 onChange={this.changeCode}
                 placeholder="请输入密码"

@@ -16,10 +16,13 @@ class AddressManage extends React.Component{
       regionOptions:[],
       listLoading: false,
       regionLoading: false,
+      addressList: [],
       addressInvoiceList: [], // 收发票地址
       addressReceiveList: [], // 收货地址
       addressContractList: [], // 收合同地址
       addressConfirmList: [], // 收函证地址
+      addrTitle: '新增地址',
+      addrItem: {},
     }
   }
   componentDidMount(){
@@ -76,6 +79,7 @@ class AddressManage extends React.Component{
         const contractList = res.data.addressList.filter(item=>item.type === '3');
         const confirmList = res.data.addressList.filter(item=>item.type === '4');
         this.setState({
+          addressList: res.data.addressList,
           addressInvoiceList: invoiceList, // 收发票地址
           addressReceiveList: ReceiveList, // 收货地址
           addressContractList: contractList, // 收合同地址
@@ -88,8 +92,19 @@ class AddressManage extends React.Component{
   handleSelAddrType=ev=>{
     this.setState({addrType: ev})
   }
-  handleAddModalVisible =(flag)=>{
-    this.setState({addrVisible:!!flag})
+  handleAddModalVisible =(flag, tag, addrId)=>{
+    let addrItem;
+    if(addrId){
+      const {addressList} = this.state;
+      addrItem = addressList.find(item=> item.addressId === addrId);
+      console.log(addrItem, 'addrItem')
+    }
+    const title= tag==='add' ? '新增地址':'编辑地址'
+    this.setState({
+      addrVisible:!!flag,
+      addrTitle: title,
+      addrItem
+    })
   }
   handleCancelAddr = ()=>{
     this.setState({addrVisible: false})
@@ -118,7 +133,7 @@ class AddressManage extends React.Component{
   }
 
   render(){
-    const {addrVisible, regionOptions, addressInvoiceList, addressReceiveList, addressContractList, addressConfirmList} = this.state;
+    const {addrVisible, regionOptions, addressInvoiceList, addressReceiveList, addressContractList, addressConfirmList, addrItem} = this.state;
     console.log(addressInvoiceList, 'addressInvoiceList')
     const { form } = this.props;
     return (
@@ -148,7 +163,7 @@ class AddressManage extends React.Component{
                       </div>
                       <div className="edit-box">
                         <span className="edit-txt">设为默认</span>
-                        <span className="edit-txt">编辑</span>
+                        <span className="edit-txt" onClick={()=>this.handleAddModalVisible(true,'edit',item.addressId)}>编辑</span>
                       </div>
                     </div>
                     )
@@ -242,13 +257,13 @@ class AddressManage extends React.Component{
             <div className="addBtnBox">
               <Button 
                 type='primary' 
-                onClick={()=>this.handleAddModalVisible(true)}
+                onClick={()=>this.handleAddModalVisible(true,'add')}
               >新增地址</Button>
             </div>
           </Col>
         </Row>
         {addrVisible? <Modal
-            title="新增收货地址"
+            title={this.state.addrTitle}
             className='addrBox'
             visible={addrVisible}
             onOk={this.handleAdd}
@@ -258,14 +273,16 @@ class AddressManage extends React.Component{
               {form.getFieldDecorator('consignee',{
                 rules: [
                   { required: true, message: '请输入收货人!' },
-                ]
+                ],
+                initialValue: addrItem&&addrItem.consignee ? addrItem.consignee : '',
               })(<Input placeholder='请输入' />)}
             </Form.Item>
             <Form.Item label={'所在地区'}>
               {form.getFieldDecorator('area',{
                 rules: [
-                  { required: true, message: '请输入收货人!' },
-                ]
+                  { required: true, message: '请选择所在地区!' },
+                ],
+                initialValue: '',
               })(
                 <Cascader options={regionOptions} />
               )}
