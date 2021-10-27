@@ -1,2 +1,5 @@
+// 订单信息
+export const ORDERADD = 'ORDERADD';
 
-export const goods_list = 'goods_list';  // 商品列表
+// 购物车数量
+export const CARTNUM = ' CARTNUM';

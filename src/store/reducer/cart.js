@@ -1,10 +1,13 @@
-// import * as TYPES from '../action-types';
+import * as TYPES from '../action-types';
 export default function cart (state={
-    data:[],
+    orderData:{},
 },action){
-    state = JSON.parse(JSON.stringify(state));
-    switch(action.type){
-        // case
-    }
-    return state;
+  state = JSON.parse(JSON.stringify(state));
+  // eslint-disable-next-line default-case
+  switch(action.type){
+    case TYPES.ORDERADD:
+      state = {...state, orderData: state.orderData};
+      break;
+  }
+  return state;
 }

@@ -12,7 +12,7 @@ export function agentDetail(payload){
 
 // 我的订单列表
 export function myOrderList(payload){
-  return axios.post('/api/agent/order/orderList',payload)
+  return axios.post('/api/agent/order/oderList',payload)
 }
 // 我的订单详情
 export function myOrderDetail(payload){
@@ -40,4 +40,8 @@ export function agentAddrAdd(payload){
 // 地址列表
 export function agentAddrList(payload){
   return axios.post('/api/seller/agent/addressList',payload)
+}
+// 删除地址
+export function agentAddrDel(payload){
+  return axios.post('/api/seller/agent/addressDel?addressId='+payload)
 }

@@ -27,25 +27,26 @@ const token = localStorage.getItem('token')
 const userInfo = localStorage.getItem('userInfo');
 const uInfo = JSON.parse(userInfo);
 
-render(<ConfigProvider locale={zhCN}>
-    <Provider store={store}>
-        <HashRouter className='mainName'>
-            <div>
-                <Navs />
-                <NavBread />
-                <Switch>
-                    <AuthRoute path='/home' component={Home} />
-                    <AuthRoute path='/cart' component={Cart} />
-                    <AuthRoute path='/personal' component={Personal} uInfo={uInfo} />
-                    <AuthRoute path='/orderDetail' component={OrderDetail} />
-                    <AuthRoute path='/placeorder' component={PlaceOrder} />
-                    <Route path='/login' component={Login} />
-                    {token ? <Redirect exact to='/home' /> : <Redirect exact to='/login' />}
-                </Switch>
-                <Footer />
-            </div>
-        </HashRouter>
-    </Provider> 
+render(
+<ConfigProvider locale={zhCN}>
+  <Provider store={store}>
+    <HashRouter className='mainName'>
+      <div>
+        <Navs />
+        <NavBread />
+        <Switch>
+          <AuthRoute path='/home' component={Home} />
+          <AuthRoute path='/cart' component={Cart} />
+          <AuthRoute path='/personal' component={Personal} uInfo={uInfo} />
+          <AuthRoute path='/orderDetail' component={OrderDetail} />
+          <AuthRoute path='/placeorder' component={PlaceOrder} />
+          <Route path='/login' component={Login} />
+          {token ? <Redirect exact to='/home' /> : <Redirect exact to='/login' />}
+        </Switch>
+        <Footer />
+      </div>
+    </HashRouter>
+  </Provider> 
 </ConfigProvider>,document.getElementById('root'))
 
 

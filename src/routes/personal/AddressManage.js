@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {Row, Col, Tabs, Tab} from 'react-bootstrap'
-import { Button, Modal, Form, Input, Cascader, message, Spin } from 'antd';
+import { Button, Modal, Form, Input, Cascader, message, Spin, Popconfirm } from 'antd';
 
 import {getRegion} from '../../api/common';
-import {agentAddrList, agentAddrAdd} from '../../api/person';
+import {agentAddrList, agentAddrAdd, agentAddrDel} from '../../api/person';
 
 class AddressManage extends React.Component{
   constructor(props){
@@ -90,8 +90,12 @@ class AddressManage extends React.Component{
   }
 
   handleSelAddrType=ev=>{
-    this.setState({addrType: ev})
+    this.setState({addrType: ev},()=>{
+      this.getAddrList();
+    })
+    
   }
+
   handleAddModalVisible =(flag, tag, addrId)=>{
     let addrItem;
     if(addrId){
@@ -126,18 +130,27 @@ class AddressManage extends React.Component{
         if(res&&res.result&&res.result.code ===200){
           message.success('成功！');
           this.handleCancelAddr();
+          this.getAddrList();
         }
-        console.log(res, 'res 添加结果')
       })
     })
   }
 
+  // 删除地址
+  handleDel=(addrId)=>{
+    agentAddrDel(addrId).then(res=>{
+      if(res&&res.result&&res.result.code===200){
+        message.success('成功！');
+        this.getAddrList();
+      }
+    })
+  }
+
   render(){
-    const {addrVisible, regionOptions, addressInvoiceList, addressReceiveList, addressContractList, addressConfirmList, addrItem} = this.state;
-    console.log(addressInvoiceList, 'addressInvoiceList')
+    const {addrVisible, regionOptions, addressInvoiceList, addressReceiveList, addressContractList, addressConfirmList, addrItem, listLoading, regionLoading} = this.state;
     const { form } = this.props;
     return (
-    <Spin spinning={false}>
+    <Spin spinning={listLoading||regionLoading}>
       <div className="discountStyle">
         <Row>
           <Col md={12}>
@@ -145,9 +158,8 @@ class AddressManage extends React.Component{
               <Tab eventKey={'1'} title="收发票" bsClass='b-radius'>
                 <div>
                   {addressInvoiceList.length>0 ? addressInvoiceList.map(item=>{
-                    console.log(item, 'item')
                     return (
-                    <div className="well-box normal-bg">
+                    <div className={item.def ? "well-box default-bg" : "well-box normal-bg"}>
                       <h3>发票地址</h3>
                       <div>
                         <p>收货人：{item.consignee? item.consignee : ''}</p>
@@ -159,10 +171,17 @@ class AddressManage extends React.Component{
                         <p>电子邮箱：{item.email?item.email:''}</p>
                       </div>
                       <div className="del-box">
-                        <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} alt={'删除'} />
+                        <Popconfirm
+                          title="确定要删除当前商品吗?"
+                          onConfirm={()=>this.handleDel(item.addressId)}
+                          okText="确定"
+                          cancelText="取消"
+                        >
+                          <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} alt={'删除'} />
+                        </Popconfirm>
                       </div>
                       <div className="edit-box">
-                        <span className="edit-txt">设为默认</span>
+                        {item.def ? null : <span className="edit-txt">设为默认</span>}
                         <span className="edit-txt" onClick={()=>this.handleAddModalVisible(true,'edit',item.addressId)}>编辑</span>
                       </div>
                     </div>
@@ -174,7 +193,7 @@ class AddressManage extends React.Component{
                 <div>
                   {addressReceiveList.length>0 ? addressReceiveList.map(item=>{
                     return (
-                      <div className="well-box default-bg">
+                      <div className={item.def ? "well-box default-bg" : "well-box normal-bg"}>
                         <h3>收货地址</h3>
                         <div>
                           <p>收货人：{item.consignee? item.consignee : ''}</p>
@@ -186,10 +205,17 @@ class AddressManage extends React.Component{
                           <p>电子邮箱：{item.email?item.email:''}</p>
                         </div>
                         <div className="del-box">
-                          <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} alt={'删除'} />
+                          <Popconfirm
+                            title="确定要删除当前商品吗?"
+                            onConfirm={()=>this.handleDel(item.addressId)}
+                            okText="确定"
+                            cancelText="取消"
+                          >
+                            <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} alt={'删除'} />
+                          </Popconfirm>
                         </div>
                         <div className="edit-box">
-                          <span className="edit-txt">设为默认</span>
+                          {item.def ? null : <span className="edit-txt">设为默认</span>}
                           <span className="edit-txt">编辑</span>
                         </div>
                       </div>
@@ -204,7 +230,7 @@ class AddressManage extends React.Component{
                 <div>
                   {addressContractList.length>0 ? addressContractList.map(item=>{
                     return (
-                      <div className="well-box normal-bg">
+                      <div className={item.def ? "well-box default-bg" : "well-box normal-bg"}>
                         <h3>收合同地址</h3>
                         <div>
                           <p>收货人：{item.consignee? item.consignee : ''}</p>
@@ -216,9 +242,17 @@ class AddressManage extends React.Component{
                           <p>电子邮箱：{item.email?item.email:''}</p>
                         </div>
                         <div className="del-box">
-                          <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} alt={'删除'} />
+                          <Popconfirm
+                            title="确定要删除当前商品吗?"
+                            onConfirm={()=>this.handleDel(item.addressId)}
+                            okText="确定"
+                            cancelText="取消"
+                          >
+                            <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} alt={'删除'} />
+                          </Popconfirm>
                         </div>
                         <div className="edit-box">
+                          {item.def ? null : <span className="edit-txt">设为默认</span>}
                           <span className="edit-txt">编辑</span>
                         </div>
                       </div>
@@ -231,7 +265,7 @@ class AddressManage extends React.Component{
                 <div>
                   {addressConfirmList.length>0 ? addressConfirmList.map(item=>{
                     return (
-                      <div className="well-box normal-bg">
+                      <div className={item.def ? "well-box default-bg" : "well-box normal-bg"}>
                         <h3>收函证地址</h3>
                         <div>
                           <p>收货人：{item.consignee? item.consignee : ''}</p>
@@ -243,9 +277,17 @@ class AddressManage extends React.Component{
                           <p>电子邮箱：{item.email?item.email:''}</p>
                         </div>
                         <div className="del-box">
-                          <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} alt={'删除'} />
+                          <Popconfirm
+                            title="确定要删除当前商品吗?"
+                            onConfirm={()=>this.handleDel(item.addressId)}
+                            okText="确定"
+                            cancelText="取消"
+                          >
+                            <img src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} alt={'删除'} />
+                          </Popconfirm>
                         </div>
                         <div className="edit-box">
+                          {item.def ? null : <span className="edit-txt">设为默认</span>}
                           <span className="edit-txt">编辑</span>
                         </div>
                       </div>

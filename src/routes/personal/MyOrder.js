@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom';
 import { Row, Col, Tab, Tabs} from 'react-bootstrap';
 import { DatePicker, Table } from 'antd';
 
+import {myOrderList} from '../../api/person'
 
 class MyOrder extends React.Component{
   constructor(props){
@@ -16,7 +17,14 @@ class MyOrder extends React.Component{
     };
   }
   componentDidMount(){
-    
+    this.getList()
+  }
+  getList = ()=>{
+    const userInfo = localStorage.getItem('userInfo');
+    const uInfo = JSON.parse(userInfo);
+    myOrderList({agentId:Number(uInfo.roleId),pageNum:1,pageSize:10}).then(res=>{
+      console.log(res, '订单列表接口')
+    })
   }
   disabledStartDate = startValue => {
     const { endValue } = this.state;

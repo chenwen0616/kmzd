@@ -3,13 +3,15 @@ import axios from './index';
 export function getProducts (payload){
   return axios.post('/api/common/dict/getDictList?dictType='+payload.dictType)
 }
-
 // 获取区域
 export function getRegion(payload){
   return axios.post('/api/common/region/list',payload)
 }
-
 // 消息列表接口
 export function getMessage(payload){
   return axios.post('/api/common/message/list',payload)
+}
+// 修改密码
+export function updatePassword(payload){
+  return axios.post('/api/common/login/passwordUpdate',payload)
 }
