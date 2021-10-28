@@ -2,6 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import {Row, Col} from 'react-bootstrap';
 
+import {myOrderDetail} from '../../api/person'
+
 import '../../assets/css/cart.less';
 import '../../assets/css/personal.less';
 
@@ -11,6 +13,24 @@ class OrderDetail extends React.Component{
     this.state={
       data: [],
     }
+  }
+
+  componentDidMount(){
+    console.log(this.props, 'this.props')
+    const param = this.GetQueryString('id')
+    console.log(param, 'param')
+  }
+
+  GetQueryString(name) {
+    const reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    const r = window.location.search.substr(1).match(reg);
+    console.log(window.location.search,'rrrr')
+    if (r != null) return unescape(r[2]); return null;
+  }
+
+  getDetail=()=>{
+    // const {} = this.props;
+    // myOrderDetail({})
   }
 
   render(){
@@ -27,7 +47,7 @@ class OrderDetail extends React.Component{
               <Col md={5}>实际支付：￥2356.98</Col>
               <Col md={7}>发货时间：2021/10/15</Col>
               <Col md={5}>使用折扣：￥2356.98</Col>
-              <Col md={7}>款第单号：SF8908901524</Col>
+              <Col md={7}>快递单号：SF8908901524</Col>
               <Col md={5}>快递名称：顺丰</Col>
               <Col md={7}>收货日期：2021/10/15</Col>
             </Row>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {Button, Checkbox, Table} from 'antd';
+import {Button,  Table, Input, Form, message} from 'antd';
 
 import { confirmOrderInfo, orderAdd } from '../api/cart'
 
@@ -24,6 +24,18 @@ class PlaceOrder extends React.Component{
     {
       title: '使用金额',
       dataIndex: 'useDiscount',
+      render:(text,record)=>{
+        return (
+        <Form.Item style={{marginBottom:0}}>
+          {this.props.form.getFieldDecorator('useDiscount' + record.discountIssueId, {
+            // rules:[
+            //   {validator: this.checkDiscount,},
+            // ],
+            initialValue: record.useDiscount ? record.useDiscount : 0
+          })(<Input placeholder="请输入" onChange={(e)=>this.changeUseDiscount(e,record.discountIssueId)} />)}
+        </Form.Item>
+        )
+      }
     }
   ];
   constructor(props){
@@ -44,14 +56,53 @@ class PlaceOrder extends React.Component{
   componentDidMount(){
     const orderIdList = JSON.parse(localStorage.getItem('placeOrderIdList'));
     console.log(orderIdList, 'orderIdList')
-    confirmOrderInfo({shoppingCatIdList: orderIdList}).then(res=>{
+    confirmOrderInfo({shoppingCartIdList: orderIdList}).then(res=>{
       if(res&&res.data){
-        this.setState({orderInfo:res.data})
+        this.setState({orderInfo:res.data},()=>{
+          this.getTotal(res.data)
+        })
       }
-      console.log(res, 'res 订单相关信息')
     })
   }
 
+  getTotal=(data)=>{
+    const proTotal = data.orderItemList&&data.orderItemList.length>0 ? data.orderItemList.reduce((cur,next)=>{
+      return cur + next.price*next.num
+    },0) : 0
+    const disPrice = data.discountList&&data.discountList.length>0 ? data.discountList.reduce((cur,next)=>{
+      return cur + next.useDiscount
+    },0) : 0
+    console.log(data, 'data')
+    console.log(proTotal, 'proTotal')
+    console.log(disPrice, 'disPrice')
+    const totalNum = data.orderItemList&&data.orderItemList.length>0 ? data.orderItemList.reduce((cur,next)=>{
+      return cur + next.num
+    },0) : 0
+
+    this.setState({
+      afterPrice: parseFloat(proTotal) - parseFloat(disPrice),
+      discountPrice: disPrice,
+      totalNum,
+    })
+  }
+
+  checkDiscount=(rule, value, callback)=>{
+    console.log(value, 'value', rule)
+  }
+
+  changeUseDiscount=(e,id)=>{
+    const request = {...this.state.orderInfo};
+    request.discountList.forEach(item=>{
+      if(item.discountIssueId === id){
+        item.useDiscount = parseFloat(e.target.value)
+      }
+    })
+    this.getTotal(request)
+    console.log(request, 'request')
+    this.setState({
+      orderInfo: request,
+    })
+  }
 
   // 下单
   handleOrderAdd = ()=>{
@@ -59,17 +110,21 @@ class PlaceOrder extends React.Component{
     const requestVo = {};
     Object.assign(requestVo, orderInfo);
     requestVo.useMoney = this.state.discountPrice;
+    requestVo.payMoney = this.state.afterPrice;
     console.log(requestVo, 'requestVo 下单参数');
-    localStorage.removeItem('placeOrderIdList')
+    
     orderAdd(requestVo).then(res=>{
+      if(res&&res.result&&res.result.code&&res.result.code === 200){
+        localStorage.removeItem('placeOrderIdList')
+        message.success('成功')
+        this.props.history.push('/home');
+      }
       console.log(res, 'res 下单后返回的结果')
     })
   }
 
   render(){
     const { addressInvoiceList, discountPrice, orderInfo } = this.state;
-    console.log(orderInfo, 'orderInfoorderInfo')
-    console.log(addressInvoiceList, 'addressInvoiceList')
     return(
       <div className="cartBox">
         <div className="mainCart">
@@ -120,26 +175,6 @@ class PlaceOrder extends React.Component{
               )
             }) : null}
             
-            {/* <li className="proList">
-              <div className="proDiv">
-                <div className="col-md-9 cartLeft">
-                  <div className="imgBox"></div>
-                  <div className="proParameter">
-                    <div>
-                      <p className="proTitle">诊断产品 LICA系列 series</p>
-                      <p className="proType">LICA 500</p>
-                      <p className="proPrice">开票价：<span>￥5390</span></p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-1">
-                  X10
-                </div>
-                <div className="col-md-2">
-                  总价：￥5800
-                </div>
-              </div>
-            </li> */}
           </ul>
           <div className="orderTable">
             <Table 
@@ -164,4 +199,4 @@ class PlaceOrder extends React.Component{
   }
 }
 
-export default connect()(PlaceOrder)
+export default Form.create()(connect()(PlaceOrder));
