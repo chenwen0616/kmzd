@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import {Link} from 'react-router-dom';
 import { Row, Col} from 'react-bootstrap';
 import { Checkbox,Icon, Input, Popconfirm, message, Spin, Button } from 'antd';
-import {cartList, delCart, orderAdd, updateGoodsNum} from '../api/cart'
+import {cartList, delCart, updateGoodsNum} from '../api/cart';
+import action from '../store/action';
 
 import '../assets/css/cart.less';
 import { Item } from '../../node_modules/rc-menu/lib';
@@ -30,6 +31,7 @@ class Cart extends React.Component{
     cartList({agentId: Number(uInfo.roleId)}).then(res=>{
       this.setState({loading: false})
       if(res&&res.data&&res.data.shoppingCartList){
+        this.props.getData(res.data.shoppingCartList)
         this.setState({cartLists:res.data.shoppingCartList})
       }
     })
@@ -111,6 +113,7 @@ class Cart extends React.Component{
   }
 
   render(){
+    console.log(this.props, 'this.props 购物车')
     const { cartLists, loading, numLoading} = this.state;
     return (
       <Spin spinning={loading||numLoading}>
@@ -120,7 +123,7 @@ class Cart extends React.Component{
             <ul className="row cartUl">
               {cartLists.length>0 ? cartLists.map((item,index)=>{
                 return (
-                  <li className="proList">
+                  <li className="proList" key={index}>
                     <Checkbox onChange={()=>this.handleChangeCart(index)} />
                     <div className="proDiv">
                       <div className="col-md-10 cartLeft">
@@ -174,4 +177,5 @@ class Cart extends React.Component{
     )
   }
 }
-export default connect()(Cart)
+
+export default connect(state=>({...state.cart}),action.cart)(Cart)

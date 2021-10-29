@@ -2,11 +2,64 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import {Link} from 'react-router-dom';
 import { Row, Col, Tab, Tabs} from 'react-bootstrap';
-import { DatePicker, Table, Spin } from 'antd';
+import { DatePicker, Table, Spin, Popconfirm } from 'antd';
 
 import {myOrderList} from '../../api/person'
 
 class MyOrder extends React.Component{
+  columns = [
+    {
+      title: '订单编号',
+      dataIndex: 'orderId',
+    },
+    {
+      title: '金额',
+      dataIndex: 'payMoney',
+    },
+    {
+      title: '下单时间',
+      dataIndex: 'orderTime',
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      render: (text,record)=>{
+        let statusLabel = '';
+        if(text==='1'){ statusLabel = '已订货' }
+        if(text==='2'){ statusLabel = '已付款' }
+        if(text==='3'){ statusLabel = '已发货' }
+        if(text==='4'){ statusLabel = '已收货' }
+        if(text==='5'){ statusLabel = '已取消' }
+        return <span>{statusLabel}</span>
+      }
+    },
+    {
+      title:'操作',
+      dataIndex:'operation',
+      render: (text,record)=>{
+        return(
+          <div>
+            <Fragment>
+              <Link to={{pathname: '/orderDetail',search:'?id='+record.orderId }} target='_blank' style={{paddingRight:10}}>查看详情</Link>
+              {record.status === '1' ? <span className='myOrderBtnTxt' onClick={this.handleCancelOrder}>取消</span> : null}
+              {record.status === '3' ? <Fragment>
+                <Popconfirm
+                  title="确认收到货了吗?"
+                  onConfirm={()=>this.handleReceive(record.orderId)}
+                  okText="确定"
+                  cancelText="取消"
+                >
+                  <span className='myOrderBtnTxt'>签收</span>
+                </Popconfirm>
+                <span className='myOrderBtnTxt'>快递单号</span>
+              </Fragment> : null}
+            </Fragment>
+            
+          </div>
+        )
+      }
+    }
+  ]
   constructor(props){
     super(props);
 
@@ -21,12 +74,21 @@ class MyOrder extends React.Component{
   componentDidMount(){
     this.getList()
   }
+  // 签收
+  handleReceive = id=>{
+    console.log(id, '签收货品')
+  }
+
+  // 取消订单
+  handleCancelOrder = id=>{
+    console.log(id, '取消订单')
+  }
+
   getList = ()=>{
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
     this.setState({loading:true})
     myOrderList({agentId:Number(uInfo.roleId),pageNum:1,pageSize:10}).then(res=>{
-      console.log(res, '订单列表接口')
       this.setState({loading:false})
       if(res&&res.data&&res.data.orderList&&res.data.orderList.length>0){
         this.setState({orderList:res.data.orderList})
@@ -74,48 +136,15 @@ class MyOrder extends React.Component{
 
   render(){
     const {startValue, endOpen, endValue, orderList, loading} = this.state;
-    const columns = [
-      {
-        title: '订单编号',
-        dataIndex: 'orderId',
-      },
-      {
-        title: '金额',
-        dataIndex: 'payMoney',
-      },
-      {
-        title: '下单时间',
-        dataIndex: 'orderTime',
-        // render:(text)=>{
-        //   const date = new Date(text);
-        //   return date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDay()+" "+(date.getHours()+8)+":"+date.getMinutes()+":"+date.getSeconds();
-        // }
-      },
-      {
-        title: '状态',
-        dataIndex: 'status',
-        render: (text,record)=>{
-          let statusLabel = '';
-          if(text==='1'){ statusLabel = '已订货' }
-          if(text==='2'){ statusLabel = '已付款' }
-          if(text==='3'){ statusLabel = '已发货' }
-          if(text==='4'){ statusLabel = '已取消' }
-          return <span>{statusLabel}</span>
-        }
-      },
-      {
-        title:'操作',
-        dataIndex:'operation',
-        render: (text,record)=>{
-          return(
-            <div>
-              <Link to={{pathname: '/orderDetail',search:'?id='+record.orderId }} target='_blank'>查看详情</Link>
-            </div>
-          )
-        }
-      }
-    ]
-
+    let proList, payList, deliveryList, receiveList,cancelList;
+    if(orderList.length>0){
+      proList = orderList.filter(item=>item.status==='1');  // 已订货
+      payList = orderList.filter(item=>item.status==='2');  // 已付款
+      deliveryList = orderList.filter(item=>item.status==='3');  // 已发货
+      receiveList = orderList.filter(item=>item.status==='4');  // 已收货
+      cancelList = orderList.filter(item=>item.status==='5');  // 已取消
+    }
+    
     return (
       <Spin spinning={loading}>
         <div className="discountStyle">
@@ -124,32 +153,32 @@ class MyOrder extends React.Component{
               <Tabs defaultActiveKey={1} id="uncontrolled-tab-example" className="tabStyle">
                 <Tab eventKey={1} title="全部订单" bsClass='b-radius'>
                   <div className="tableM">
-                    <Table dataSource={orderList} columns={columns} />
+                    <Table dataSource={orderList} columns={this.columns} />
                   </div>
                 </Tab>
                 <Tab eventKey={2} title="已订货">
                   <div className="tableM">
-                    <Table dataSource={[]} columns={columns} />
+                    <Table dataSource={proList} columns={this.columns} />
                   </div>
                 </Tab>
                 <Tab eventKey={3} title="已付款">
                   <div className="tableM">
-                    <Table dataSource={[]} columns={columns} />
+                    <Table dataSource={payList} columns={this.columns} />
                   </div>
                 </Tab>
                 <Tab eventKey={4} title="已发货">
                   <div className="tableM">
-                    <Table dataSource={[]} columns={columns} />
+                    <Table dataSource={deliveryList} columns={this.columns} />
                   </div>
                 </Tab>
                 <Tab eventKey={5} title="已收货">
                   <div className="tableM">
-                    <Table dataSource={[]} columns={columns} />
+                    <Table dataSource={receiveList} columns={this.columns} />
                   </div>
                 </Tab>
                 <Tab eventKey={6} title="已取消">
                   <div className="tableM">
-                    <Table dataSource={[]} columns={columns} />
+                    <Table dataSource={cancelList} columns={this.columns} />
                   </div>
                 </Tab>
               </Tabs>

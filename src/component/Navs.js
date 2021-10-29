@@ -4,6 +4,8 @@ import { Badge } from 'react-bootstrap'
 import { withRouter, NavLink} from 'react-router-dom';
 import { cartList } from '../api/cart';
 
+import action from '../store/action';
+
 class Navs extends React.Component{
   constructor(props){
     super(props);
@@ -24,6 +26,7 @@ class Navs extends React.Component{
   }
 
   render(){
+    console.log(this.props, '导航页')
     const { cartLen} = this.state;
     return <div className='sNav'>
       <div className='nav navBox'>
@@ -32,7 +35,7 @@ class Navs extends React.Component{
         </div>
         <div className="navTop">
           <NavLink to='/home'>订购项目</NavLink>
-          <NavLink to='/cart'>购物车{cartLen!=0 ? <Badge>{cartLen}</Badge> : ''}</NavLink>
+          <NavLink to='/cart'>购物车{this.props.orderData.length!==0 ? <Badge>{this.props.orderData.length}</Badge> : ''}</NavLink>
           <NavLink to='/personal'>个人中心</NavLink>
         </div>
       </div>
@@ -40,4 +43,4 @@ class Navs extends React.Component{
   }
 
 }
-export default withRouter(connect()(Navs));
+export default withRouter(connect(state=>({...state.cart}),action.cart)(Navs));

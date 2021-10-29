@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {Button,  Table, Input, Form, message} from 'antd';
-
-import { confirmOrderInfo, orderAdd } from '../api/cart'
+import { confirmOrderInfo, orderAdd, cartList } from '../api/cart'
+import action from '../store/action'
 
 import '../assets/css/cart.less';
 
@@ -104,8 +104,10 @@ class PlaceOrder extends React.Component{
     })
   }
 
-  // 下单
+  // 下单提交
   handleOrderAdd = ()=>{
+    const userInfo = localStorage.getItem('userInfo');
+    const uInfo = JSON.parse(userInfo);
     const {orderInfo} = this.state;
     const requestVo = {};
     Object.assign(requestVo, orderInfo);
@@ -118,6 +120,12 @@ class PlaceOrder extends React.Component{
         localStorage.removeItem('placeOrderIdList')
         message.success('成功')
         this.props.history.push('/home');
+        cartList({agentId: Number(uInfo.roleId)}).then(response=>{
+          this.setState({loading: false})
+          if(response&&response.data&&response.data.shoppingCartList){
+            this.props.getData(response.data.shoppingCartList)
+          }
+        })
       }
       console.log(res, 'res 下单后返回的结果')
     })
@@ -199,4 +207,4 @@ class PlaceOrder extends React.Component{
   }
 }
 
-export default Form.create()(connect()(PlaceOrder));
+export default Form.create()(connect(state=>({...state.cart}),action.cart)(PlaceOrder));

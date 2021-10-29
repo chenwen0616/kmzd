@@ -45,3 +45,11 @@ export function agentAddrList(payload){
 export function agentAddrDel(payload){
   return axios.post('/api/seller/agent/addressDel?addressId='+payload)
 }
+//许可证列表接口
+export function getLicenceList(payload){
+  return axios.post('/api/seller/agent/licenceList?agentId='+payload)
+}
+//第三方资质接口
+export function getThirdLicenceList(payload){
+  return axios.post('/api/seller/agent/thirdLicenceList?agentId='+payload)
+}

@@ -2,9 +2,10 @@ import React from 'react';
 import {connect} from "react-redux";
 import { ControlLabel, FormGroup, FormControl,  Col } from 'react-bootstrap';
 import { Icon, Spin, Form, Select, Pagination, Button, Input, Radio, message} from 'antd';
+import action from '../store/action';
 
 import {goodsList, goodsTypeList} from '../api/home';
-import {addCart} from '../api/cart';
+import {addCart, cartList} from '../api/cart';
 import {getProducts} from '../api/common';
 
 import '../assets/css/home.less';
@@ -35,6 +36,17 @@ class Home extends React.Component{
     this.getGoodsList();
     this.getgoodsTypeList(uInfo);
     this.getProductList();
+    // 存入redux
+    this.reduxGetCartData(uInfo)
+  }
+
+  // 存入redux
+  reduxGetCartData=(uInfo)=>{
+    cartList({agentId: Number(uInfo.roleId)}).then(response=>{
+      if(response&&response.data&&response.data.shoppingCartList){
+        this.props.getData(response.data.shoppingCartList)
+      }
+    })
   }
   
   // 获取货品列表数据
@@ -147,7 +159,20 @@ class Home extends React.Component{
         }
         addCart(requestVo).then(res=>{
           if(res&&res.result&&res.result.code===200){
-            message.success('添加成功')
+            message.success('添加成功');
+            this.props.getData([...this.props.orderData,{
+              "shoppingCartId": 18,
+              "num": 3,
+              "type": 1,
+              "goodsId": 4,
+              "name": "HBsAg_1",
+              "specifications": null,
+              "payType": 2,
+              "price": 15,
+              "hospitalId": 1,
+              "url": "https://crmtest.chemclin.com/fastdfs/dsgroup1/M00/00/00/wKgLDWFyBd2Ab5PrAAgKZZ_Bibs292.png"
+          },])
+            // this.reduxGetCartData(uInfo)
           }
           console.log(res, 'res 添加购物车结果')
         })
@@ -159,6 +184,7 @@ class Home extends React.Component{
   render(){
     const {loading, instrumentTypeList, goodsNum, reagentTypeList, goodsList, productsList} = this.state;
     const { form:{getFieldDecorator} } = this.props;
+    console.log(this.props, 'this.props 首页')
     return <Spin spinning={loading}><div className='homeBox'>
       <div className='mainHome'>
         <div className='col-md-3'>
@@ -211,8 +237,8 @@ class Home extends React.Component{
           <div className="r_box">
             {goodsList.length>0 ? goodsList.map((item, index)=>{
               return (
-                <div className="col-sm-6 col-md-4">
-                  <div className="thumbnail goods_list" key={index}>
+                <div className="col-sm-6 col-md-4" key={index}>
+                  <div className="thumbnail goods_list">
                     <Form.Item>
                       {getFieldDecorator('url',{
                         initialValue: item.url
@@ -230,8 +256,10 @@ class Home extends React.Component{
                           })(<p className="proType">{item.instrumentTypeId ? item.instrumentTypeId : ''}</p>)}
                         </Form.Item>
                         <Form.Item>
-                          {getFieldDecorator('payType')(
-                            <Radio.Group onChange={this.onChangeRadioHospital} value={this.state.hospitalRadioVal}>
+                          {getFieldDecorator('payType',{
+                            initialValue: this.state.hospitalRadioVal
+                          })(
+                            <Radio.Group onChange={this.onChangeRadioHospital}>
                               <Radio value={2}>开票价：<span className="price">￥{item.fare?item.fare:0}</span></Radio>
                               <Radio value={1}>LP价：<span className="price">￥{item.lp ? item.lp : 0}</span></Radio>
                             </Radio.Group>
@@ -240,7 +268,7 @@ class Home extends React.Component{
                         
                         <Form.Item className='for-form' label="医院名称:" required={false}>
                           {getFieldDecorator('hospitalId')(
-                            <Select size={"normal"} style={{width:'100%'}} placeholder="请选择">
+                            <Select size={"default"} style={{width:'100%'}} placeholder="请选择">
                               {
                                 (item.hospitalList && item.hospitalList.length>0) ? item.hospitalList.map(hItem=>{
                                   return <Option key={hItem.hospitalId}>{hItem.hospitalName}</Option>
@@ -299,4 +327,4 @@ class Home extends React.Component{
     </Spin>
   }
 }
-export default Form.create()(connect()(Home))
+export default Form.create()(connect(state=>({...state.cart}),action.cart)(Home))

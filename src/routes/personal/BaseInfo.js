@@ -3,25 +3,49 @@ import { connect } from 'react-redux';
 import { FormGroup, ControlLabel, HelpBlock, FormControl, Row, Col } from 'react-bootstrap';
 import {Upload, Icon, Form, Input} from 'antd';
 
-import {agentDetail} from '../../api/person';
+import {agentDetail, getLicenceList, getThirdLicenceList} from '../../api/person';
 
 class BaseInfo extends React.Component{
   constructor(props){
     super(props);
     this.state={
       agentDetail: {},
+      licenceListData:[], // 许可证列表
+      thirdLicenceData: [],// 第三方资质
     }
   }
 
   componentDidMount(){
-    this.getUserDetail();
+    const userInfo = localStorage.getItem('userInfo');
+    const uInfo = JSON.parse(userInfo);
+    this.getUserDetail(uInfo);
+    this.licenceList(uInfo);
+    this.thirdLicenceList(uInfo);
   }
-
-  getUserDetail =()=>{
-    agentDetail({agentId:16}).then(res=>{
+  // 经销商基础信息
+  getUserDetail =(uInfo)=>{
+    agentDetail({agentId:uInfo.roleId}).then(res=>{
       if(res&&res.data&&res.data.agent){
         this.setState({agentDetail:res.data.agent})
       }
+    })
+  }
+  // 许可证列表
+  licenceList=(uInfo)=>{
+    getLicenceList(uInfo.roleId).then(res=>{
+      if(res&&res.data&&res.data.licenceList&&res.data.licenceList.length>0){
+        this.setState({licenceListData: res.data.licenceList})
+      }
+      console.log(res, 'res 许可证列表')
+    })
+  }
+  // 第三方资质
+  thirdLicenceList=(uInfo)=>{
+    getThirdLicenceList(uInfo.roleId).then(res=>{
+      if(res&&res.data&&res.data.licenceList&&res.data.licenceList.length>0){
+        this.setState({thirdLicenceData: res.data.licenceList})
+      }
+      console.log(res, 'res 第三方资质')
     })
   }
   
@@ -47,7 +71,7 @@ class BaseInfo extends React.Component{
           <Row>
             <Col md={5}>
               <Form.Item label="信用编码">
-                <Input value={agentDetail&&agentDetail.company ? agentDetail.company : '-'} />
+                <Input value={agentDetail&&agentDetail.creditCode ? agentDetail.creditCode : '-'} />
               </Form.Item>
             </Col>
             <Col md={5}>
@@ -59,7 +83,7 @@ class BaseInfo extends React.Component{
           <Row>
             <Col md={5}>
               <Form.Item label="实际控制人">
-                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+                <Input value={agentDetail&&agentDetail.realControllerName ? agentDetail.realControllerName : '-'} />
               </Form.Item>
             </Col>
             <Col md={5}>
@@ -71,24 +95,24 @@ class BaseInfo extends React.Component{
           <Row>
             <Col md={5}>
               <Form.Item label="联系方式">
-                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+                <Input value={agentDetail&&agentDetail.phone ? agentDetail.phone : '-'} />
               </Form.Item>
             </Col>
             <Col md={5}>
               <Form.Item label="注册资金">
-                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+                <Input value={agentDetail&&agentDetail.registrationCapital ? agentDetail.registrationCapital : '-'} />
               </Form.Item>
             </Col>
           </Row>
           <Row>
             <Col md={5}>
               <Form.Item label="成立日期">
-                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+                <Input value={agentDetail&&agentDetail.foundDate ? agentDetail.foundDate : '-'} />
               </Form.Item>
             </Col>
             <Col md={5}>
               <Form.Item label="营业期限">
-                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+                <Input value={agentDetail&&agentDetail.businessTerm ? agentDetail.businessTerm : '-'} />
               </Form.Item>
             </Col>
           </Row>
@@ -115,39 +139,36 @@ class BaseInfo extends React.Component{
           <Row className="m-top">
             <Col md={5}>
               <Form.Item label="公司名称">
-                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : ''} />
               </Form.Item>
             </Col>
             <Col md={5}>
               <Form.Item label="税号">
-                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+                <Input value={(agentDetail&&agentDetail.bill&&agentDetail.bill.taxCode) ? agentDetail.bill.taxCode : ''} />
               </Form.Item>
             </Col>
           </Row>
           <Row>
             <Col md={5}>
               <Form.Item label="公司地址">
-                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+                <Input value={(agentDetail&&agentDetail.bill&&agentDetail.bill.address) ? agentDetail.bill.address : ''} />
               </Form.Item>
             </Col>
             <Col md={5}>
               <Form.Item label="开户行">
-                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+                <Input value={(agentDetail&&agentDetail.bill&&agentDetail.bill.bank) ? agentDetail.bill.bank : ''} />
               </Form.Item>
             </Col>
           </Row>
           <Row>
             <Col md={5}>
               <Form.Item label="账号">
-                <Input value={agentDetail&&agentDetail.corporation ? agentDetail.corporation : '-'} />
+                <Input value={(agentDetail&&agentDetail.bill&&agentDetail.bill.account) ? agentDetail.bill.account : ''} />
               </Form.Item>
             </Col>
           </Row>
         </Row>
-        
       </form>
-      
-        
     </div>)
   }
 
