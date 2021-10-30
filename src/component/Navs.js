@@ -18,11 +18,14 @@ class Navs extends React.Component{
   componentDidMount(){
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
-    cartList({agentId: Number(uInfo.roleId)}).then(res=>{
-      if(res&&res.data&&res.data.shoppingCartList){
-        this.setState({cartLen:res.data.shoppingCartList.length})
-      }
-    })
+    if(uInfo){
+      cartList({agentId: Number(uInfo.roleId)}).then(res=>{
+        if(res&&res.data&&res.data.shoppingCartList){
+          this.setState({cartLen:res.data.shoppingCartList.length})
+        }
+      })
+    }
+    
   }
 
   render(){
