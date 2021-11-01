@@ -156,6 +156,10 @@ class MyOrder extends React.Component{
     
     return (
       <Spin spinning={loading}>
+        <div className='personBread'>
+          <a href='/home'>首页</a>
+          <span> / 我的订单</span>
+        </div>
         <div className="discountStyle">
           <Row>
             <Col md={12}>

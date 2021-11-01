@@ -33,7 +33,6 @@ render(
     <HashRouter className='mainName'>
       <div>
         <Navs />
-        <NavBread />
         <Switch>
           <AuthRoute path='/home' component={Home} />
           <AuthRoute path='/cart' component={Cart} />

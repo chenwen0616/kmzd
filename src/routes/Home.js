@@ -176,7 +176,14 @@ class Home extends React.Component{
   render(){
     const {loading, instrumentTypeList, goodsNum, reagentTypeList, goodsList, productsList} = this.state;
     const { form:{getFieldDecorator} } = this.props;
-    return <Spin spinning={loading}><div className='homeBox'>
+    return <Spin spinning={loading}>
+      <div className='navBreadTitle'>
+        <div className='bTitle'>
+          <a href='/home'>首页</a>
+          <span> / 购物车</span>
+        </div>
+      </div>
+      <div className='homeBox'>
       <div className='mainHome'>
         <div className='col-md-3'>
           <p className='selectFont'>

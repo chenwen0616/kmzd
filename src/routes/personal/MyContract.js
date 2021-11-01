@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Form, Table, DatePicker, Select, Col, Row, Button } from 'antd';
+import { Form, Table, DatePicker, Select, Col, Row, Button, Spin } from 'antd';
 
 import { agentContractList } from '../../api/person'
 import { getDict } from '../../api/common'
@@ -76,6 +76,7 @@ class MyContract extends React.Component{
       contractList: [],
       contractStatusList: [],
       contractTypeList: [],
+      loading: false,
     }
   }
 
@@ -123,11 +124,13 @@ class MyContract extends React.Component{
   getList=()=>{
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
+    this.setState({loading:true})
     agentContractList({
       agentId: uInfo.roleId,
       pageNum: 1,
       pageSize: 10,
     }).then(res=>{
+      this.setState({loading: false})
       if(res&&res.data&&res.data.contractList){
         this.setState({contractList: res.data.contractList})
       }
@@ -180,61 +183,70 @@ class MyContract extends React.Component{
 
   render(){
     const { form } = this.props;
-    const { startValue, endOpen, endValue, contractList, contractStatusList } = this.state;
-    return (<div className="discountStyle">
-      <div className='contractFilterS'>
-        <Row>
-          <Col md={6}>
-            <Form.Item label='筛选状态'>
-              {form.getFieldDecorator('status',{
-                initialValue: '0'
-              })(
-                <Select>
-                  <Option key={'0'}>全部</Option>
-                  {contractStatusList.length>0 ? contractStatusList.map(item=>{
-                    return <Option key={item.dictValue}>{item.dictLabel}</Option>
-                  }) : null}
-                </Select>
-              )}
-            </Form.Item>
-          </Col>
-          <Col md={10}>
-            <Form.Item>
-              <Form.Item>
-                {form.getFieldDecorator('startTime')(
-                  <DatePicker
-                    disabledDate={this.disabledStartDate}
-                    format="YYYY-MM-DD"
-                    value={startValue}
-                    placeholder="开始日期"
-                    onChange={this.onStartChange}
-                    onOpenChange={this.handleStartOpenChange}
-                  />
-                )}
-              </Form.Item>
-              <span style={{display:'inline-block',padding:'0 10px',color:'#888',height:'40px'}}>—</span>
-              <Form.Item>
-                {form.getFieldDecorator('endTime')(
-                  <DatePicker
-                    disabledDate={this.disabledEndDate}
-                    format="YYYY-MM-DD"
-                    value={endValue}
-                    placeholder="结束日期"
-                    onChange={this.onEndChange}
-                    open={endOpen}
-                    onOpenChange={this.handleEndOpenChange}
-                  />
-                )}
-              </Form.Item>
-            </Form.Item>
-          </Col>
-          <Col md={4}>
-            <Button type='primary' size={'large'} onClick={this.handleSearch}>查询</Button>
-          </Col>
-        </Row>
-      </div>
-      <Table columns={this.columns} dataSource={contractList} />
-    </div>)
+    const { startValue, endOpen, endValue, contractList, contractStatusList, loading } = this.state;
+    return (
+      <Spin spinning={loading}>
+        <div className='personBread'>
+          <a href='/home'>首页</a>
+          <span> / 我的合同</span>
+        </div>
+        <div className="discountStyle">
+          <div className='contractFilterS'>
+            <Row>
+              <Col md={6}>
+                <Form.Item label='筛选状态'>
+                  {form.getFieldDecorator('status',{
+                    initialValue: '0'
+                  })(
+                    <Select>
+                      <Option key={'0'}>全部</Option>
+                      {contractStatusList.length>0 ? contractStatusList.map(item=>{
+                        return <Option key={item.dictValue}>{item.dictLabel}</Option>
+                      }) : null}
+                    </Select>
+                  )}
+                </Form.Item>
+              </Col>
+              <Col md={10}>
+                <Form.Item>
+                  <Form.Item>
+                    {form.getFieldDecorator('startTime')(
+                      <DatePicker
+                        disabledDate={this.disabledStartDate}
+                        format="YYYY-MM-DD"
+                        value={startValue}
+                        placeholder="开始日期"
+                        onChange={this.onStartChange}
+                        onOpenChange={this.handleStartOpenChange}
+                      />
+                    )}
+                  </Form.Item>
+                  <span style={{display:'inline-block',padding:'0 10px',color:'#888',height:'40px'}}>—</span>
+                  <Form.Item>
+                    {form.getFieldDecorator('endTime')(
+                      <DatePicker
+                        disabledDate={this.disabledEndDate}
+                        format="YYYY-MM-DD"
+                        value={endValue}
+                        placeholder="结束日期"
+                        onChange={this.onEndChange}
+                        open={endOpen}
+                        onOpenChange={this.handleEndOpenChange}
+                      />
+                    )}
+                  </Form.Item>
+                </Form.Item>
+              </Col>
+              <Col md={4}>
+                <Button type='primary' size={'large'} onClick={this.handleSearch}>查询</Button>
+              </Col>
+            </Row>
+          </div>
+          <Table columns={this.columns} dataSource={contractList} />
+        </div>
+      </Spin>
+    
+    )
   }
 }
 

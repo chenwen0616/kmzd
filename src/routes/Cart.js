@@ -117,6 +117,12 @@ class Cart extends React.Component{
     const { cartLists, loading, numLoading} = this.state;
     return (
       <Spin spinning={loading||numLoading}>
+        <div className='navBreadTitle'>
+          <div className='bTitle'>
+            <a href='/home'>首页</a>
+            <span> / 购物车</span>
+          </div>
+        </div>
         <div className="cartBox">
           <div className="mainCart">
             <h2>购物车信息</h2>

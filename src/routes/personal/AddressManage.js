@@ -151,6 +151,10 @@ class AddressManage extends React.Component{
     const { form } = this.props;
     return (
     <Spin spinning={listLoading||regionLoading}>
+      <div className='personBread'>
+        <a href='/home'>首页</a>
+        <span> / 地址管理</span>
+      </div>
       <div className="discountStyle">
         <Row>
           <Col md={12}>

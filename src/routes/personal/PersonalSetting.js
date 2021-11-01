@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {Button, Modal, Form, Input} from 'antd'
+import {Button, Modal, Form, Input, Spin} from 'antd'
 
 class PersonalSetting extends React.Component{
   constructor(props){
@@ -68,49 +68,57 @@ class PersonalSetting extends React.Component{
   render(){
     const { form }= this.props;
     const {editVisible}= this.state;
-    return (<div className="personalR">
-      <div>
-        <Button type='primary' size='large' onClick={()=>this.editPass(true)}>修改密码</Button>
-      </div>
-      <div className="mTop">
-        <Button type='primary' size='large' onClick={this.loginOut}>退出登录</Button>
-      </div>
-      
-      {editVisible? <Modal
-        title="修改密码"
-        className='addrBox'
-        visible={editVisible}
-        onOk={this.handleEditPass}
-        onCancel={this.handleCancel}
-      >
-        <Form.Item label={'旧密码'}>
-          {form.getFieldDecorator('oldPassword',{
-            rules: [
-              { required: true, message: '请输入!' },
-            ]
-          })(<Input.Password placeholder='请输入' />)}
-        </Form.Item>
-        <Form.Item label={'新密码'}>
-          {form.getFieldDecorator('password',{
-            rules: [
-              {
-                validator: this.checkPassword,
-              },
-            ]
-          })(<Input.Password placeholder='请输入' />)}
-        </Form.Item>
-        <Form.Item label={'确认新密码'}>
-          {form.getFieldDecorator('confirm',{
-            rules: [
-              { required: true, message: '请输入!' },
-              {
-                validator: this.checkConfirm,
-              },
-            ]
-          })(<Input.Password placeholder='请输入' />)}
-        </Form.Item>
-      </Modal> : null}
-    </div>)
+    return (
+      <Spin spinning={false}>
+        <div className='personBread' style={{top:'-92px'}}>
+          <a href='/home'>首页</a>
+          <span> / 我的折扣</span>
+        </div>
+        <div className="personalR">
+          <div>
+            <Button type='primary' size='large' onClick={()=>this.editPass(true)}>修改密码</Button>
+          </div>
+          <div className="mTop">
+            <Button type='primary' size='large' onClick={this.loginOut}>退出登录</Button>
+          </div>
+          
+          {editVisible? <Modal
+            title="修改密码"
+            className='addrBox'
+            visible={editVisible}
+            onOk={this.handleEditPass}
+            onCancel={this.handleCancel}
+          >
+            <Form.Item label={'旧密码'}>
+              {form.getFieldDecorator('oldPassword',{
+                rules: [
+                  { required: true, message: '请输入!' },
+                ]
+              })(<Input.Password placeholder='请输入' />)}
+            </Form.Item>
+            <Form.Item label={'新密码'}>
+              {form.getFieldDecorator('password',{
+                rules: [
+                  {
+                    validator: this.checkPassword,
+                  },
+                ]
+              })(<Input.Password placeholder='请输入' />)}
+            </Form.Item>
+            <Form.Item label={'确认新密码'}>
+              {form.getFieldDecorator('confirm',{
+                rules: [
+                  { required: true, message: '请输入!' },
+                  {
+                    validator: this.checkConfirm,
+                  },
+                ]
+              })(<Input.Password placeholder='请输入' />)}
+            </Form.Item>
+          </Modal> : null}
+        </div>
+      </Spin>
+    )
   }
 }
 
