@@ -37,24 +37,11 @@ class MyNews extends React.Component{
         {messageList.length>0 ? messageList.map(item=>{
           return (
             <ListGroupItem href="javascript:;">
-              <span className="s-l-txt">有一条消息是这么写的有一条消息是这么写的有一条有一条消息是这</span>
-              <span className="s-r-txt">2021-11-15 23:23:22</span>
+              <span className="s-l-txt">{item.message}</span>
+              <span className="s-r-txt">{item.createTime}</span>
             </ListGroupItem>
           )
         }) : <div>暂无数据</div>}
-        
-        <ListGroupItem href="javascript:;">
-          <span className="s-l-txt">有一条消息是这么写的有一条消息是这么写的有一条有一条消息是这</span>
-          <span className="s-r-txt">2021-11-15 23:23:22</span>
-        </ListGroupItem>
-        <ListGroupItem href="javascript:;">
-          <span className="s-l-txt">有一条消息是这么写的有一条消息是这么写的有一条有一条消息是这</span>
-          <span className="s-r-txt">2021-11-15 23:23:22</span>
-        </ListGroupItem>
-        <ListGroupItem href="javascript:;">
-          <span className="s-l-txt">有一条消息是这么写的有一条消息是这么写的有一条有一条消息是这</span>
-          <span className="s-r-txt">2021-11-15 23:23:22</span>
-        </ListGroupItem>
       </ListGroup>
     </div>)
   }

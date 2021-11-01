@@ -2,9 +2,9 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import {Link} from 'react-router-dom';
 import { Row, Col, Tab, Tabs} from 'react-bootstrap';
-import { DatePicker, Table, Spin, Popconfirm } from 'antd';
+import { DatePicker, Table, Spin, Popconfirm, message } from 'antd';
 
-import {myOrderList} from '../../api/person'
+import {myOrderList, getOrderSign} from '../../api/person'
 
 class MyOrder extends React.Component{
   columns = [
@@ -41,17 +41,17 @@ class MyOrder extends React.Component{
           <div>
             <Fragment>
               <Link to={{pathname: '/orderDetail',search:'?id='+record.orderId }} target='_blank' style={{paddingRight:10}}>查看详情</Link>
-              {record.status === '1' ? <span className='myOrderBtnTxt' onClick={this.handleCancelOrder}>取消</span> : null}
+              {/* {record.status === '1' ? <span className='myOrderBtnTxt' onClick={this.handleCancelOrder}>取消</span> : null} */}
               {record.status === '3' ? <Fragment>
                 <Popconfirm
                   title="确认收到货了吗?"
-                  onConfirm={()=>this.handleReceive(record.orderId)}
+                  onConfirm={()=>this.handleReceive(record.orderId,record.status)}
                   okText="确定"
                   cancelText="取消"
                 >
                   <span className='myOrderBtnTxt'>签收</span>
                 </Popconfirm>
-                <span className='myOrderBtnTxt'>快递单号</span>
+                {/* <span className='myOrderBtnTxt'>快递单号</span> */}
               </Fragment> : null}
             </Fragment>
             
@@ -75,14 +75,23 @@ class MyOrder extends React.Component{
     this.getList()
   }
   // 签收
-  handleReceive = id=>{
-    console.log(id, '签收货品')
+  handleReceive = (id,status)=>{
+    console.log(id, '签收货品', status)
+    getOrderSign({
+      orderId: id,
+      status,
+    }).then(res=>{
+      if(res&&res.result&&res.result.code === 200){
+        message.success('成功');
+        this.getList();
+      }
+    })
   }
 
-  // 取消订单
-  handleCancelOrder = id=>{
-    console.log(id, '取消订单')
-  }
+  // // 取消订单
+  // handleCancelOrder = id=>{
+  //   console.log(id, '取消订单')
+  // }
 
   getList = ()=>{
     const userInfo = localStorage.getItem('userInfo');

@@ -18,6 +18,10 @@ export function myOrderList(payload){
 export function myOrderDetail(payload){
   return axios.post('/api/agent/order/orderDetail',payload)
 }
+// 订单签收
+export function getOrderSign(payload){
+  return axios.post('/api/agent/order/orderSign',payload)
+}
 
 // 折扣列表
 export function agentDiscountList(payload){

@@ -1,6 +1,6 @@
 import axios from './index';
-// 获取产品系列
-export function getProducts (payload){
+// 获取字典 （产品系列、合同状态）
+export function getDict (payload){
   return axios.post('/api/common/dict/getDictList?dictType='+payload.dictType)
 }
 // 获取区域

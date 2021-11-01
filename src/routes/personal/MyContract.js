@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Form, Table, DatePicker, Select, Col, Row, Button } from 'antd';
 
 import { agentContractList } from '../../api/person'
+import { getDict } from '../../api/common'
 
 const { Option } = Select;
 
@@ -11,10 +12,16 @@ class MyContract extends React.Component{
     {
       title: '序号',
       dataIndex: 'seq',
+      render: (text, record, index) => `${index + 1}`,
     },
     {
       title: '类型',
-      dataIndex: 'contractType'
+      dataIndex: 'contractType',
+      render: (text,record)=>{
+        const { contractTypeList } = this.state;
+        const type = contractTypeList.length>0 ?contractTypeList.find(item=>item.dictValue === String(text)).dictLabel : '';
+        return <span>{type}</span>
+      }
     },
     {
       title: '编号',
@@ -26,20 +33,35 @@ class MyContract extends React.Component{
     },
     {
       title: '状态',
-      dataIndex: 'contractStatus'
+      dataIndex: 'contractStatus',
+      render: (text,record)=>{
+        const {contractStatusList} = this.state;
+        const status = contractStatusList.length>0 ?contractStatusList.find(item=>item.dictValue === String(text)).dictLabel : '';
+        console.log(status, 'status')
+        return <span>{status}</span>
+      }
     },
     {
       title: '文件',
-      dataIndex: 'attachmentPath '
+      dataIndex: 'attachmentPath ',
+      render(text,record){
+        const path = record.attachmentPath;
+        const name=path.substring(path.lastIndexOf("/")+1);
+        return <span>{name}</span>
+      }
     },
     {
       title: '操作',
       dataIndex: 'operation',
-      render(){
+      render: (text, record)=>{
+        const path = record.attachmentPath;
+        const name=path.substring(path.lastIndexOf("/")+1);
+        console.log(name, 'name')
         return (
           <div>
-            <a>下载</a>
-            <a>查看详情</a>
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+            <a style={{paddingRight:10}} onClick={()=>this.handleDownloadFile(record.attachmentPath)}>下载</a>
+            <a href={record.attachmentPath} target='_blank' rel="noreferrer">查看详情</a>
           </div>
         )
       }
@@ -52,10 +74,51 @@ class MyContract extends React.Component{
       endValue: null,
       endOpen: false,
       contractList: [],
+      contractStatusList: [],
+      contractTypeList: [],
     }
   }
+
+  handleDownloadFile =(path)=>{
+    const fileName = path.substring(path.lastIndexOf("/")+1);
+    const x = new XMLHttpRequest();
+    x.open("GET", path, true);
+    x.responseType = 'blob';
+    x.onload=function(e) {
+        // 会创建一个 DOMString，其中包含一个表示参数中给出的对象的URL。
+        // 这个 URL 的生命周期和创建它的窗口中的 document 绑定。这个新的URL 对象表示指定的 File 对象或 Blob 对象。
+        const url = window.URL.createObjectURL(x.response)
+        const a = document.createElement('a');
+        a.href = url
+        a.download = fileName;
+        a.click()
+    }
+    x.send();
+  }
+
+  // 获取合同状态
+  getContractStatus = ()=>{
+    getDict({dictType:'crm_contract_status '}).then(res=>{
+      if(res&&res.data&&res.data.dictList&&res.data.dictList.length>0){
+        console.log(res.data.dictList, 'dictList 合同状态')
+        this.setState({contractStatusList: res.data.dictList})
+      }
+    })
+  }
+  // 获取合同类型
+  getContractType = () =>{
+    getDict({dictType:'crm_contract_type '}).then(res=>{
+      if(res&&res.data&&res.data.dictList&&res.data.dictList.length>0){
+        console.log(res.data.dictList, '合同类型')
+        this.setState({contractTypeList: res.data.dictList})
+      }
+    })
+  }
+
   componentDidMount(){
     this.getList();
+    this.getContractStatus();
+    this.getContractType();
   }
   getList=()=>{
     const userInfo = localStorage.getItem('userInfo');
@@ -117,7 +180,7 @@ class MyContract extends React.Component{
 
   render(){
     const { form } = this.props;
-    const { startValue, endOpen, endValue, contractList } = this.state;
+    const { startValue, endOpen, endValue, contractList, contractStatusList } = this.state;
     return (<div className="discountStyle">
       <div className='contractFilterS'>
         <Row>
@@ -128,9 +191,9 @@ class MyContract extends React.Component{
               })(
                 <Select>
                   <Option key={'0'}>全部</Option>
-                  <Option key={1}>有效</Option>
-                  <Option key={2}>无效</Option>
-                  <Option key={3}>待定</Option>
+                  {contractStatusList.length>0 ? contractStatusList.map(item=>{
+                    return <Option key={item.dictValue}>{item.dictLabel}</Option>
+                  }) : null}
                 </Select>
               )}
             </Form.Item>

@@ -85,7 +85,7 @@ class Cart extends React.Component{
   // 删除商品
   handleDelPro = (item)=>{
     delCart({
-      shoppingCatIdList: [item]
+      shoppingCartIdList: [item]
     }).then(res=>{
       if(res&&res.result&&res.result.code===200){
         message.success('成功');

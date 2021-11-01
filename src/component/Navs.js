@@ -29,7 +29,6 @@ class Navs extends React.Component{
   }
 
   render(){
-    console.log(this.props, '导航页')
     const { cartLen} = this.state;
     return <div className='sNav'>
       <div className='nav navBox'>

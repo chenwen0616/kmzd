@@ -6,7 +6,7 @@ import action from '../store/action';
 
 import {goodsList, goodsTypeList} from '../api/home';
 import {addCart, cartList} from '../api/cart';
-import {getProducts} from '../api/common';
+import {getDict} from '../api/common';
 
 import '../assets/css/home.less';
 
@@ -58,12 +58,14 @@ class Home extends React.Component{
       agentId: Number(uInfo.roleId),
       pageSize: 15,
       pageNum: pNum ? pNum : 1,
-      instrumentTypeId: 1,
-      productSeries:'01',
-      testItemId: 4
+      ...param,
+      // instrumentTypeId: '',  // 1
+      // productSeries:'',  //01
+      // testItemId: ''  // 4
     }).then(res=>{
       this.setState({ loading: false })
       if(res&&res.data&&res.data.goodsList){
+        console.log(res.data.goodsList, 'goodsList')
         this.setState({
           goodsList: res.data.goodsList,
           pageNum: res.data.pageNum,
@@ -91,11 +93,11 @@ class Home extends React.Component{
   }
   // 获取产品系列
   getProductList = ()=>{
-    getProducts({dictType:'crm_reagent_product'}).then(res=>{
+    getDict({dictType:'crm_reagent_product'}).then(res=>{
       if(res&&res.data&&res.data.dictList&&res.data.dictList.length>0){
+        console.log(res.data.dictList, 'dictList')
         this.setState({productsList: res.data.dictList})
       }
-      console.log(res, '产品系列')
     })
   }
 
@@ -111,13 +113,6 @@ class Home extends React.Component{
     this.setState({
       goodsNum: this.state.goodsNum + 1
     })
-  }
-  // 选择医院
-  onChangeRadioHospital = (e)=>{
-    console.log(e, 'eeee')
-    // this.setState({
-    //   hospitalRadioVal: e.target.value,
-    // });
   }
 
   // 页数改变
@@ -142,7 +137,7 @@ class Home extends React.Component{
   }
 
   handleAddCart=(param)=>{
-    const {form} = this.props;
+    const {form, orderData} = this.props;
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
     form.validateFields((err, values) => {
@@ -160,23 +155,20 @@ class Home extends React.Component{
         addCart(requestVo).then(res=>{
           if(res&&res.result&&res.result.code===200){
             message.success('添加成功');
-            this.props.getData([...this.props.orderData,{
-              "shoppingCartId": 18,
-              "num": 3,
-              "type": 1,
-              "goodsId": 4,
-              "name": "HBsAg_1",
-              "specifications": null,
-              "payType": 2,
-              "price": 15,
-              "hospitalId": 1,
-              "url": "https://crmtest.chemclin.com/fastdfs/dsgroup1/M00/00/00/wKgLDWFyBd2Ab5PrAAgKZZ_Bibs292.png"
-          },])
-            // this.reduxGetCartData(uInfo)
+            // const newData = []
+            // if(orderData.length>0){
+            //   orderData.forEach(item=>{
+            //     if(item.goodsId===requestVo.goodsId && item.type===requestVo.type){
+            //       newData.push({...item, num: Number(item.num)+Number(requestVo.num)})
+            //     }else{
+            //       newData.push([item,requestVo]);
+            //     }
+            //   })
+            // }
+            // this.props.getData(newData)
+            this.reduxGetCartData(uInfo)
           }
-          console.log(res, 'res 添加购物车结果')
         })
-        console.log(requestVo, 'form.values')
       }
     })
   }
@@ -184,7 +176,6 @@ class Home extends React.Component{
   render(){
     const {loading, instrumentTypeList, goodsNum, reagentTypeList, goodsList, productsList} = this.state;
     const { form:{getFieldDecorator} } = this.props;
-    console.log(this.props, 'this.props 首页')
     return <Spin spinning={loading}><div className='homeBox'>
       <div className='mainHome'>
         <div className='col-md-3'>
@@ -198,7 +189,7 @@ class Home extends React.Component{
                 <Select size={"large"} style={{width:'100%'}} placeholder="请选择">
                   {
                     productsList.length>0 ? productsList.map(item=>{
-                      return <Option key={item.dictValue}>{item.dictLabel}</Option>
+                      return <Option key={item.dictValue} value={item.dictValue}>{item.dictLabel}</Option>
                     }) : null
                   }
                 </Select>
@@ -209,18 +200,18 @@ class Home extends React.Component{
                 <Select size={"large"} style={{width:'100%'}} placeholder="请选择">
                   {
                     reagentTypeList.length>0 ? reagentTypeList.map(item=>{
-                      return <Option key={item.testItemId}>{item.testItemName}</Option>
+                      return <Option key={item.testItemId} value={item.testItemId}>{item.testItemName}</Option>
                     }) : null
                   }
                 </Select>
               )}
             </Form.Item>
             <Form.Item className='for-form' label="仪器型号" required={false}>
-              {getFieldDecorator('instrumentTypeIds')(
+              {getFieldDecorator('instrumentTypeId')(
                 <Select size={"large"} style={{width:'100%'}} placeholder="请选择">
                   {
                     instrumentTypeList.length>0 ? instrumentTypeList.map(item=>{
-                      return <Option key={item.instrumentTypeId}>{item.instrumentTypeName}</Option>
+                      return <Option key={item.instrumentTypeId} value={item.instrumentTypeId}>{item.instrumentTypeName}</Option>
                     }) : null
                   }
                 </Select>
@@ -253,13 +244,13 @@ class Home extends React.Component{
                         <Form.Item>
                           {getFieldDecorator('instrumentTypeId',{
                             initialValue: item.instrumentTypeId
-                          })(<p className="proType">{item.instrumentTypeId ? item.instrumentTypeId : ''}</p>)}
+                          })(<p className="proType">{item.instrumentType ? item.instrumentType : ''}</p>)}
                         </Form.Item>
                         <Form.Item>
                           {getFieldDecorator('payType',{
                             initialValue: this.state.hospitalRadioVal
                           })(
-                            <Radio.Group onChange={this.onChangeRadioHospital}>
+                            <Radio.Group>
                               <Radio value={2}>开票价：<span className="price">￥{item.fare?item.fare:0}</span></Radio>
                               <Radio value={1}>LP价：<span className="price">￥{item.lp ? item.lp : 0}</span></Radio>
                             </Radio.Group>
@@ -312,13 +303,14 @@ class Home extends React.Component{
           </div>
 
           <div className="pageBox">
-            <Pagination 
+            {goodsList.length>0 ? <Pagination 
               defaultCurrent={1} 
               current={this.state.pageNum} 
               pageSize={this.state.pageSize} 
-              total={70} 
+              total={this.state.total} 
               onChange={this.onChangePage}
-            />
+            /> 
+            : null}
           </div>
         </div>
 
