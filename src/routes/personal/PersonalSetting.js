@@ -2,6 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import {Button, Modal, Form, Input, Spin} from 'antd'
 
+import { updatePassword } from '../../api/common'
+
 class PersonalSetting extends React.Component{
   constructor(props){
     super(props);
@@ -20,7 +22,9 @@ class PersonalSetting extends React.Component{
 
   loginOut = ()=>{
     localStorage.removeItem('token');
-    window.open('/login')
+    localStorage.removeItem('userInfo');
+    // window.open('/login')
+    window.location.href = '/#/login'
   }
 
   handleEditPass=()=>{
