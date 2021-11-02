@@ -4,7 +4,7 @@ import {Row, Col, Tabs, Tab} from 'react-bootstrap'
 import { Button, Modal, Form, Input, Cascader, message, Spin, Popconfirm } from 'antd';
 
 import {getRegion} from '../../api/common';
-import {agentAddrList, agentAddrAdd, agentAddrDel} from '../../api/person';
+import {agentAddrList, agentAddrAdd, agentAddrDel, agentAddrUpdate} from '../../api/person';
 
 class AddressManage extends React.Component{
   constructor(props){
@@ -114,31 +114,58 @@ class AddressManage extends React.Component{
     this.setState({addrVisible: false})
   }
 
-  // 新增地址
+  // 新增&编辑地址
   handleAdd = ()=>{
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
     const {form} = this.props;
+    const { addrTitle } = this.state;
     form.validateFields((err, values) => {
       if(err) return;
       const requestVo = {};
       Object.assign(requestVo, values);
       requestVo.type = this.state.addrType;
-      requestVo.address = values.area.length>0 ? values.area[0]+values.area[1]+values.area[2]+values.detailAddr : '';
+      // requestVo.address = values.area.length>0 ? values.area[0]+values.area[1]+values.area[2]+values.detailAddr : '';
+      requestVo.address = values.detailAddr;
       requestVo.agentId = uInfo.roleId;
-      agentAddrAdd(requestVo).then(res=>{
-        if(res&&res.result&&res.result.code ===200){
-          message.success('成功！');
-          this.handleCancelAddr();
-          this.getAddrList();
-        }
-      })
+      if(addrTitle === '新增地址'){
+        agentAddrAdd(requestVo).then(res=>{
+          if(res&&res.result&&res.result.code ===200){
+            message.success('成功！');
+            this.handleCancelAddr();
+            this.getAddrList();
+          }
+        })
+      }else{
+        agentAddrUpdate(requestVo).then(res=>{
+          console.log(res, '编辑地址 结果');
+          if(res&&res.result&&res.result.code===200){
+            message.success('成功！');
+            this.handleCancelAddr();
+            this.getAddrList();
+          }
+        })
+      }
+      
+    })
+  }
+
+  // 设为默认
+  setDefaultAddr = (item)=>{
+    const requestVo = {...item};
+    requestVo.def = '1';
+    agentAddrUpdate(requestVo).then(res=>{
+      console.log(res, '设为默认结果');
+      if(res&&res.result&&res.result.code===200){
+        message.success('成功！');
+        this.getAddrList();
+      }
     })
   }
 
   // 删除地址
   handleDel=(addrId)=>{
-    agentAddrDel(addrId).then(res=>{
+    agentAddrDel({addressId:addrId}).then(res=>{
       if(res&&res.result&&res.result.code===200){
         message.success('成功！');
         this.getAddrList();
@@ -161,15 +188,15 @@ class AddressManage extends React.Component{
             <Tabs defaultActiveKey={'1'} onSelect={this.handleSelAddrType} id="uncontrolled-tab-example" className="tabStyle">
               <Tab eventKey={'1'} title="收发票" bsClass='b-radius'>
                 <div>
-                  {addressInvoiceList.length>0 ? addressInvoiceList.map(item=>{
+                  {addressInvoiceList.length>0 ? addressInvoiceList.map((item,index)=>{
                     return (
-                    <div className={item.def ? "well-box default-bg" : "well-box normal-bg"}>
+                    <div className={item.def ? "well-box default-bg" : "well-box normal-bg"} key={index}>
                       <h3>发票地址</h3>
                       <div>
                         <p>收货人：{item.consignee? item.consignee : ''}</p>
-                        <p>所在地区：{item.address ? item.address : ''}</p>
+                        {/* <p>所在地区：{item.address ? item.address : ''}</p> */}
                         <p>地址：{item.address?item.address:''}</p>
-                        <p>合同地址：{}</p>
+                        <p>合同地址：{item.address ? item.address : ''}</p>
                         <p>手机号：{item.phone?item.phone:''}</p>
                         <p>固定电话:{item.telephone?item.telephone:''}</p>
                         <p>电子邮箱：{item.email?item.email:''}</p>
@@ -185,7 +212,7 @@ class AddressManage extends React.Component{
                         </Popconfirm>
                       </div>
                       <div className="edit-box">
-                        {item.def ? null : <span className="edit-txt">设为默认</span>}
+                        {item.def ? null : <span className="edit-txt" onClick={()=>this.setDefaultAddr(item)}>设为默认</span>}
                         <span className="edit-txt" onClick={()=>this.handleAddModalVisible(true,'edit',item.addressId)}>编辑</span>
                       </div>
                     </div>
@@ -195,15 +222,15 @@ class AddressManage extends React.Component{
               </Tab>
               <Tab eventKey={'2'} title="收货">
                 <div>
-                  {addressReceiveList.length>0 ? addressReceiveList.map(item=>{
+                  {addressReceiveList.length>0 ? addressReceiveList.map((item,index)=>{
                     return (
-                      <div className={item.def ? "well-box default-bg" : "well-box normal-bg"}>
+                      <div className={item.def ? "well-box default-bg" : "well-box normal-bg"} key={index}>
                         <h3>收货地址</h3>
                         <div>
                           <p>收货人：{item.consignee? item.consignee : ''}</p>
                           <p>所在地区：{}</p>
                           <p>地址：{item.address ? item.address : ''}</p>
-                          <p>合同地址：{}</p>
+                          <p>合同地址：{item.address ? item.address : ''}</p>
                           <p>手机号：{item.phone?item.phone:''}</p>
                           <p>固定电话:{item.telephone?item.telephone:''}</p>
                           <p>电子邮箱：{item.email?item.email:''}</p>
@@ -219,7 +246,7 @@ class AddressManage extends React.Component{
                           </Popconfirm>
                         </div>
                         <div className="edit-box">
-                          {item.def ? null : <span className="edit-txt">设为默认</span>}
+                          {item.def ? null : <span className="edit-txt" onClick={()=>this.setDefaultAddr(item)}>设为默认</span>}
                           <span className="edit-txt">编辑</span>
                         </div>
                       </div>
@@ -232,15 +259,15 @@ class AddressManage extends React.Component{
               </Tab>
               <Tab eventKey={'3'} title="收合同">
                 <div>
-                  {addressContractList.length>0 ? addressContractList.map(item=>{
+                  {addressContractList.length>0 ? addressContractList.map((item,index)=>{
                     return (
-                      <div className={item.def ? "well-box default-bg" : "well-box normal-bg"}>
+                      <div className={item.def ? "well-box default-bg" : "well-box normal-bg"} key={index}>
                         <h3>收合同地址</h3>
                         <div>
                           <p>收货人：{item.consignee? item.consignee : ''}</p>
-                          <p>所在地区：{}</p>
+                          {/* <p>所在地区：{}</p> */}
                           <p>地址：{item.address ? item.address : ''}</p>
-                          <p>合同地址：{}</p>
+                          <p>合同地址：{item.address ? item.address : ''}</p>
                           <p>手机号：{item.phone?item.phone:''}</p>
                           <p>固定电话:{item.telephone?item.telephone:''}</p>
                           <p>电子邮箱：{item.email?item.email:''}</p>
@@ -256,7 +283,7 @@ class AddressManage extends React.Component{
                           </Popconfirm>
                         </div>
                         <div className="edit-box">
-                          {item.def ? null : <span className="edit-txt">设为默认</span>}
+                          {item.def ? null : <span className="edit-txt" onClick={()=>this.setDefaultAddr(item)}>设为默认</span>}
                           <span className="edit-txt">编辑</span>
                         </div>
                       </div>
@@ -267,15 +294,15 @@ class AddressManage extends React.Component{
               </Tab>
               <Tab eventKey={'4'} title="收函证">
                 <div>
-                  {addressConfirmList.length>0 ? addressConfirmList.map(item=>{
+                  {addressConfirmList.length>0 ? addressConfirmList.map((item,index)=>{
                     return (
                       <div className={item.def ? "well-box default-bg" : "well-box normal-bg"}>
                         <h3>收函证地址</h3>
                         <div>
                           <p>收货人：{item.consignee? item.consignee : ''}</p>
-                          <p>所在地区：{item.address ? item.address : ''}</p>
+                          {/* <p>所在地区：{item.address ? item.address : ''}</p> */}
                           <p>地址：{item.address?item.address:''}</p>
-                          <p>合同地址：山水元东园路13号楼901</p>
+                          <p>合同地址：{item.address ? item.address : ''}</p>
                           <p>手机号：{item.phone?item.phone:''}</p>
                           <p>固定电话:{item.telephone?item.telephone:''}</p>
                           <p>电子邮箱：{item.email?item.email:''}</p>
@@ -291,7 +318,7 @@ class AddressManage extends React.Component{
                           </Popconfirm>
                         </div>
                         <div className="edit-box">
-                          {item.def ? null : <span className="edit-txt">设为默认</span>}
+                          {item.def ? null : <span className="edit-txt" onClick={()=>this.setDefaultAddr(item)}>设为默认</span>}
                           <span className="edit-txt">编辑</span>
                         </div>
                       </div>
@@ -308,7 +335,8 @@ class AddressManage extends React.Component{
             </div>
           </Col>
         </Row>
-        {addrVisible? <Modal
+        {addrVisible? 
+        <Modal
             title={this.state.addrTitle}
             className='addrBox'
             visible={addrVisible}
@@ -323,7 +351,7 @@ class AddressManage extends React.Component{
                 initialValue: addrItem&&addrItem.consignee ? addrItem.consignee : '',
               })(<Input placeholder='请输入' />)}
             </Form.Item>
-            <Form.Item label={'所在地区'}>
+            {/* <Form.Item label={'所在地区'}>
               {form.getFieldDecorator('area',{
                 rules: [
                   { required: true, message: '请选择所在地区!' },
@@ -332,26 +360,29 @@ class AddressManage extends React.Component{
               })(
                 <Cascader options={regionOptions} />
               )}
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item label={'详细地址'}>
               {form.getFieldDecorator('detailAddr',{
                 rules: [
                   { required: true, message: '请输入收货人!' },
-                ]
+                ],
+                initialValue: addrItem&&addrItem.address ? addrItem.address : '',
               })(<Input placeholder='请输入' />)}
             </Form.Item>
             <Form.Item label={'手机号码'}>
               {form.getFieldDecorator('phone',{
                 rules: [
                   { required: true, message: '请输入手机号码!' },
-                ]
+                ],
+                initialValue: addrItem&&addrItem.phone ? addrItem.phone : '',
               })(<Input placeholder='请输入' />)}
             </Form.Item>
             <Form.Item label={'固定电话'}>
               {form.getFieldDecorator('telephone',{
                 rules: [
                   { required: false, message: '请输入固定电话!' },
-                ]
+                ],
+                initialValue: addrItem&&addrItem.telephone ? addrItem.telephone : '',
               })(
                 <Input placeholder='请输入' />
               )}
@@ -360,7 +391,8 @@ class AddressManage extends React.Component{
               {form.getFieldDecorator('email',{
                 rules: [
                   { required: false, message: '请输入邮箱编码!' },
-                ]
+                ],
+                initialValue: addrItem&&addrItem.email ? addrItem.email : '',
               })(
                 <Input placeholder='请输入' />
               )}

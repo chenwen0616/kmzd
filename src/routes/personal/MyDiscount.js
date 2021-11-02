@@ -59,7 +59,7 @@ class MyDiscount extends React.Component{
       agentId: uInfo.roleId,
       pageNum: 1,
       pageSize: 10,
-      status: 1,
+      // status: 1,
     }).then(res=>{
       console.log(res, 'res 折扣列表')
       this.setState({loading:false})

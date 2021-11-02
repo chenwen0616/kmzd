@@ -47,7 +47,11 @@ export function agentAddrList(payload){
 }
 // 删除地址
 export function agentAddrDel(payload){
-  return axios.post('/api/seller/agent/addressDel?addressId='+payload)
+  return axios.post('/api/seller/agent/addressDel',payload)
+}
+// 编辑地址
+export function agentAddrUpdate(payload){
+  return axios.post('/api/seller/agent/addressUpdate', payload)
 }
 //许可证列表接口
 export function getLicenceList(payload){

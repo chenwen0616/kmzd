@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {Button,  Table, Input, Form, message} from 'antd';
+import {Button, Table, Input, Form, message, Modal} from 'antd';
 import { confirmOrderInfo, orderAdd, cartList } from '../api/cart'
 import action from '../store/action'
+import { agentAddrAdd } from '../api/person';
 
 import '../assets/css/cart.less';
 
@@ -49,13 +50,18 @@ class PlaceOrder extends React.Component{
       totalNum: 0,
       afterPrice: 0,
       totalPrice: 0,
-      orderInfo: {}
+      orderInfo: {},
+      addrLoading: false,
+      addrVisible: false,
     }
   }
 
   componentDidMount(){
+    this.getOrderInfo();
+  }
+
+  getOrderInfo = ()=>{
     const orderIdList = JSON.parse(localStorage.getItem('placeOrderIdList'));
-    console.log(orderIdList, 'orderIdList')
     confirmOrderInfo({shoppingCartIdList: orderIdList}).then(res=>{
       if(res&&res.data){
         this.setState({orderInfo:res.data},()=>{
@@ -64,6 +70,10 @@ class PlaceOrder extends React.Component{
       }
     })
   }
+
+  // componentWillUnmount(){
+  //   localStorage.removeItem('placeOrderIdList')
+  // }
 
   getTotal=(data)=>{
     const proTotal = data.orderItemList&&data.orderItemList.length>0 ? data.orderItemList.reduce((cur,next)=>{
@@ -131,19 +141,53 @@ class PlaceOrder extends React.Component{
     })
   }
 
+  // 新增默认地址
+  handleAddVisible = ()=>{
+    this.setState({addrVisible:true})
+  }
+  handleCancelAddr = ()=>{
+    this.setState({addrVisible:false})
+  }
+  handleAdd = ()=>{
+    const userInfo = localStorage.getItem('userInfo');
+    const uInfo = JSON.parse(userInfo);
+    const {form} = this.props;
+    this.setState({addrLoading:true})
+    form.validateFields((err, values) => {
+      if(err) return;
+      const requestVo = {};
+      Object.assign(requestVo, values);
+      requestVo.type = this.state.addrType;
+      // requestVo.address = values.area.length>0 ? values.area[0]+values.area[1]+values.area[2]+values.detailAddr : '';
+      requestVo.address = values.detailAddr;
+      requestVo.agentId = uInfo.roleId;
+      requestVo.def = '1';
+      agentAddrAdd(requestVo).then(res=>{
+        this.setState({addrLoading:false})
+        if(res&&res.result&&res.result.code ===200){
+          message.success('成功！');
+          this.handleCancelAddr();
+          this.getOrderInfo();
+        }
+      })
+    })
+  }
+
   render(){
-    const { addressInvoiceList, discountPrice, orderInfo } = this.state;
+    const { addressInvoiceList, discountPrice, orderInfo, addrVisible, addrLoading } = this.state;
+    const {form} = this.props;
     return(
       <div className="cartBox">
         <div className="mainCart">
           <div className="addressInfo">
             <h3>地址信息</h3>
             <p className="selP">请选择配送地址</p>
-            <p className="tip">您想使用的是下方显示的地址吗？如果是，点击相应的“配送到这个地址”按钮，或者您可以输入一个新的送货地址：<a>添加新地址</a></p>
+            <p className="tip">您想使用的是下方显示的地址吗？如果是，点击相应的“配送到这个地址”按钮，或者您可以输入一个新的送货地址：<a onClick={this.handleAddVisible}>添加新地址</a></p>
             <div className="addrMsg">
               <h3>收货地址</h3>
               <div>
-                <p>所在地区：{}</p>
+                {/* <p>所在地区：{}</p> */}
+                <p>联系人：{((orderInfo&&orderInfo.goodAddress&&orderInfo.goodAddress.consignee))?orderInfo.goodAddress.consignee : ''}</p>
                 <p>地址：{(orderInfo&&orderInfo.goodAddress&&orderInfo.goodAddress.address) ? orderInfo.goodAddress.address : ''}</p>
                 <p>手机号：{(orderInfo&&orderInfo.goodAddress&&orderInfo.goodAddress.phone) ? orderInfo.goodAddress.phone : ''}</p>
               </div>
@@ -151,7 +195,8 @@ class PlaceOrder extends React.Component{
             <div className="addrMsg">
               <h3>发票地址</h3>
               <div>
-                <p>所在地区：{}</p>
+                {/* <p>所在地区：{}</p> */}
+                <p>联系人：{((orderInfo&&orderInfo.invoiceAddress&&orderInfo.invoiceAddress.consignee))?orderInfo.invoiceAddress.consignee : ''}</p>
                 <p>地址：{(orderInfo&&orderInfo.invoiceAddress&&orderInfo.invoiceAddress.address) ? orderInfo.invoiceAddress.address : ''}</p>
                 <p>手机号：{(orderInfo&&orderInfo.invoiceAddress&&orderInfo.invoiceAddress.phone) ? orderInfo.invoiceAddress.phone : ''}</p>
               </div>
@@ -167,8 +212,9 @@ class PlaceOrder extends React.Component{
                       <div className="proParameter">
                         <div>
                           <p className="proTitle">{item.name}</p>
-                          <p className="proType">{item.type}</p>
+                          <p className="proType">{item.instrumentType}</p>
                           <p className="proPrice">开票价：<span>￥{item.price}</span></p>
+                          <p className='proType'>{item.discountDescription}</p>
                         </div>
                       </div>
                     </div>
@@ -202,6 +248,56 @@ class PlaceOrder extends React.Component{
           </div>
           
         </div>
+
+        {addrVisible? 
+        <Modal
+            title='新增地址'
+            className='addrBox'
+            visible={addrVisible}
+            onOk={this.handleAdd}
+            onCancel={this.handleCancelAddr}
+            confirmLoading={addrLoading}
+          >
+            <Form.Item label={'收货人'}>
+              {form.getFieldDecorator('consignee',{
+                rules: [
+                  { required: true, message: '请输入收货人!' },
+                ],
+              })(<Input placeholder='请输入' />)}
+            </Form.Item>
+            <Form.Item label={'详细地址'}>
+              {form.getFieldDecorator('detailAddr',{
+                rules: [
+                  { required: true, message: '请输入收货人!' },
+                ]
+              })(<Input placeholder='请输入' />)}
+            </Form.Item>
+            <Form.Item label={'手机号码'}>
+              {form.getFieldDecorator('phone',{
+                rules: [
+                  { required: true, message: '请输入手机号码!' },
+                ]
+              })(<Input placeholder='请输入' />)}
+            </Form.Item>
+            <Form.Item label={'固定电话'}>
+              {form.getFieldDecorator('telephone',{
+                rules: [
+                  { required: false, message: '请输入固定电话!' },
+                ]
+              })(
+                <Input placeholder='请输入' />
+              )}
+            </Form.Item>
+            <Form.Item label={'邮箱编码'}>
+              {form.getFieldDecorator('email',{
+                rules: [
+                  { required: false, message: '请输入邮箱编码!' },
+                ]
+              })(
+                <Input placeholder='请输入' />
+              )}
+            </Form.Item>
+          </Modal> : null}
       </div>
     )
   }

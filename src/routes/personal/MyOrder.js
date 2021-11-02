@@ -79,7 +79,7 @@ class MyOrder extends React.Component{
     console.log(id, '签收货品', status)
     getOrderSign({
       orderId: id,
-      status,
+      status: '4',
     }).then(res=>{
       if(res&&res.result&&res.result.code === 200){
         message.success('成功');
