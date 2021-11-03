@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {Button, Modal, Form, Input, Spin} from 'antd'
+import {Button, Modal, Form, Input, Spin, message} from 'antd'
 
 import { updatePassword } from '../../api/common'
 
@@ -24,11 +24,32 @@ class PersonalSetting extends React.Component{
     localStorage.removeItem('token');
     localStorage.removeItem('userInfo');
     // window.open('/login')
-    window.location.href = '/#/login'
+    window.location.href = '/#/login';
+    window.location.reload();
   }
 
   handleEditPass=()=>{
-    console.log('修改密码')
+    const { form } = this.props;
+    form.validateFields((err, values) => {
+      if (!err) {
+        updatePassword({
+          oldPassword: values.oldPassword,
+          password: values.password
+        }).then(res=>{
+          if(res&&res.result&&res.result.code===200){
+            message.success('成功');
+            localStorage.removeItem('token');
+            localStorage.removeItem('userInfo');
+            window.location.href = '/#/login';
+            window.location.reload();
+          }else{
+            message.error(res.result.message)
+          }
+          console.log(res, 'res 结果')
+        })
+        console.log(values, '修改密码')
+      }
+    })
   }
 
   checkConfirm = (rule, value, callback) => {

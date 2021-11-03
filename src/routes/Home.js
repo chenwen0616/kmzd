@@ -93,7 +93,7 @@ class Home extends React.Component{
   }
   // 获取产品系列
   getProductList = ()=>{
-    getDict({dictType:'crm_reagent_product'}).then(res=>{
+    getDict({dictType:'crm_agent_production'}).then(res=>{
       if(res&&res.data&&res.data.dictList&&res.data.dictList.length>0){
         console.log(res.data.dictList, 'dictList')
         this.setState({productsList: res.data.dictList})

@@ -13,5 +13,5 @@ export function getMessage(payload){
 }
 // 修改密码
 export function updatePassword(payload){
-  return axios.post('/api/common/login/passwordUpdate',payload)
+  return axios.post(`/api/common/login/passwordUpdate?oldPassword=${payload.oldPassword}&password=${payload.password}`)
 }
