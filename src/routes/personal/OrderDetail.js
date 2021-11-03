@@ -33,7 +33,7 @@ class OrderDetail extends React.Component{
   getDetail=()=>{
     this.setState({loading: true});
     const param = this.getQueryVariable()
-    myOrderDetail({oderId:param}).then(res=>{
+    myOrderDetail({orderId:param}).then(res=>{
       this.setState({loading:false})
       if(res&&res.data){
         this.setState({orderDetail:res.data})

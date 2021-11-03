@@ -180,7 +180,6 @@ class Home extends React.Component{
       <div className='navBreadTitle'>
         <div className='bTitle'>
           <a href='/home'>首页</a>
-          <span> / 购物车</span>
         </div>
       </div>
       <div className='homeBox'>

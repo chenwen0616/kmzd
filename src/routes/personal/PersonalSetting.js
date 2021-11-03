@@ -97,7 +97,7 @@ class PersonalSetting extends React.Component{
       <Spin spinning={false}>
         <div className='personBread' style={{top:'-92px'}}>
           <a href='/home'>首页</a>
-          <span> / 我的折扣</span>
+          <span> / 设置</span>
         </div>
         <div className="personalR">
           <div>

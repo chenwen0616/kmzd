@@ -12,5 +12,5 @@ export function goodsTypeList(payload){
 
 // /api/agent/order/oderList
 export function orderList(payload){
-  return axios.post('/api/agent/order/oderList',payload.data)
+  return axios.post('/api/agent/order/orderList',payload.data)
 }

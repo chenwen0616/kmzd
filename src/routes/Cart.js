@@ -123,8 +123,8 @@ class Cart extends React.Component{
             <span> / 购物车</span>
           </div>
         </div>
-        <div className="cartBox">
-          <div className="mainCart">
+        <div className="cartBox" style={{minHeight:'85vh'}}>
+          <div className="mainCart" style={{position:'relative'}}>
             <h2>购物车信息</h2>
             <ul className="row cartUl">
               {cartLists.length>0 ? cartLists.map((item,index)=>{
@@ -174,7 +174,7 @@ class Cart extends React.Component{
       
             </ul>
             
-            <div className="cartBtnBox">
+            <div className="cartBtnBox" style={{position:'absolute',bottom:'40px',right:'0px'}}>
               <Button type='primary' onClick={this.handlePlaceOrder}>下单</Button>
             </div>
           </div>

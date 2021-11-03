@@ -12,7 +12,7 @@ export function agentDetail(payload){
 
 // 我的订单列表
 export function myOrderList(payload){
-  return axios.post('/api/agent/order/oderList',payload)
+  return axios.post('/api/agent/order/orderList',payload)
 }
 // 我的订单详情
 export function myOrderDetail(payload){
