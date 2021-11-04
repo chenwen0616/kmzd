@@ -137,7 +137,7 @@ class Cart extends React.Component{
                         <div className="proParameter">
                           <div>
                             <p className="proTitle">{item.name ? item.name : ''}</p>
-                            <p className="proType">{item.type}</p>
+                            <p className="proType">{item.instrumentType?item.instrumentType: ''}</p>
                             <p className="proPrice">价格：<span>￥{item.price}</span></p>
                           </div>
                         </div>

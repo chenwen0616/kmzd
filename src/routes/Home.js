@@ -35,7 +35,6 @@ class Home extends React.Component{
     const uInfo = JSON.parse(userInfo);
     this.getGoodsList();
     this.getgoodsTypeList(uInfo);
-    this.getProductList();
     // 存入redux
     this.reduxGetCartData(uInfo)
   }
@@ -64,10 +63,13 @@ class Home extends React.Component{
       // testItemId: ''  // 4
     }).then(res=>{
       this.setState({ loading: false })
-      if(res&&res.data&&res.data.goodsList){
-        console.log(res.data.goodsList, 'goodsList')
+      if(res&&res.data&&res.data.goodsList&&res.data.goodsList.length>0){
+        const arr =[];
+        res.data.goodsList.forEach(item=>{
+          arr.push({...item, num:1})
+        })
         this.setState({
-          goodsList: res.data.goodsList,
+          goodsList: arr,
           pageNum: res.data.pageNum,
           pageSize: res.data.pageSize,
           total: res.data.total
@@ -85,34 +87,71 @@ class Home extends React.Component{
         this.setState({
           instrumentTypeList: res.data.instrumentTypeList,
           reagentTypeList: res.data.reagentTypeList
+        },()=>{
+          this.getProductList();
         })
       }
     }).catch(err=>{
       console.log(err, 'err')
     })
   }
+  unique=(arr)=>{
+    //Set数据结构，它类似于数组，其成员的值都是唯一的
+    return Array.from(new Set(arr)); // 利用Array.from将Set结构转换成数组
+  }
+
+  uniqueObject=(arr)=>{
+    var result = [];
+    var obj = {};
+    for(var i =0; i<arr.length; i++){
+        if(!obj[arr[i].key]){
+          result.push(arr[i]);
+          obj[arr[i].key] = true;
+        }
+    }
+    return result;
+  }
+
   // 获取产品系列
   getProductList = ()=>{
+    const {reagentTypeList} = this.state;
+    const arr = [];
+    let newArr = [];
+    const proList = [];
     getDict({dictType:'crm_agent_production'}).then(res=>{
       if(res&&res.data&&res.data.dictList&&res.data.dictList.length>0){
-        console.log(res.data.dictList, 'dictList')
-        this.setState({productsList: res.data.dictList})
+        if(reagentTypeList.length>0){
+          reagentTypeList.forEach(item=>{
+            arr.push(item.productSeries);
+            newArr = this.unique(arr);
+          })
+        }
+        newArr.forEach(nItem=>{
+          res.data.dictList.forEach(rItem=>{
+            if(nItem === rItem.dictValue){
+              proList.push(rItem)
+            }
+          })
+        })
+        this.setState({productsList: proList})
       }
     })
   }
 
   // 减数量
-  handleClickMinus = ()=>{
-    if(this.state.goodsNum <=1){
-      return;
-    }
-    this.setState({goodsNum: this.state.goodsNum - 1})
+  handleClickMinus = (index)=>{
+    const list = [...this.state.goodsList];
+    console.log(list, 'list')
+    list[index].num--;
+    list[index].num = list[index].num < 1 ? 1 : list[index].num;
+    this.setState({goodsList:list})
   }
 
-  handleClickPlus =()=>{
-    this.setState({
-      goodsNum: this.state.goodsNum + 1
-    })
+  handleClickPlus =(index)=>{
+    const list = [...this.state.goodsList];
+    console.log(list, 'list')
+    list[index].num++;
+    this.setState({goodsList:list})
   }
 
   // 页数改变
@@ -173,9 +212,14 @@ class Home extends React.Component{
     })
   }
 
+  productsSelect = (e)=>{
+    this.props.form.resetFields('testItemId')
+  }
+
   render(){
     const {loading, instrumentTypeList, goodsNum, reagentTypeList, goodsList, productsList} = this.state;
     const { form:{getFieldDecorator} } = this.props;
+    const proSelId = this.props.form.getFieldValue('productSeries');
     return <Spin spinning={loading}>
       <div className='navBreadTitle'>
         <div className='bTitle'>
@@ -192,7 +236,7 @@ class Home extends React.Component{
           <div className='selectBox'>
             <Form.Item className='for-form' label="产品系列" required={false}>
               {getFieldDecorator('productSeries')(
-                <Select size={"large"} style={{width:'100%'}} placeholder="请选择">
+                <Select size={"large"} style={{width:'100%'}} placeholder="请选择" onChange={this.productsSelect}>
                   {
                     productsList.length>0 ? productsList.map(item=>{
                       return <Option key={item.dictValue} value={item.dictValue}>{item.dictLabel}</Option>
@@ -203,9 +247,9 @@ class Home extends React.Component{
             </Form.Item>
             <Form.Item className='for-form' label="试剂类型" required={false}>
               {getFieldDecorator('testItemId')(
-                <Select size={"large"} style={{width:'100%'}} placeholder="请选择">
+                <Select size={"large"} style={{width:'100%'}} placeholder="请选择" >
                   {
-                    reagentTypeList.length>0 ? reagentTypeList.map(item=>{
+                    (reagentTypeList.length>0&&proSelId) ? this.uniqueObject(reagentTypeList.filter(fItem=>fItem.productSeries===proSelId)).map((item,index)=>{
                       return <Option key={item.testItemId} value={item.testItemId}>{item.testItemName}</Option>
                     }) : null
                   }
@@ -278,16 +322,16 @@ class Home extends React.Component{
                           <Col md={6} style={{paddingLeft:0,paddingRight:0}}>
                             <Form.Item>
                               {getFieldDecorator('num',{
-                                initialValue: this.state.goodsNum
+                                initialValue: item.num
                               })(
                                 <div style={{display:'flex'}}>
-                                  <Button type='default' className="cartNumBg" onClick={()=>this.handleClickMinus()}>
+                                  <Button type='default' className="cartNumBg" onClick={()=>this.handleClickMinus(index)}>
                                     <Icon type="minus" style={{fontSize:16}} />
                                   </Button>
                                   <div className="cartBg">
-                                    <Input placeholder="" defaultValue={1} value={goodsNum} />
+                                    <Input placeholder="" defaultValue={1} value={item.num} />
                                   </div>
-                                  <Button type='default' className="cartNumBg" onClick={()=>this.handleClickPlus()}>
+                                  <Button type='default' className="cartNumBg" onClick={()=>this.handleClickPlus(index)}>
                                     <Icon type="plus" style={{fontSize:16}} /> 
                                   </Button>
                                 </div>
