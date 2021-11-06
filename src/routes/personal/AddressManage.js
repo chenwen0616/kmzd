@@ -179,7 +179,7 @@ class AddressManage extends React.Component{
     return (
     <Spin spinning={listLoading||regionLoading}>
       <div className='personBread'>
-        <a href='/home'>首页</a>
+        <a href='/#/home'>首页</a>
         <span> / 地址管理</span>
       </div>
       <div className="discountStyle">
@@ -203,7 +203,7 @@ class AddressManage extends React.Component{
                       </div>
                       <div className="del-box">
                         <Popconfirm
-                          title="确定要删除当前商品吗?"
+                          title="是否确认删除该地址?"
                           onConfirm={()=>this.handleDel(item.addressId)}
                           okText="确定"
                           cancelText="取消"
@@ -237,7 +237,7 @@ class AddressManage extends React.Component{
                         </div>
                         <div className="del-box">
                           <Popconfirm
-                            title="确定要删除当前商品吗?"
+                            title="是否确认删除该地址?"
                             onConfirm={()=>this.handleDel(item.addressId)}
                             okText="确定"
                             cancelText="取消"
@@ -247,7 +247,7 @@ class AddressManage extends React.Component{
                         </div>
                         <div className="edit-box">
                           {item.def ? null : <span className="edit-txt" onClick={()=>this.setDefaultAddr(item)}>设为默认</span>}
-                          <span className="edit-txt">编辑</span>
+                          <span className="edit-txt" onClick={()=>this.handleAddModalVisible(true,'edit',item.addressId)}>编辑</span>
                         </div>
                       </div>
                     )
@@ -274,7 +274,7 @@ class AddressManage extends React.Component{
                         </div>
                         <div className="del-box">
                           <Popconfirm
-                            title="确定要删除当前商品吗?"
+                            title="是否确认删除该地址?"
                             onConfirm={()=>this.handleDel(item.addressId)}
                             okText="确定"
                             cancelText="取消"
@@ -284,7 +284,7 @@ class AddressManage extends React.Component{
                         </div>
                         <div className="edit-box">
                           {item.def ? null : <span className="edit-txt" onClick={()=>this.setDefaultAddr(item)}>设为默认</span>}
-                          <span className="edit-txt">编辑</span>
+                          <span className="edit-txt" onClick={()=>this.handleAddModalVisible(true,'edit',item.addressId)}>编辑</span>
                         </div>
                       </div>
                     )
@@ -309,7 +309,7 @@ class AddressManage extends React.Component{
                         </div>
                         <div className="del-box">
                           <Popconfirm
-                            title="确定要删除当前商品吗?"
+                            title="是否确认删除该地址?"
                             onConfirm={()=>this.handleDel(item.addressId)}
                             okText="确定"
                             cancelText="取消"
@@ -319,7 +319,7 @@ class AddressManage extends React.Component{
                         </div>
                         <div className="edit-box">
                           {item.def ? null : <span className="edit-txt" onClick={()=>this.setDefaultAddr(item)}>设为默认</span>}
-                          <span className="edit-txt">编辑</span>
+                          <span className="edit-txt" onClick={()=>this.handleAddModalVisible(true,'edit',item.addressId)}>编辑</span>
                         </div>
                       </div>
                     )

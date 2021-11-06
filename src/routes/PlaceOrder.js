@@ -240,10 +240,12 @@ class PlaceOrder extends React.Component{
           </div>
 
           <div className="totalBox">
+            {discountPrice ? 
             <p>
               <span>{`使用优惠券，一共优惠${discountPrice}元，`}</span>
               <span className="totalNum">共{this.state.totalNum}件商品，一共￥{this.state.afterPrice}元</span>
             </p>
+            : null}
             <Button type="primary" onClick={this.handleOrderAdd}>提交</Button>
           </div>
           

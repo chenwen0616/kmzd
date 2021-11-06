@@ -39,7 +39,6 @@ class BaseInfo extends React.Component{
       if(res&&res.data&&res.data.licenceList&&res.data.licenceList.length>0){
         this.setState({licenceListData: res.data.licenceList})
       }
-      console.log(res, 'res 许可证列表')
     })
   }
   // 第三方资质
@@ -48,17 +47,15 @@ class BaseInfo extends React.Component{
       if(res&&res.data&&res.data.licenceList&&res.data.licenceList.length>0){
         this.setState({thirdLicenceData: res.data.licenceList})
       }
-      console.log(res, 'res 第三方资质')
     })
   }
   
   render(){
     const {agentDetail, loading} = this.state;
-    console.log(agentDetail, '代理商详情')
     return (
       <Spin spinning={loading}>
         <div className='personBread'>
-          <a href='/home'>首页</a>
+          <a href='/#/home'>首页</a>
           <span> / 基本信息</span>
         </div>
         <div className="discountStyle m-left m-bottom baseInfoBox">

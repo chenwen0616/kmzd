@@ -39,7 +39,7 @@ class MyNews extends React.Component{
     return (
       <Spin spinning={loading}>
         <div className='personBread'>
-          <a href='/home'>首页</a>
+          <a href='/#/home'>首页</a>
           <span> / 我的消息</span>
         </div>
         <div className="m-top newsBox m-left">

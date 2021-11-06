@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Form, Table, DatePicker, Select, Col, Row, Button, Spin } from 'antd';
-
+import moment from 'moment';
 import { agentContractList } from '../../api/person'
 import { getDict } from '../../api/common'
 
@@ -121,7 +121,7 @@ class MyContract extends React.Component{
     this.getContractStatus();
     this.getContractType();
   }
-  getList=()=>{
+  getList=(param)=>{
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
     this.setState({loading:true})
@@ -129,6 +129,7 @@ class MyContract extends React.Component{
       agentId: uInfo.roleId,
       pageNum: 1,
       pageSize: 10,
+      ...param,
     }).then(res=>{
       this.setState({loading: false})
       if(res&&res.data&&res.data.contractList){
@@ -178,6 +179,17 @@ class MyContract extends React.Component{
   };
 
   handleSearch = ()=>{
+    const { form } = this.props;
+    form.validateFields((err, values) => {
+      if(!err){
+        console.log(values, 'values')
+        const requestVo = {};
+        requestVo.status = values.status;
+        requestVo.startDate = values.startTime ? moment(values.startTime).format('YYYY-MM-DD HH:mm:ss') : '';
+        requestVo.endDate = values.endTime ? moment(values.endTime).format('YYYY-MM-DD HH:mm:ss') : '';
+        this.getList(requestVo)
+      }
+    })
     console.log('查询')
   }
 
@@ -187,7 +199,7 @@ class MyContract extends React.Component{
     return (
       <Spin spinning={loading}>
         <div className='personBread'>
-          <a href='/home'>首页</a>
+          <a href='/#/home'>首页</a>
           <span> / 我的合同</span>
         </div>
         <div className="discountStyle">
@@ -214,7 +226,7 @@ class MyContract extends React.Component{
                       <DatePicker
                         disabledDate={this.disabledStartDate}
                         format="YYYY-MM-DD"
-                        value={startValue}
+                        // value={startValue}
                         placeholder="开始日期"
                         onChange={this.onStartChange}
                         onOpenChange={this.handleStartOpenChange}
@@ -227,7 +239,7 @@ class MyContract extends React.Component{
                       <DatePicker
                         disabledDate={this.disabledEndDate}
                         format="YYYY-MM-DD"
-                        value={endValue}
+                        // value={endValue}
                         placeholder="结束日期"
                         onChange={this.onEndChange}
                         open={endOpen}
@@ -242,7 +254,7 @@ class MyContract extends React.Component{
               </Col>
             </Row>
           </div>
-          <Table columns={this.columns} dataSource={contractList} />
+          <Table  rowKey={record => record.contractId} columns={this.columns} dataSource={contractList} />
         </div>
       </Spin>
     

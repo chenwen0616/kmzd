@@ -54,8 +54,8 @@ class OrderDetail extends React.Component{
     return (
       <Spin spinning={loading}>
         <div className='personBread' style={{left: '10%',top: '-33px'}}>
-          <a href='/home'>首页</a>
-          <span> / 我的折扣</span>
+          <a href='/#/home'>首页</a>
+          <span> / 订单详情</span>
         </div>
         <div className="personalBox">
           <div className="mainPersonal">

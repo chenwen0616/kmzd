@@ -223,7 +223,7 @@ class Home extends React.Component{
     return <Spin spinning={loading}>
       <div className='navBreadTitle'>
         <div className='bTitle'>
-          <a href='/home'>首页</a>
+          <a href='/#/home'>首页</a>
         </div>
       </div>
       <div className='homeBox'>

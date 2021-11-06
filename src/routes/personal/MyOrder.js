@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {Link} from 'react-router-dom';
 import { Row, Col, Tab, Tabs} from 'react-bootstrap';
 import { DatePicker, Table, Spin, Popconfirm, message } from 'antd';
-
+import moment from 'moment';
 import {myOrderList, getOrderSign} from '../../api/person'
 
 class MyOrder extends React.Component{
@@ -93,13 +93,18 @@ class MyOrder extends React.Component{
   //   console.log(id, '取消订单')
   // }
 
-  getList = ()=>{
+  getList = (param)=>{
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
     this.setState({loading:true})
-    myOrderList({agentId:Number(uInfo.roleId),pageNum:1,pageSize:10}).then(res=>{
+    myOrderList({
+      agentId:Number(uInfo.roleId),
+      pageNum:1,
+      pageSize:10,
+      ...param,
+    }).then(res=>{
       this.setState({loading:false})
-      if(res&&res.data&&res.data.orderList&&res.data.orderList.length>0){
+      if(res&&res.data&&res.data.orderList){
         this.setState({orderList:res.data.orderList})
       }
     })
@@ -122,6 +127,16 @@ class MyOrder extends React.Component{
   onChange = (field, value) => {
     this.setState({
       [field]: value,
+    },()=>{
+      if(field === 'endValue' && this.state.startValue){
+        const start = moment(this.state.startValue).format('YYYY-MM-DD HH:mm:ss');
+        const end = moment(this.state.endValue).format('YYYY-MM-DD HH:mm:ss');
+        console.log(start, 'stattttt')
+        this.getList({
+          startDate: start,
+          endDate: end
+        })
+      }
     });
   };
   
@@ -157,7 +172,7 @@ class MyOrder extends React.Component{
     return (
       <Spin spinning={loading}>
         <div className='personBread'>
-          <a href='/home'>首页</a>
+          <a href='/#/home'>首页</a>
           <span> / 我的订单</span>
         </div>
         <div className="discountStyle">
@@ -166,12 +181,12 @@ class MyOrder extends React.Component{
               <Tabs defaultActiveKey={1} id="uncontrolled-tab-example" className="tabStyle">
                 <Tab eventKey={1} title="全部订单" bsClass='b-radius'>
                   <div className="tableM">
-                    <Table dataSource={orderList} columns={this.columns} />
+                    <Table rowKey='orderId' dataSource={orderList} columns={this.columns} />
                   </div>
                 </Tab>
                 <Tab eventKey={2} title="已订货">
                   <div className="tableM">
-                    <Table dataSource={proList} columns={this.columns} />
+                    <Table rowKey='orderId' dataSource={proList} columns={this.columns} />
                   </div>
                 </Tab>
                 <Tab eventKey={3} title="已付款">
@@ -181,17 +196,17 @@ class MyOrder extends React.Component{
                 </Tab>
                 <Tab eventKey={4} title="已发货">
                   <div className="tableM">
-                    <Table dataSource={deliveryList} columns={this.columns} />
+                    <Table rowKey='orderId' dataSource={deliveryList} columns={this.columns} />
                   </div>
                 </Tab>
                 <Tab eventKey={5} title="已收货">
                   <div className="tableM">
-                    <Table dataSource={receiveList} columns={this.columns} />
+                    <Table rowKey='orderId' dataSource={receiveList} columns={this.columns} />
                   </div>
                 </Tab>
                 <Tab eventKey={6} title="已取消">
                   <div className="tableM">
-                    <Table dataSource={cancelList} columns={this.columns} />
+                    <Table rowKey='orderId' dataSource={cancelList} columns={this.columns} />
                   </div>
                 </Tab>
               </Tabs>
