@@ -4,6 +4,7 @@ import {ButtonGroup, Button, Row, Col, Tab, Tabs, Modal} from 'react-bootstrap';
 import { Table, DatePicker, Spin} from 'antd';
 import {Link} from 'react-router-dom';
 import moment from 'moment';
+import {getDict} from '../../api/common'
 
 import { agentDiscountList, agentDiscountDetail } from '../../api/person';
 
@@ -25,12 +26,19 @@ class MyDiscount extends React.Component{
       title: '期限',
       dataIndex: 'dateTime',
       render: (test,record)=>{
-        return (<div>{record.startTime}-{record.endTime}</div>)
+        return (<div>{record.startTime.slice(0,11)}-{record.endTime.slice(0,11)}</div>)
       }
     },
     {
       title: '状态',
-      dataIndex: 'status'
+      dataIndex: 'status',
+      render: (text,record)=>{
+        const {statusList} = this.state;
+        if(statusList.length>0){
+          const ss =statusList.find(item=>item.dictValue===String(text));
+        }
+        return <span>{statusList.length>0 ? statusList.find(item=>item.dictValue===String(text)).dictLabel : ''}</span>
+      }
     },
     {
       title: '操作',
@@ -78,10 +86,12 @@ class MyDiscount extends React.Component{
       endOpen: false,
       loading: false,
       disDetail: {},
+      statusList: [],
     }
   }
   componentDidMount(){
     this.getList();
+    this.getStatus()
   }
 
   getList = (param)=>{
@@ -95,10 +105,17 @@ class MyDiscount extends React.Component{
       ...param
       // status: 1,
     }).then(res=>{
-      console.log(res, 'res 折扣列表')
       this.setState({loading:false})
       if(res&&res.data&&res.data.discountList){
         this.setState({discountList: res.data.discountList})
+      }
+    })
+  }
+
+  getStatus = ()=>{
+    getDict({dictType:'crm_discount_use_flag'}).then(res=>{
+      if(res&&res.data&&res.data.dictList){
+        this.setState({statusList: res.data.dictList})
       }
     })
   }
@@ -125,7 +142,6 @@ class MyDiscount extends React.Component{
       if(field === 'endValue' && this.state.startValue){
         const start = moment(this.state.startValue).format('YYYY-MM-DD');
         const end = moment(this.state.endValue).format('YYYY-MM-DD');
-        console.log(start, 'stattttt')
         this.getList({
           startDate: start,
           endDate: end
@@ -155,7 +171,6 @@ class MyDiscount extends React.Component{
 
   render(){
     const {discountList, startValue, endOpen, endValue, loading, disDetail} = this.state;
-    console.log(discountList, 'discountListdiscountListdiscountList')
     return (
       <Spin spinning={loading}>
         <div className='personBread'>
@@ -170,13 +185,13 @@ class MyDiscount extends React.Component{
                   <Table columns={this.cloumns} dataSource={discountList} rowKey='discountIssueId' />
                 </Tab>
                 <Tab eventKey={2} title="使用中">
-                  <Table columns={this.cloumns} dataSource={[]} rowKey='discountIssueId' />
+                  <Table columns={this.cloumns} dataSource={discountList.length>0 ? discountList.filter(item=>item.status===0) : []} rowKey='discountIssueId' />
                 </Tab>
                 <Tab eventKey={3} title="已使用">
-                  <Table columns={this.cloumns} dataSource={[]} rowKey='discountIssueId' />
+                  <Table columns={this.cloumns} dataSource={discountList.length>0 ? discountList.filter(item=>item.status===1) : []} rowKey='discountIssueId' />
                 </Tab>
                 <Tab eventKey={4} title="已过期">
-                  <Table columns={this.cloumns} dataSource={[]} rowKey='discountIssueId' />
+                  <Table columns={this.cloumns} dataSource={discountList.length>0 ? discountList.filter(item=>item.status===2) : []} rowKey='discountIssueId' />
                 </Tab>
               </Tabs>
               <div className="dateBox">
@@ -250,7 +265,6 @@ class MyDiscount extends React.Component{
             disDetail: res.data
           })
         }
-        console.log(res, '折扣详情')
       })
     })
   }

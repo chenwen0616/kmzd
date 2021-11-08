@@ -1,7 +1,6 @@
 import React from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import { FormGroup, ControlLabel, FormControl, HelpBlock } from 'react-bootstrap';
 import { Button, Form, Input, message } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 
@@ -179,7 +178,12 @@ class Login extends React.Component {
             localStorage.setItem('token', res.data.token);
             axios.defaults.headers.common["token"] = res.data.token;
             message.success('成功！')
-            this.props.history.push('/home');
+            const flag = window.localStorage.getItem('firstLogin');
+            if(flag){
+              this.props.history.push('/home');
+            }else{
+              this.props.history.push('/updatePassword');
+            }
           } else {
             message.error(res.result.message);
           }

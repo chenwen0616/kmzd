@@ -51,7 +51,7 @@ class BaseInfo extends React.Component{
   }
   
   render(){
-    const {agentDetail, loading} = this.state;
+    const {agentDetail, loading, licenceListData, thirdLicenceData} = this.state;
     return (
       <Spin spinning={loading}>
         <div className='personBread'>
@@ -126,19 +126,35 @@ class BaseInfo extends React.Component{
             
             <Row className="uploadBox">
               <p>许可证</p>
-              <Upload listType="picture-card" >
-              <div>
-                <Icon type="plus" style={{fontSize:'28px',color:'#999'}} />
+              <div style={{height:'70px'}}>
+                {licenceListData.length>0 ? licenceListData.map((item,index)=>{
+                  return (<span key={index} style={{width:'102px',height:'102px', display:'inline-block',marginRight:5,overflow:'hidden'}}>
+                    <img src={item.picUrl} alt='' style={{height:'100px'}} />
+                  </span>)
+                }) : null}
+                {/* <Upload listType="picture-card" >
+                  <div>
+                    <Icon type="plus" style={{fontSize:'28px',color:'#999'}} />
+                  </div>
+                </Upload> */}
               </div>
-              </Upload>
             </Row>
-            <Row className="uploadBox">
+
+            <Row className="uploadBox" style={{marginTop:'60px'}}>
               <p>三方资质</p>
-              <Upload listType="picture-card" >
               <div>
-                <Icon type="plus" style={{fontSize:'28px',color:'#999'}} />
+                {thirdLicenceData.length>0 ? thirdLicenceData.map((item,index)=>{
+                  return (<span key={index} style={{width:'102px',height:'102px', display:'inline-block',marginRight:5,overflow:'hidden'}}>
+                    <img src={item.picUrl} alt='' style={{height:'100px'}} />
+                  </span>)
+                }) : null}
+                {/* <Upload listType="picture-card" >
+                  <div>
+                    <Icon type="plus" style={{fontSize:'28px',color:'#999'}} />
+                  </div>
+                </Upload> */}
               </div>
-              </Upload>
+              
             </Row>
             <Row className="baseRow m-top">
               <h2>开票信息</h2>

@@ -1,9 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {ListGroup, ListGroupItem} from 'react-bootstrap'
-import { Spin } from 'antd';
+import { Spin, Collapse } from 'antd';
 
 import { getMessage } from '../../api/common';
+
+const { Panel } = Collapse;
 
 class MyNews extends React.Component{
   constructor(props){
@@ -34,6 +36,13 @@ class MyNews extends React.Component{
     })
   }
 
+  getTitle=(item)=>{
+    const header = <div style={{display:'flex'}}>
+      <span className="s-l-txt">{item.title}</span>
+      <span className="s-r-txt">{item.createTime.slice(0,11)}</span>
+    </div>
+    return header
+  }
   render(){
     const { messageList, loading } = this.state;
     return (
@@ -46,10 +55,13 @@ class MyNews extends React.Component{
           <ListGroup>
             {messageList.length>0 ? messageList.map(item=>{
               return (
-                <ListGroupItem href="javascript:;">
-                  <span className="s-l-txt">{item.message}</span>
-                  <span className="s-r-txt">{item.createTime}</span>
-                </ListGroupItem>
+                <Collapse defaultActiveKey={[]} bordered={false}>
+                  <Panel header={this.getTitle(item)} key="1">
+                    <p style={{fontWeight:'bold'}}>{item.title}</p>
+                    <p style={{color:'#999'}}>{item.createTime.slice(0,11)}</p>
+                    <p style={{marginTop:10}}>{item.message}</p>
+                  </Panel>
+                </Collapse>
               )
             }) : <div>暂无数据</div>}
           </ListGroup>

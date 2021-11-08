@@ -20,8 +20,9 @@ import Personal from './routes/Personal';
 import OrderDetail from './routes/personal/OrderDetail';
 import Login from './component/Account/Login';
 import PlaceOrder from './routes/PlaceOrder';
-
+import updatePassword from './component/Account/UpdatePassword';
 import AuthRoute from './utils/AuthRoute';
+
 
 const token = localStorage.getItem('token')
 const userInfo = localStorage.getItem('userInfo');
@@ -40,6 +41,7 @@ render(
           <AuthRoute path='/orderDetail' component={OrderDetail} />
           <AuthRoute path='/placeorder' component={PlaceOrder} />
           <Route path='/login' component={Login} />
+          <Route path='/updatePassword' component={updatePassword} />
           {token ? <Redirect exact to='/home' /> : <Redirect exact to='/login' />}
         </Switch>
         <Footer />

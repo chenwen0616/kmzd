@@ -19,6 +19,9 @@ class MyOrder extends React.Component{
     {
       title: '下单时间',
       dataIndex: 'orderTime',
+      render: (text,record)=>{
+        return <span>{text? text.slice(0,11) : ''}</span>
+      }
     },
     {
       title: '状态',

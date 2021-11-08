@@ -99,7 +99,7 @@ class MyContract extends React.Component{
 
   // 获取合同状态
   getContractStatus = ()=>{
-    getDict({dictType:'crm_contract_status '}).then(res=>{
+    getDict({dictType:'crm_contract_status'}).then(res=>{
       if(res&&res.data&&res.data.dictList&&res.data.dictList.length>0){
         console.log(res.data.dictList, 'dictList 合同状态')
         this.setState({contractStatusList: res.data.dictList})
@@ -108,7 +108,7 @@ class MyContract extends React.Component{
   }
   // 获取合同类型
   getContractType = () =>{
-    getDict({dictType:'crm_contract_type '}).then(res=>{
+    getDict({dictType:'crm_contract_type'}).then(res=>{
       if(res&&res.data&&res.data.dictList&&res.data.dictList.length>0){
         console.log(res.data.dictList, '合同类型')
         this.setState({contractTypeList: res.data.dictList})

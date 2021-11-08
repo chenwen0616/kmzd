@@ -8,6 +8,7 @@ import MyContract from './personal/MyContract'
 import MyDiscount from './personal/MyDiscount'
 import MyNews from './personal/MyNews'
 import MyOrder from './personal/MyOrder'
+import AuthRoute from '../utils/AuthRoute';
 
 import PersonalSetting from './personal/PersonalSetting'
 
@@ -34,13 +35,13 @@ class Personal extends React.Component{
         </ul>
         <div className="col-md-9">
           <Switch>
-            <Route path='/personal/baseinfo' component={BaseInfo} />
-            <Route path='/personal/orders' component={MyOrder} />
-            <Route path='/personal/discount' component={MyDiscount} />
-            <Route path='/personal/news' component={MyNews} />
-            <Route path='/personal/addrmanage' component={AddressManage} />
-            <Route path='/personal/contract' component={MyContract} />
-            <Route path='/personal/settings' component={PersonalSetting} />
+            <AuthRoute path='/personal/baseinfo' component={BaseInfo} />
+            <AuthRoute path='/personal/orders' component={MyOrder} />
+            <AuthRoute path='/personal/discount' component={MyDiscount} />
+            <AuthRoute path='/personal/news' component={MyNews} />
+            <AuthRoute path='/personal/addrmanage' component={AddressManage} />
+            <AuthRoute path='/personal/contract' component={MyContract} />
+            <AuthRoute path='/personal/settings' component={PersonalSetting} />
             {/* 默认展示基本信息 */}
             <Redirect from='/personal' to='personal/baseinfo' />
           </Switch>
