@@ -31,15 +31,22 @@ class Cart extends React.Component{
     cartList({agentId: Number(uInfo.roleId)}).then(res=>{
       this.setState({loading: false})
       if(res&&res.data&&res.data.shoppingCartList){
+        const newData = [];
+        if(res.data.shoppingCartList.length>0){
+          res.data.shoppingCartList.forEach(item=>{
+            newData.push({...item, checked: false})
+          })
+        }
         this.props.getData(res.data.shoppingCartList)
-        this.setState({cartLists:res.data.shoppingCartList})
+        this.setState({cartLists:newData})
       }
     })
   }
 
-  handleChangeCart = (index)=>{
+  handleChangeCart = (e,index)=>{
     const list = [...this.state.cartLists]
     list[index].checked = !list[index].checked;
+    console.log(e.target.value, 'eee')
     // 单选框中如果有一个是checked值为true
     const some = list.some((item,index)=>{
       return list[index].checked
@@ -130,7 +137,7 @@ class Cart extends React.Component{
               {cartLists.length>0 ? cartLists.map((item,index)=>{
                 return (
                   <li className="proList" key={index}>
-                    <Checkbox onChange={()=>this.handleChangeCart(index)} />
+                    <Checkbox onChange={(e)=>this.handleChangeCart(e,index)} />
                     <div className="proDiv">
                       <div className="col-md-10 cartLeft">
                         <div className="imgBox"><img src={item.url} alt='' style={{width:'97%'}} /></div>
