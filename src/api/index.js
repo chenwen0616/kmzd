@@ -14,6 +14,7 @@ axios.interceptors.response.use(result =>result.data,e=>{
         localStorage.removeItem('token');
         localStorage.removeItem('userInfo');
         window.location.href = '/#/login'
+        window.location.reload();
     }
     return Promise.reject(e)
 });

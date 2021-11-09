@@ -215,75 +215,78 @@ class Login extends React.Component {
       <div className="loginB">
         <div className="loginMain">
           <h2>用户登录</h2>
-          <Form.Item className='for-form' label="账号" required={false}>
-            {getFieldDecorator('phone', {
-              rules: [
-                { required: true, message: '请输入账号!' },
-              ]
-            })(
-              <Input
-                size="large"
-                onChange={this.changeCode}
-                placeholder="请输入账号"
-              />,
-            )}
-          </Form.Item>
-          <Form.Item className='for-form' label="密码" required={false}>
-            {getFieldDecorator('password', {
-              rules: [
-                { required: false, message: '请输入密码!' },
-              ]
-            })(
-              <Input.Password
-                size="large"
-                onChange={this.changeCode}
-                placeholder="请输入密码"
-              />,
-            )}
-          </Form.Item>
+          <Form onSubmit={this.handleLoginClick}>
+            <Form.Item className='for-form' label="账号" required={false}>
+              {getFieldDecorator('phone', {
+                rules: [
+                  { required: true, message: '请输入账号!' },
+                ]
+              })(
+                <Input
+                  size="large"
+                  onChange={this.changeCode}
+                  placeholder="请输入账号"
+                />,
+              )}
+            </Form.Item>
+            <Form.Item className='for-form' label="密码" required={false}>
+              {getFieldDecorator('password', {
+                rules: [
+                  { required: false, message: '请输入密码!' },
+                ]
+              })(
+                <Input.Password
+                  size="large"
+                  onChange={this.changeCode}
+                  placeholder="请输入密码"
+                />,
+              )}
+            </Form.Item>
 
-          <Form.Item className='for-form codeForm' label="验证码" required={false}>
-            {getFieldDecorator('sendcode', {
-              rules: [
-                { required: true, message: '请输入校验码!' },
-                {
-                  validator: (rule, value, callback) => {
-                    if (value) {
-                      if (value.toLowerCase() === this.state.code.toLowerCase()) {
-                        callback()
-                        this.setState({
-                          sendcode: value,
-                          showError: false
-                        })
+            <Form.Item className='for-form codeForm' label="验证码" required={false}>
+              {getFieldDecorator('sendcode', {
+                rules: [
+                  { required: true, message: '请输入校验码!' },
+                  {
+                    validator: (rule, value, callback) => {
+                      if (value) {
+                        if (value.toLowerCase() === this.state.code.toLowerCase()) {
+                          callback()
+                          this.setState({
+                            sendcode: value,
+                            showError: false
+                          })
+                        } else {
+                          callback('请输入正确的验证码')
+                          this.setState({
+                            showError: true
+                          })
+                        }
                       } else {
-                        callback('请输入正确的验证码')
-                        this.setState({
-                          showError: true
-                        })
+                        callback()
                       }
-                    } else {
-                      callback()
                     }
                   }
-                }
-              ],
-            })(
-              <Input
-                size="large"
-                // prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                suffix={suffix}
-                onChange={this.changeCode}
-                placeholder="请输入校验码"
-              />,
-            )}
-          </Form.Item>
+                ],
+              })(
+                <Input
+                  size="large"
+                  // prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                  suffix={suffix}
+                  onChange={this.changeCode}
+                  placeholder="请输入校验码"
+                />,
+              )}
+            </Form.Item>
 
-          <Button
-            loading={loading}
-            type='primary'
-            onClick={this.handleLoginClick}
-            style={{ width: '100%', height: '40px', background: '#004EA2', border: "1px solid #004EA2" }}
-          >登录</Button>
+            <Button
+              loading={loading}
+              type='primary'
+              onClick={this.handleLoginClick}
+              style={{ width: '100%', height: '40px', background: '#004EA2', border: "1px solid #004EA2" }}
+            >登录</Button>
+          </Form>
+          
         </div>
       </div>
     </div>)

@@ -16,7 +16,7 @@ class Cart extends React.Component{
     this.state = {
       cartLists: [],
       loading: false,
-      numLoading: false,
+      // numLoading: false,
     }
   }
 
@@ -62,14 +62,15 @@ class Cart extends React.Component{
     const list = [...this.state.cartLists];
     list[index].num--;
     list[index].num = list[index].num < 1 ? 1 : list[index].num;
-    this.setState({numLoading: true})
+    // this.setState({numLoading: true})
     updateGoodsNum({
       num: list[index].num,
       shoppingCartId: list[index].shoppingCartId
     }).then(res=>{
-      this.setState({numLoading: false})
+      // this.setState({numLoading: false})
       if(res&&res.result&&res.result.code===200){
-        this.getCartList();
+        // this.getCartList();
+        this.setState({cartLists:list})
       }
     })
   }
@@ -77,14 +78,15 @@ class Cart extends React.Component{
   handleAdd=(index)=>{
     const list = [...this.state.cartLists];
     list[index].num++;
-    this.setState({numLoading: true})
+    // this.setState({numLoading: true})
     updateGoodsNum({
       num: list[index].num,
       shoppingCartId: list[index].shoppingCartId
     }).then(res=>{
-      this.setState({numLoading: false})
+      // this.setState({numLoading: false})
       if(res&&res.result&&res.result.code===200){
-        this.getCartList();
+        // this.getCartList();
+        this.setState({cartLists:list})
       }
     })
   }
@@ -121,9 +123,9 @@ class Cart extends React.Component{
 
   render(){
     console.log(this.props, 'this.props 购物车')
-    const { cartLists, loading, numLoading} = this.state;
+    const { cartLists, loading} = this.state;
     return (
-      <Spin spinning={loading||numLoading}>
+      <Spin spinning={loading}>
         <div className='navBreadTitle'>
           <div className='bTitle'>
             <a href='/#/home'>首页</a>
@@ -137,7 +139,7 @@ class Cart extends React.Component{
               {cartLists.length>0 ? cartLists.map((item,index)=>{
                 return (
                   <li className="proList" key={index}>
-                    <Checkbox onChange={(e)=>this.handleChangeCart(e,index)} />
+                    <Checkbox checked={!!item.checked} onChange={(e)=>this.handleChangeCart(e,index)} />
                     <div className="proDiv">
                       <div className="col-md-10 cartLeft">
                         <div className="imgBox"><img src={item.url} alt='' style={{width:'97%'}} /></div>
