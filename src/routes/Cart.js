@@ -94,7 +94,7 @@ class Cart extends React.Component{
   // 删除商品
   handleDelPro = (item)=>{
     delCart({
-      shoppingCartIdList: [item]
+      shoppingCartIdList: item
     }).then(res=>{
       if(res&&res.result&&res.result.code===200){
         message.success('成功');
@@ -121,8 +121,21 @@ class Cart extends React.Component{
     this.props.history.push('/placeorder');
   }
 
+  handleDelOrder=()=>{
+    const {cartLists} = this.state;
+    const list = cartLists.filter(item=>item.checked);
+    if(list.length === 0){
+      message.warning('请先勾选商品');
+      return;
+    }
+    const listIds=[];
+    list.forEach(item=>{
+      listIds.push(item.shoppingCartId)
+    })
+    this.handleDelPro(listIds)
+  }
+
   render(){
-    console.log(this.props, 'this.props 购物车')
     const { cartLists, loading} = this.state;
     return (
       <Spin spinning={loading}>
@@ -135,7 +148,7 @@ class Cart extends React.Component{
         <div className="cartBox" style={{minHeight:'85vh'}}>
           <div className="mainCart" style={{position:'relative'}}>
             <h2>购物车信息</h2>
-            <ul className="row cartUl">
+            <ul className="row cartUl" style={{minHeight:'60vh'}}>
               {cartLists.length>0 ? cartLists.map((item,index)=>{
                 return (
                   <li className="proList" key={index}>
@@ -167,7 +180,7 @@ class Cart extends React.Component{
                           <div className="del-box">
                             <Popconfirm
                               title="确定要删除当前商品吗?"
-                              onConfirm={()=>this.handleDelPro(item.shoppingCartId)}
+                              onConfirm={()=>this.handleDelPro([item.shoppingCartId])}
                               okText="确定"
                               cancelText="取消"
                             >
@@ -183,7 +196,15 @@ class Cart extends React.Component{
       
             </ul>
             
-            <div className="cartBtnBox" style={{position:'absolute',bottom:'40px',right:'0px'}}>
+            <div className="cartBtnBox">
+              <Popconfirm
+                title="确定要删除当前商品吗?"
+                onConfirm={this.handleDelOrder}
+                okText="确定"
+                cancelText="取消"
+              >
+                <Button type='danger' style={{marginRight:10}}>删除选中商品</Button>
+              </Popconfirm>
               <Button type='primary' onClick={this.handlePlaceOrder}>下单</Button>
             </div>
           </div>

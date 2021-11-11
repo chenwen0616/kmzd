@@ -152,9 +152,9 @@ class PlaceOrder extends React.Component{
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
     const {form} = this.props;
-    this.setState({addrLoading:true})
     form.validateFields((err, values) => {
       if(err) return;
+      this.setState({addrLoading:true})
       const requestVo = {};
       Object.assign(requestVo, values);
       requestVo.type = this.state.addrType;
@@ -270,7 +270,7 @@ class PlaceOrder extends React.Component{
             <Form.Item label={'详细地址'}>
               {form.getFieldDecorator('detailAddr',{
                 rules: [
-                  { required: true, message: '请输入收货人!' },
+                  { required: true, message: '请输入详细地址!' },
                 ]
               })(<Input placeholder='请输入' />)}
             </Form.Item>
