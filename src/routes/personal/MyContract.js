@@ -208,10 +208,10 @@ class MyContract extends React.Component{
               <Col md={6}>
                 <Form.Item label='筛选状态'>
                   {form.getFieldDecorator('status',{
-                    initialValue: '0'
+                    initialValue: '-1'
                   })(
                     <Select>
-                      <Option key={'0'}>全部</Option>
+                      <Option key={'-1'}>全部</Option>
                       {contractStatusList.length>0 ? contractStatusList.map(item=>{
                         return <Option key={item.dictValue}>{item.dictLabel}</Option>
                       }) : null}

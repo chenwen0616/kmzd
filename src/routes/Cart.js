@@ -58,7 +58,8 @@ class Cart extends React.Component{
   }
 
   // 减购物车商品数量
-  handleMinus=(index)=>{
+  handleMinus=(e,index)=>{
+    e.preventDefault();
     const list = [...this.state.cartLists];
     list[index].num--;
     list[index].num = list[index].num < 1 ? 1 : list[index].num;
@@ -75,7 +76,8 @@ class Cart extends React.Component{
     })
   }
   // 增加购物车商品数量
-  handleAdd=(index)=>{
+  handleAdd=(e,index)=>{
+    e.preventDefault();
     const list = [...this.state.cartLists];
     list[index].num++;
     // this.setState({numLoading: true})
@@ -167,13 +169,13 @@ class Cart extends React.Component{
                       <div className="col-md-2">
                         <Row className="proDiv">
                           <Row className="show-grid" style={{display:'flex'}}>
-                            <div className="centerStyle cBox" onClick={()=>this.handleMinus(index)}>
+                            <div className="centerStyle cBox" onClick={(e)=>this.handleMinus(e,index)}>
                               <span className="txt"><Icon type="minus" style={{fontSize:14}} /></span>
                             </div>
                             <Col xs={4} md={4} className="numInput centerStyle inputW">
                               <Input value={item.num} />
                             </Col>
-                            <div className="centerStyle cBox" onClick={()=>this.handleAdd(index)}>
+                            <div className="centerStyle cBox" onClick={(e)=>this.handleAdd(e,index)}>
                               <span className="txt"><Icon type="plus" /></span>
                             </div>
                           </Row>
@@ -184,7 +186,8 @@ class Cart extends React.Component{
                               okText="确定"
                               cancelText="取消"
                             >
-                              <img alt='删除产品' src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} />
+                              <div className='backImg'></div>
+                              {/* <img alt='删除产品' src={process.env.PUBLIC_URL + '/img/icon_shanchu.png'} /> */}
                             </Popconfirm>
                           </div>
                         </Row>

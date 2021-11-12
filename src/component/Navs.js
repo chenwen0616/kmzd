@@ -31,7 +31,7 @@ class Navs extends React.Component{
   render(){
     const { cartLen} = this.state;
     return <div className='sNav'>
-      <div className='nav navBox'>
+      <div className='nav container'>
         <div className='col-md-2' style={{height:'80px',display:'flex'}}>
           <img src={process.env.PUBLIC_URL + '/img/logo2.png'} alt='logo' />
         </div>

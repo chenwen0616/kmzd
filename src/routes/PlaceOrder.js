@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {Button, Table, Input, Form, message, Modal} from 'antd';
 import { confirmOrderInfo, orderAdd, cartList } from '../api/cart'
 import action from '../store/action'
-import { agentAddrAdd } from '../api/person';
+import { agentAddrUpdate } from '../api/person';
 
 import '../assets/css/cart.less';
 
@@ -53,6 +53,7 @@ class PlaceOrder extends React.Component{
       orderInfo: {},
       addrLoading: false,
       addrVisible: false,
+      addrType: 1, // 收货地址 or 发票地址
     }
   }
 
@@ -76,21 +77,24 @@ class PlaceOrder extends React.Component{
   // }
 
   getTotal=(data)=>{
+    console.log(data, 'data')
     const proTotal = data.orderItemList&&data.orderItemList.length>0 ? data.orderItemList.reduce((cur,next)=>{
       return cur + next.price*next.num
     },0) : 0
     const disPrice = data.discountList&&data.discountList.length>0 ? data.discountList.reduce((cur,next)=>{
-      return cur + next.useDiscount
+      return cur + next.useDiscount ? next.useDiscount : 0
     },0) : 0
-    console.log(data, 'data')
-    console.log(proTotal, 'proTotal')
-    console.log(disPrice, 'disPrice')
     const totalNum = data.orderItemList&&data.orderItemList.length>0 ? data.orderItemList.reduce((cur,next)=>{
       return cur + next.num
     },0) : 0
 
+    const price = data.sumMoney - disPrice - data.fullReductionMoney;
+    console.log(data.sumMoney, 'sumMoney')
+    console.log(disPrice, 'disPrice 折扣')
+    console.log(data.fullReductionMoney, '满减')
+    console.log(price, 'price')
     this.setState({
-      afterPrice: parseFloat(proTotal) - parseFloat(disPrice),
+      afterPrice: parseFloat(data.sumMoney) - parseFloat(disPrice) - data.fullReductionMoney,
       discountPrice: disPrice,
       totalNum,
     })
@@ -121,8 +125,14 @@ class PlaceOrder extends React.Component{
     const {orderInfo} = this.state;
     const requestVo = {};
     Object.assign(requestVo, orderInfo);
-    requestVo.useMoney = this.state.discountPrice;
+    requestVo.useMoney = this.state.discountPrice ? this.state.discountPrice : 0;
     requestVo.payMoney = this.state.afterPrice;
+    orderInfo.discountList.forEach(item=>{
+      if(!item.useDiscount){
+        item.useDiscount =0;
+      }
+      requestVo.discountList.push(item)
+    })
     console.log(requestVo, 'requestVo 下单参数');
     
     orderAdd(requestVo).then(res=>{
@@ -142,8 +152,11 @@ class PlaceOrder extends React.Component{
   }
 
   // 新增默认地址
-  handleAddVisible = ()=>{
-    this.setState({addrVisible:true})
+  handleAddVisible = (flag, addrType)=>{
+    this.setState({
+      addrVisible:true,
+      addrType
+    })
   }
   handleCancelAddr = ()=>{
     this.setState({addrVisible:false})
@@ -162,7 +175,7 @@ class PlaceOrder extends React.Component{
       requestVo.address = values.detailAddr;
       requestVo.agentId = uInfo.roleId;
       requestVo.def = '1';
-      agentAddrAdd(requestVo).then(res=>{
+      agentAddrUpdate(requestVo).then(res=>{
         this.setState({addrLoading:false})
         if(res&&res.result&&res.result.code ===200){
           message.success('成功！');
@@ -174,15 +187,28 @@ class PlaceOrder extends React.Component{
   }
 
   render(){
-    const { addressInvoiceList, discountPrice, orderInfo, addrVisible, addrLoading } = this.state;
+    const { discountPrice, orderInfo, addrVisible, addrLoading, addrType } = this.state;
     const {form} = this.props;
+    let consignee;
+    let address;
+    let phone;
+    if(addrType===1){
+      consignee = orderInfo&&orderInfo.goodAddress&&orderInfo.goodAddress.consignee ? orderInfo.goodAddress.consignee : '';
+      address = orderInfo&&orderInfo.goodAddress&&orderInfo.goodAddress.address ? orderInfo.goodAddress.address : '';
+      phone = orderInfo&&orderInfo.goodAddress&&orderInfo.goodAddress.phone ? orderInfo.goodAddress.phone : '';
+    }else{
+      consignee = orderInfo&&orderInfo.invoiceAddress&&orderInfo.invoiceAddress.consignee ? orderInfo.invoiceAddress.consignee :'';
+      address = orderInfo&&orderInfo.invoiceAddress&&orderInfo.invoiceAddress.address ? orderInfo.invoiceAddress.address :'';
+      phone = orderInfo&&orderInfo.invoiceAddress&&orderInfo.invoiceAddress.phone ? orderInfo.invoiceAddress.phone :'';
+    }
+    
     return(
       <div className="cartBox">
         <div className="mainCart">
           <div className="addressInfo">
             <h3>地址信息</h3>
             <p className="selP">请选择配送地址</p>
-            <p className="tip">您想使用的是下方显示的地址吗？如果是，点击相应的“配送到这个地址”按钮，或者您可以输入一个新的送货地址：<a onClick={this.handleAddVisible}>添加新地址</a></p>
+            <p className="tip">您想使用的是下方显示的地址吗？如果是，点击相应的“配送到这个地址”按钮，或者您可以输入一个新的送货地址：<a>添加新地址</a></p>
             <div className="addrMsg">
               <h3>收货地址</h3>
               <div>
@@ -191,6 +217,8 @@ class PlaceOrder extends React.Component{
                 <p>地址：{(orderInfo&&orderInfo.goodAddress&&orderInfo.goodAddress.address) ? orderInfo.goodAddress.address : ''}</p>
                 <p>手机号：{(orderInfo&&orderInfo.goodAddress&&orderInfo.goodAddress.phone) ? orderInfo.goodAddress.phone : ''}</p>
               </div>
+              <div className='backImg addrPosition'></div>
+              <div className='editTxt' onClick={()=>this.handleAddVisible(true, 1)}>编辑</div>
             </div>
             <div className="addrMsg">
               <h3>发票地址</h3>
@@ -200,12 +228,13 @@ class PlaceOrder extends React.Component{
                 <p>地址：{(orderInfo&&orderInfo.invoiceAddress&&orderInfo.invoiceAddress.address) ? orderInfo.invoiceAddress.address : ''}</p>
                 <p>手机号：{(orderInfo&&orderInfo.invoiceAddress&&orderInfo.invoiceAddress.phone) ? orderInfo.invoiceAddress.phone : ''}</p>
               </div>
+              <div className='editTxt' onClick={()=>this.handleAddVisible(true, 2)}>编辑</div>
             </div>
           </div>
           <ul className="row cartUl pOul">
             {orderInfo.orderItemList&&orderInfo.orderItemList.length>0 ? orderInfo.orderItemList.map(item=>{
               return (
-                <li className="proList">
+                <li className="proList" key={item.shoppingCartId}>
                   <div className="proDiv">
                     <div className="col-md-9 cartLeft">
                       <div className="imgBox"><img src={item.url} alt={item.url} style={{width:'98%'}} /></div>
@@ -252,8 +281,9 @@ class PlaceOrder extends React.Component{
         </div>
 
         {addrVisible? 
+        
         <Modal
-            title='新增地址'
+            title='编辑地址'
             className='addrBox'
             visible={addrVisible}
             onOk={this.handleAdd}
@@ -265,23 +295,26 @@ class PlaceOrder extends React.Component{
                 rules: [
                   { required: true, message: '请输入收货人!' },
                 ],
+                initialValue: consignee
               })(<Input placeholder='请输入' />)}
             </Form.Item>
             <Form.Item label={'详细地址'}>
               {form.getFieldDecorator('detailAddr',{
                 rules: [
                   { required: true, message: '请输入详细地址!' },
-                ]
+                ],
+                initialValue: address
               })(<Input placeholder='请输入' />)}
             </Form.Item>
             <Form.Item label={'手机号码'}>
               {form.getFieldDecorator('phone',{
                 rules: [
                   { required: true, message: '请输入手机号码!' },
-                ]
+                ],
+                initialValue: phone
               })(<Input placeholder='请输入' />)}
             </Form.Item>
-            <Form.Item label={'固定电话'}>
+            {/* <Form.Item label={'固定电话'}>
               {form.getFieldDecorator('telephone',{
                 rules: [
                   { required: false, message: '请输入固定电话!' },
@@ -298,7 +331,7 @@ class PlaceOrder extends React.Component{
               })(
                 <Input placeholder='请输入' />
               )}
-            </Form.Item>
+            </Form.Item> */}
           </Modal> : null}
       </div>
     )

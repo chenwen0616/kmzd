@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from "react-redux";
-import { ControlLabel, FormGroup, FormControl,  Col } from 'react-bootstrap';
-import { Icon, Spin, Form, Select, Pagination, Button, Input, Radio, message} from 'antd';
+import { ControlLabel, FormGroup, FormControl} from 'react-bootstrap';
+import { Icon, Spin, Form, Select, Pagination, Button, Input, Radio, message, Row, Col} from 'antd';
 import action from '../store/action';
 
 import {goodsList, goodsTypeList} from '../api/home';
@@ -20,12 +20,10 @@ class Home extends React.Component{
       loading: false,
       reagentTypeList: [], // 试剂类型
       instrumentTypeList: [], // 仪器类型
-      goodsNum: 1, // 购物车数量
       goodsList: [],
       pageNum: 1,
       pageSize: 15,
       total: 0,
-      hospitalRadioVal: 1,
       productsList: [], // 产品系列
     }
   }
@@ -66,7 +64,11 @@ class Home extends React.Component{
       if(res&&res.data&&res.data.goodsList&&res.data.goodsList.length>0){
         const arr =[];
         res.data.goodsList.forEach(item=>{
-          arr.push({...item, num:1})
+          arr.push({
+            ...item, 
+            num:1,
+            payType: 2,
+          })
         })
         this.setState({
           goodsList: arr,
@@ -141,7 +143,7 @@ class Home extends React.Component{
   // 减数量
   handleClickMinus = (index)=>{
     const list = [...this.state.goodsList];
-    console.log(list, 'list')
+    console.log(index, 'list')
     list[index].num--;
     list[index].num = list[index].num < 1 ? 1 : list[index].num;
     this.setState({goodsList:list})
@@ -149,7 +151,6 @@ class Home extends React.Component{
 
   handleClickPlus =(index)=>{
     const list = [...this.state.goodsList];
-    console.log(list, 'list')
     list[index].num++;
     this.setState({goodsList:list})
   }
@@ -217,7 +218,7 @@ class Home extends React.Component{
   }
 
   render(){
-    const {loading, instrumentTypeList, goodsNum, reagentTypeList, goodsList, productsList} = this.state;
+    const {loading, instrumentTypeList, reagentTypeList, goodsList, productsList} = this.state;
     const { form:{getFieldDecorator} } = this.props;
     const proSelId = this.props.form.getFieldValue('productSeries');
     return <Spin spinning={loading}>
@@ -227,7 +228,7 @@ class Home extends React.Component{
         </div>
       </div>
       <div className='homeBox'>
-      <div className='mainHome'>
+      <div className='container mainHome'>
         <div className='col-md-3'>
           <p className='selectFont'>
             <img src={process.env.PUBLIC_URL + '/img/shaixuan.png'} style={{width:'24px'}} alt='筛选' />
@@ -278,7 +279,7 @@ class Home extends React.Component{
           <div className="r_box">
             {goodsList.length>0 ? goodsList.map((item, index)=>{
               return (
-                <div className="col-sm-6 col-md-4" key={index}>
+                <div className="col-sm-6 col-md-4" key={item.goodsId}>
                   <div className="thumbnail goods_list">
                     <Form.Item>
                       {getFieldDecorator('url',{
@@ -297,8 +298,8 @@ class Home extends React.Component{
                           })(<p className="proType">{item.instrumentType ? item.instrumentType : ''}</p>)}
                         </Form.Item>
                         <Form.Item>
-                          {getFieldDecorator('payType',{
-                            initialValue: this.state.hospitalRadioVal
+                          {getFieldDecorator('payType'+item.goodsId,{
+                            initialValue: item.payType
                           })(
                             <Radio.Group>
                               <Radio value={2}>开票价：<span className="price">￥{item.fare?item.fare:0}</span></Radio>
@@ -308,7 +309,7 @@ class Home extends React.Component{
                         </Form.Item>
                         
                         <Form.Item className='for-form' label="医院名称:" required={false}>
-                          {getFieldDecorator('hospitalId')(
+                          {getFieldDecorator('hospitalId'+item.goodsId)(
                             <Select size={"default"} style={{width:'100%'}} placeholder="请选择">
                               {
                                 (item.hospitalList && item.hospitalList.length>0) ? item.hospitalList.map(hItem=>{
@@ -318,30 +319,33 @@ class Home extends React.Component{
                             </Select>
                           )}
                         </Form.Item>
-                        <div className="cart_btn" style={{display:'flex'}}>
-                          <Col md={6} style={{paddingLeft:0,paddingRight:0}}>
-                            <Form.Item>
-                              {getFieldDecorator('num',{
-                                initialValue: item.num
-                              })(
-                                <div style={{display:'flex'}}>
-                                  <Button type='default' className="cartNumBg" onClick={()=>this.handleClickMinus(index)}>
-                                    <Icon type="minus" style={{fontSize:16}} />
-                                  </Button>
-                                  <div className="cartBg">
-                                    <Input placeholder="" defaultValue={1} value={item.num} />
+                        <div className="cart_btn">
+                          <Row style={{display:'flex',justifyContent:'flex-end'}}>
+                            <Col md={14} xm={24} style={{paddingLeft:0,paddingRight:0}}>
+                              <Form.Item>
+                                {getFieldDecorator('num',{
+                                  initialValue: item.num
+                                })(
+                                  <div style={{display:'flex'}}>
+                                    <Button type='default' className="cartNumBg" onClick={()=>this.handleClickMinus(index)}>
+                                      <Icon type="minus" style={{fontSize:14}} />
+                                    </Button>
+                                    <div className="cartBg">
+                                      <Input placeholder="" defaultValue={1} value={item.num} />
+                                    </div>
+                                    <Button type='default' className="cartNumBg" onClick={()=>this.handleClickPlus(index)}>
+                                      <Icon type="plus" style={{fontSize:14}} /> 
+                                    </Button>
                                   </div>
-                                  <Button type='default' className="cartNumBg" onClick={()=>this.handleClickPlus(index)}>
-                                    <Icon type="plus" style={{fontSize:16}} /> 
-                                  </Button>
-                                </div>
-                              )}
-                            </Form.Item>
-                            
-                          </Col>
-                          <Col md={6} style={{paddingRight:0,textAlign:'right'}}>
-                            <Button type='primary' size="large" onClick={()=>this.handleAddCart({goodsId:item.goodsId,farePrice:item.fare,lpPrice:item.lp, type:item.type})}>加入购物车</Button>
-                          </Col>
+                                )}
+                              </Form.Item>
+                              
+                            </Col>
+                            <Col md={10} xm={24} style={{paddingRight:0,textAlign:'right'}}>
+                              <Button type='primary' size="large" onClick={()=>this.handleAddCart({goodsId:item.goodsId,farePrice:item.fare,lpPrice:item.lp, type:item.type})}>加入购物车</Button>
+                            </Col>
+                          </Row>
+                          
                         </div>
                     </div>
                   </div>
