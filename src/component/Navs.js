@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Badge } from 'react-bootstrap'
+import { Badge, Col } from 'react-bootstrap'
 import { withRouter, NavLink} from 'react-router-dom';
 import { cartList } from '../api/cart';
 
@@ -32,14 +32,14 @@ class Navs extends React.Component{
     const { cartLen} = this.state;
     return <div className='sNav'>
       <div className='nav container'>
-        <div className='col-md-2' style={{height:'80px',display:'flex'}}>
+        <Col md={2} sm={12} style={{height:'80px',display:'flex'}}>
           <img src={process.env.PUBLIC_URL + '/img/logo2.png'} alt='logo' />
-        </div>
-        <div className="navTop">
+        </Col>
+        <Col md={10} sm={12} className="navTop">
           <NavLink to='/home'>订购项目</NavLink>
           <NavLink to='/cart'>购物车{this.props.orderData.length!==0 ? <Badge>{this.props.orderData.length}</Badge> : ''}</NavLink>
           <NavLink to='/personal'>个人中心</NavLink>
-        </div>
+        </Col>
       </div>
     </div>;
   }

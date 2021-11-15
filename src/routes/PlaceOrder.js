@@ -21,6 +21,15 @@ class PlaceOrder extends React.Component{
     {
       title: '剩余金额',
       dataIndex: 'balance',
+      render: (text,record)=>{
+        return (
+          <Form.Item style={{marginBottom:0}}>
+            {this.props.form.getFieldDecorator('balance' + record.discountIssueId)(
+              <span>{text}</span>
+            )}
+          </Form.Item>
+        )
+      }
     },
     {
       title: '使用金额',
@@ -53,7 +62,8 @@ class PlaceOrder extends React.Component{
       orderInfo: {},
       addrLoading: false,
       addrVisible: false,
-      addrType: 1, // 收货地址 or 发票地址
+      addrType: 1, // 收货地址 or 发票地址,
+      addressId: 0,
     }
   }
 
@@ -77,7 +87,6 @@ class PlaceOrder extends React.Component{
   // }
 
   getTotal=(data)=>{
-    console.log(data, 'data')
     const proTotal = data.orderItemList&&data.orderItemList.length>0 ? data.orderItemList.reduce((cur,next)=>{
       return cur + next.price*next.num
     },0) : 0
@@ -89,10 +98,6 @@ class PlaceOrder extends React.Component{
     },0) : 0
 
     const price = data.sumMoney - disPrice - data.fullReductionMoney;
-    console.log(data.sumMoney, 'sumMoney')
-    console.log(disPrice, 'disPrice 折扣')
-    console.log(data.fullReductionMoney, '满减')
-    console.log(price, 'price')
     this.setState({
       afterPrice: parseFloat(data.sumMoney) - parseFloat(disPrice) - data.fullReductionMoney,
       discountPrice: disPrice,
@@ -100,9 +105,10 @@ class PlaceOrder extends React.Component{
     })
   }
 
-  checkDiscount=(rule, value, callback)=>{
-    console.log(value, 'value', rule)
-  }
+  // checkDiscount=(rule, value, callback)=>{
+  //   console.log(value, 'value', rule)
+  //   callback();
+  // }
 
   changeUseDiscount=(e,id)=>{
     const request = {...this.state.orderInfo};
@@ -125,14 +131,27 @@ class PlaceOrder extends React.Component{
     const {orderInfo} = this.state;
     const requestVo = {};
     Object.assign(requestVo, orderInfo);
+    const newArr = [];
+    const isFlag = [];
     requestVo.useMoney = this.state.discountPrice ? this.state.discountPrice : 0;
     requestVo.payMoney = this.state.afterPrice;
     orderInfo.discountList.forEach(item=>{
       if(!item.useDiscount){
         item.useDiscount =0;
       }
-      requestVo.discountList.push(item)
+      newArr.push(item)
     })
+    requestVo.discountList = newArr;
+    requestVo.discountList.forEach(item=>{
+      if(item.useDiscount>item.balance || item.useDiscount > requestVo.sumMoney){
+        isFlag.push(false)
+      }else{
+        isFlag.push(true);
+      }
+    })
+    const every = isFlag.every(item=>item);
+    message.warning('使用金额不能超过剩余金额或者付出金额');
+    if(!every) return;
     console.log(requestVo, 'requestVo 下单参数');
     
     orderAdd(requestVo).then(res=>{
@@ -151,11 +170,12 @@ class PlaceOrder extends React.Component{
     })
   }
 
-  // 新增默认地址
-  handleAddVisible = (flag, addrType)=>{
+  // 编辑默认地址
+  handleAddVisible = (flag, addrType, addrId)=>{
     this.setState({
       addrVisible:true,
-      addrType
+      addrType,
+      addressId:addrId
     })
   }
   handleCancelAddr = ()=>{
@@ -175,6 +195,8 @@ class PlaceOrder extends React.Component{
       requestVo.address = values.detailAddr;
       requestVo.agentId = uInfo.roleId;
       requestVo.def = '1';
+      requestVo.addressId = this.state.addressId;
+      console.log(requestVo, 'requestVo 编辑地址')
       agentAddrUpdate(requestVo).then(res=>{
         this.setState({addrLoading:false})
         if(res&&res.result&&res.result.code ===200){
@@ -218,7 +240,7 @@ class PlaceOrder extends React.Component{
                 <p>手机号：{(orderInfo&&orderInfo.goodAddress&&orderInfo.goodAddress.phone) ? orderInfo.goodAddress.phone : ''}</p>
               </div>
               <div className='backImg addrPosition'></div>
-              <div className='editTxt' onClick={()=>this.handleAddVisible(true, 1)}>编辑</div>
+              <div className='editTxt' onClick={()=>this.handleAddVisible(true, 1, orderInfo.goodAddress.addressId)}>编辑</div>
             </div>
             <div className="addrMsg">
               <h3>发票地址</h3>
@@ -228,7 +250,7 @@ class PlaceOrder extends React.Component{
                 <p>地址：{(orderInfo&&orderInfo.invoiceAddress&&orderInfo.invoiceAddress.address) ? orderInfo.invoiceAddress.address : ''}</p>
                 <p>手机号：{(orderInfo&&orderInfo.invoiceAddress&&orderInfo.invoiceAddress.phone) ? orderInfo.invoiceAddress.phone : ''}</p>
               </div>
-              <div className='editTxt' onClick={()=>this.handleAddVisible(true, 2)}>编辑</div>
+              <div className='editTxt' onClick={()=>this.handleAddVisible(true, 2,orderInfo.invoiceAddress.addressId)}>编辑</div>
             </div>
           </div>
           <ul className="row cartUl pOul">
