@@ -63,17 +63,7 @@ class Cart extends React.Component{
     const list = [...this.state.cartLists];
     list[index].num--;
     list[index].num = list[index].num < 1 ? 1 : list[index].num;
-    // this.setState({numLoading: true})
-    updateGoodsNum({
-      num: list[index].num,
-      shoppingCartId: list[index].shoppingCartId
-    }).then(res=>{
-      // this.setState({numLoading: false})
-      if(res&&res.result&&res.result.code===200){
-        // this.getCartList();
-        this.setState({cartLists:list})
-      }
-    })
+    this.updateNum(index)
   }
   // 增加购物车商品数量
   handleAdd=(e,index)=>{
@@ -81,6 +71,22 @@ class Cart extends React.Component{
     const list = [...this.state.cartLists];
     list[index].num++;
     // this.setState({numLoading: true})
+    this.updateNum(index)
+  }
+
+  handleChangeNumber=(e, index, flag)=>{
+    e.preventDefault();
+    const list = [...this.state.cartLists];
+    list[index].num = e.target.value < 1 ? 1 : e.target.value;
+    if(flag){
+      this.updateNum(index)
+    }else{
+      this.setState({cartLists:list})
+    }
+  }
+
+  updateNum = (index)=>{
+    const list = [...this.state.cartLists];
     updateGoodsNum({
       num: list[index].num,
       shoppingCartId: list[index].shoppingCartId
@@ -92,7 +98,7 @@ class Cart extends React.Component{
       }
     })
   }
-
+  
   // 删除商品
   handleDelPro = (item)=>{
     delCart({
@@ -142,7 +148,7 @@ class Cart extends React.Component{
     return (
       <Spin spinning={loading}>
         <div className='navBreadTitle'>
-          <div className='bTitle'>
+          <div className='container'>
             <a href='/#/home'>首页</a>
             <span> / 购物车</span>
           </div>
@@ -173,7 +179,7 @@ class Cart extends React.Component{
                               <span className="txt"><Icon type="minus" style={{fontSize:14}} /></span>
                             </div>
                             <Col xs={4} md={4} className="numInput centerStyle inputW">
-                              <Input value={item.num} />
+                              <Input value={item.num} onChange={e=>this.handleChangeNumber(e,index)} onPressEnter={e=>this.handleChangeNumber(e,index,'flag')} onBlur={e=>this.handleChangeNumber(e,index,'flag')} />
                             </Col>
                             <div className="centerStyle cBox" onClick={(e)=>this.handleAdd(e,index)}>
                               <span className="txt"><Icon type="plus" /></span>

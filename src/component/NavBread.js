@@ -16,7 +16,7 @@ class NavBread extends React.Component{
     
     render(){
         return <div className='navBreadTitle'>
-            <a className='bTitle'>首页</a>
+            <a className='container'>首页</a>
         </div>
     }
 }

@@ -223,7 +223,7 @@ class Home extends React.Component{
     const proSelId = this.props.form.getFieldValue('productSeries');
     return <Spin spinning={loading}>
       <div className='navBreadTitle'>
-        <div className='bTitle'>
+        <div className='container'>
           <a href='/#/home'>首页</a>
         </div>
       </div>
