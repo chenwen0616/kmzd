@@ -23,6 +23,7 @@ class AddressManage extends React.Component{
       addressConfirmList: [], // 收函证地址
       addrTitle: '新增地址',
       addrItem: {},
+      curAddrId: '',
     }
   }
   componentDidMount(){
@@ -102,6 +103,7 @@ class AddressManage extends React.Component{
       const {addressList} = this.state;
       addrItem = addressList.find(item=> item.addressId === addrId);
       console.log(addrItem, 'addrItem')
+      this.setState({curAddrId: addrId})
     }
     const title= tag==='add' ? '新增地址':'编辑地址'
     this.setState({
@@ -137,6 +139,7 @@ class AddressManage extends React.Component{
           }
         })
       }else{
+        requestVo.addressId = this.state.curAddrId;
         agentAddrUpdate(requestVo).then(res=>{
           console.log(res, '编辑地址 结果');
           if(res&&res.result&&res.result.code===200){

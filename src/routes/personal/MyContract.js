@@ -81,17 +81,20 @@ class MyContract extends React.Component{
   }
 
   handleDownloadFile =(path)=>{
+    console.log(path, 'path')
+    const url1 = 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Ftupian.qqjay.com%2Fu%2F2018%2F0222%2F2_163119_13.jpg&refer=http%3A%2F%2Ftupian.qqjay.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1639646017&t=6706e6a6e90316cff959293b7ab06dac'
     const fileName = path.substring(path.lastIndexOf("/")+1);
     const x = new XMLHttpRequest();
-    x.open("GET", path, true);
+    x.open("GET", url1);
     x.responseType = 'blob';
     x.onload=function(e) {
         // 会创建一个 DOMString，其中包含一个表示参数中给出的对象的URL。
         // 这个 URL 的生命周期和创建它的窗口中的 document 绑定。这个新的URL 对象表示指定的 File 对象或 Blob 对象。
         const url = window.URL.createObjectURL(x.response)
         const a = document.createElement('a');
+        console.log(a, 'aaaaa')
         a.href = url
-        a.download = fileName;
+        a.setAttribute('download','')
         a.click()
     }
     x.send();
@@ -184,7 +187,7 @@ class MyContract extends React.Component{
       if(!err){
         console.log(values, 'values')
         const requestVo = {};
-        requestVo.status = values.status;
+        requestVo.contractStatus = values.status;
         requestVo.startDate = values.startTime ? moment(values.startTime).format('YYYY-MM-DD HH:mm:ss') : '';
         requestVo.endDate = values.endTime ? moment(values.endTime).format('YYYY-MM-DD HH:mm:ss') : '';
         this.getList(requestVo)
@@ -208,10 +211,10 @@ class MyContract extends React.Component{
               <Col md={6}>
                 <Form.Item label='筛选状态'>
                   {form.getFieldDecorator('status',{
-                    initialValue: '-1'
+                    initialValue: ''
                   })(
                     <Select>
-                      <Option key={'-1'}>全部</Option>
+                      <Option key='' value=''>全部</Option>
                       {contractStatusList.length>0 ? contractStatusList.map(item=>{
                         return <Option key={item.dictValue}>{item.dictLabel}</Option>
                       }) : null}
