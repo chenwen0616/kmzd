@@ -85,7 +85,7 @@ class MyContract extends React.Component{
     const url1 = 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Ftupian.qqjay.com%2Fu%2F2018%2F0222%2F2_163119_13.jpg&refer=http%3A%2F%2Ftupian.qqjay.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1639646017&t=6706e6a6e90316cff959293b7ab06dac'
     const fileName = path.substring(path.lastIndexOf("/")+1);
     const x = new XMLHttpRequest();
-    x.open("GET", url1);
+    x.open("GET", path);
     x.responseType = 'blob';
     x.onload=function(e) {
         // 会创建一个 DOMString，其中包含一个表示参数中给出的对象的URL。
@@ -188,8 +188,8 @@ class MyContract extends React.Component{
         console.log(values, 'values')
         const requestVo = {};
         requestVo.contractStatus = values.status;
-        requestVo.startDate = values.startTime ? moment(values.startTime).format('YYYY-MM-DD HH:mm:ss') : '';
-        requestVo.endDate = values.endTime ? moment(values.endTime).format('YYYY-MM-DD HH:mm:ss') : '';
+        requestVo.startDate = values.startTime ? moment(values.startTime).format('YYYY-MM-DD') : '';
+        requestVo.endDate = values.endTime ? moment(values.endTime).format('YYYY-MM-DD') : '';
         this.getList(requestVo)
       }
     })

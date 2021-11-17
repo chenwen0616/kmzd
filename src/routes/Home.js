@@ -320,8 +320,8 @@ class Home extends React.Component{
                           )}
                         </Form.Item>
                         <div className="cart_btn">
-                          <Row style={{display:'flex',justifyContent:'flex-end'}}>
-                            <Col md={14} xm={24} style={{paddingLeft:0,paddingRight:0}}>
+                          <div class='cart_hope'>
+                            <div style={{paddingLeft:0,paddingRight:0}}>
                               <Form.Item>
                                 {getFieldDecorator('num',{
                                   initialValue: item.num
@@ -339,12 +339,11 @@ class Home extends React.Component{
                                   </div>
                                 )}
                               </Form.Item>
-                              
-                            </Col>
-                            <Col md={10} xm={24} style={{paddingRight:0,textAlign:'right'}}>
+                            </div>
+                            <div style={{paddingRight:0,textAlign:'right'}}>
                               <Button type='primary' size="large" onClick={()=>this.handleAddCart({goodsId:item.goodsId,farePrice:item.fare,lpPrice:item.lp, type:item.type})}>加入购物车</Button>
-                            </Col>
-                          </Row>
+                            </div>
+                          </div>
                           
                         </div>
                     </div>
