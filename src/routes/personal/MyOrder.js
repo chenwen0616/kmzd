@@ -131,10 +131,9 @@ class MyOrder extends React.Component{
     this.setState({
       [field]: value,
     },()=>{
-      if(field === 'endValue' && this.state.startValue){
-        const start = moment(this.state.startValue).format('YYYY-MM-DD');
-        const end = moment(this.state.endValue).format('YYYY-MM-DD');
-        console.log(start, 'stattttt')
+      if(field === 'endValue'){
+        const start = this.state.startValue ? moment(this.state.startValue).format('YYYY-MM-DD') : '';
+        const end = this.state.endValue ? moment(this.state.endValue).format('YYYY-MM-DD') : '';
         this.getList({
           startDate: start,
           endDate: end
