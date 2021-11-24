@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from "react-redux";
-import { ControlLabel, FormGroup, FormControl} from 'react-bootstrap';
-import { Icon, Spin, Form, Select, Pagination, Button, Input, Radio, message, Row, Col} from 'antd';
+// import { ControlLabel, FormGroup, FormControl} from 'react-bootstrap';
+import { Icon, Spin, Form, Select, Pagination, Button, Input, Radio, message} from 'antd';
 import action from '../store/action';
 
 import {goodsList, goodsTypeList} from '../api/home';
@@ -177,7 +177,7 @@ class Home extends React.Component{
   }
 
   handleAddCart=(param)=>{
-    const {form, orderData} = this.props;
+    const {form} = this.props;
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
     form.validateFields((err, values) => {

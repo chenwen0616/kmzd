@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {ButtonGroup, Button, Row, Col, Tab, Tabs, Modal} from 'react-bootstrap';
-import { Table, DatePicker, Spin} from 'antd';
+import { Row, Col, Tab, Tabs, Modal} from 'react-bootstrap';
+import { Table, DatePicker, Spin, Icon} from 'antd';
 import {Link} from 'react-router-dom';
 import moment from 'moment';
 import {getDict} from '../../api/common'
@@ -34,9 +34,9 @@ class MyDiscount extends React.Component{
       dataIndex: 'status',
       render: (text,record)=>{
         const {statusList} = this.state;
-        if(statusList.length>0){
-          const ss =statusList.find(item=>item.dictValue===String(text));
-        }
+        // if(statusList.length>0){
+        //   const ss =statusList.find(item=>item.dictValue===String(text));
+        // }
         return <span>{statusList.length>0 ? statusList.find(item=>item.dictValue===String(text)).dictLabel : ''}</span>
       }
     },
@@ -44,7 +44,7 @@ class MyDiscount extends React.Component{
       title: '操作',
       dataIndex: 'options',
       render: (text,record)=>{
-        return (<a onClick={()=>this.handleCheckDetail(true, record.discountIssueId)}>查看详情</a>)
+        return (<span style={{color:"#004EA2",cursor:'pointer'}} onClick={()=>this.handleCheckDetail(true, record.discountIssueId)}>查看详情</span>)
       }
     }
   ];
@@ -195,28 +195,31 @@ class MyDiscount extends React.Component{
                 </Tab>
               </Tabs>
               <div className="dateBox">
-                <Col md={5}>
-                  <DatePicker
-                    disabledDate={this.disabledStartDate}
-                    format="YYYY-MM-DD"
-                    value={startValue}
-                    placeholder="开始"
-                    onChange={this.onStartChange}
-                    onOpenChange={this.handleStartOpenChange}
-                  />
-                </Col>
-                <Col md={1}>-</Col>
-                <Col md={5}>
-                  <DatePicker
-                    disabledDate={this.disabledEndDate}
-                    format="YYYY-MM-DD"
-                    value={endValue}
-                    placeholder="结束"
-                    onChange={this.onEndChange}
-                    open={endOpen}
-                    onOpenChange={this.handleEndOpenChange}
-                  />
-                </Col>
+                <div style={{display:'flex',alignItems:'center'}}>
+                  <Col md={5}>
+                    <DatePicker
+                      disabledDate={this.disabledStartDate}
+                      format="YYYY-MM-DD"
+                      value={startValue}
+                      placeholder="开始日期"
+                      onChange={this.onStartChange}
+                      onOpenChange={this.handleStartOpenChange}
+                    />
+                  </Col>
+                  <Col md={1} style={{display:'flex',justifyContent:'center'}}><Icon type="minus" /></Col>
+                  <Col md={5}>
+                    <DatePicker
+                      disabledDate={this.disabledEndDate}
+                      format="YYYY-MM-DD"
+                      value={endValue}
+                      placeholder="结束日期"
+                      onChange={this.onEndChange}
+                      open={endOpen}
+                      onOpenChange={this.handleEndOpenChange}
+                    />
+                  </Col>
+                </div>
+                
                 
               </div>
             </Col>

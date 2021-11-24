@@ -1,9 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {Button, Table, Input, Form, message, Modal} from 'antd';
+import {Button, Table, Input, Form, message, Modal, Popconfirm} from 'antd';
 import { confirmOrderInfo, orderAdd, cartList } from '../api/cart'
+import {Link} from 'react-router-dom';
 import action from '../store/action'
-import { agentAddrUpdate } from '../api/person';
+import { agentAddrUpdate, agentAddrDel } from '../api/person';
 
 import '../assets/css/cart.less';
 
@@ -87,9 +88,6 @@ class PlaceOrder extends React.Component{
   // }
 
   getTotal=(data)=>{
-    const proTotal = data.orderItemList&&data.orderItemList.length>0 ? data.orderItemList.reduce((cur,next)=>{
-      return cur + next.price*next.num
-    },0) : 0
     const disPrice = data.discountList&&data.discountList.length>0 ? data.discountList.reduce((cur,next)=>{
       return cur + next.useDiscount ? next.useDiscount : 0
     },0) : 0
@@ -97,7 +95,6 @@ class PlaceOrder extends React.Component{
       return cur + next.num
     },0) : 0
 
-    const price = data.sumMoney - disPrice - data.fullReductionMoney;
     this.setState({
       afterPrice: parseFloat(data.sumMoney) - parseFloat(disPrice) - data.fullReductionMoney,
       discountPrice: disPrice,
@@ -150,9 +147,11 @@ class PlaceOrder extends React.Component{
       }
     })
     const every = isFlag.every(item=>item);
-    message.warning('使用金额不能超过剩余金额或者付出金额');
-    if(!every) return;
-    console.log(requestVo, 'requestVo 下单参数');
+    // console.log(every, 'every', isFlag)
+    if(!every) {
+      message.warning('使用金额不能超过剩余金额或者付出金额');
+      return;
+    };
     
     orderAdd(requestVo).then(res=>{
       if(res&&res.result&&res.result.code&&res.result.code === 200){
@@ -208,6 +207,16 @@ class PlaceOrder extends React.Component{
     })
   }
 
+  // 删除地址
+  handleDel=(addrId)=>{
+    agentAddrDel({addressId:addrId}).then(res=>{
+      if(res&&res.result&&res.result.code===200){
+        message.success('成功！');
+        this.getOrderInfo();
+      }
+    })
+  }
+
   render(){
     const { discountPrice, orderInfo, addrVisible, addrLoading, addrType } = this.state;
     const {form} = this.props;
@@ -230,16 +239,22 @@ class PlaceOrder extends React.Component{
           <div className="addressInfo">
             <h3>地址信息</h3>
             <p className="selP">请选择配送地址</p>
-            <p className="tip">您想使用的是下方显示的地址吗？如果是，点击相应的“配送到这个地址”按钮，或者您可以输入一个新的送货地址：<a>添加新地址</a></p>
+            <p className="tip">您想使用的是下方显示的地址吗？如果是，点击相应的“配送到这个地址”按钮，或者您可以输入一个新的送货地址：<Link to={{pathname: '/personal/addrmanage',search:'?placeType=1'}}>添加新地址</Link></p>
             <div className="addrMsg">
               <h3>收货地址</h3>
               <div>
-                {/* <p>所在地区：{}</p> */}
                 <p>联系人：{((orderInfo&&orderInfo.goodAddress&&orderInfo.goodAddress.consignee))?orderInfo.goodAddress.consignee : ''}</p>
                 <p>地址：{(orderInfo&&orderInfo.goodAddress&&orderInfo.goodAddress.address) ? orderInfo.goodAddress.address : ''}</p>
                 <p>手机号：{(orderInfo&&orderInfo.goodAddress&&orderInfo.goodAddress.phone) ? orderInfo.goodAddress.phone : ''}</p>
               </div>
-              <div className='backImg addrPosition'></div>
+              <Popconfirm
+                title="是否确认删除该地址?"
+                onConfirm={()=>this.handleDel(orderInfo.goodAddress.addressId)}
+                okText="确定"
+                cancelText="取消"
+              >
+                <div className='backImg addrPosition' style={{cursor:'pointer'}}></div>
+              </Popconfirm>
               <div className='editTxt' onClick={()=>this.handleAddVisible(true, 1, orderInfo.goodAddress.addressId)}>编辑</div>
             </div>
             <div className="addrMsg">

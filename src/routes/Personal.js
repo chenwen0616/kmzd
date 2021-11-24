@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {Route, Switch, Redirect, NavLink,} from 'react-router-dom';
+import {Switch, Redirect, NavLink,} from 'react-router-dom';
 
 import BaseInfo from './personal/BaseInfo'
 import AddressManage from './personal/AddressManage'
@@ -16,9 +16,9 @@ import '../assets/css/personal.less';
 
 
 class Personal extends React.Component{
-  constructor(props){
-    super(props);
-  }
+  // constructor(props){
+  //   super(props);
+  // }
   render(){
     return (<div className="personalBox">
       <div className="mainPersonal">

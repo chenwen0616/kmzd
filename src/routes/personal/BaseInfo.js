@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormGroup, ControlLabel, HelpBlock, FormControl, Row, Col } from 'react-bootstrap';
-import {Upload, Icon, Form, Input, Spin} from 'antd';
+import { Row, Col } from 'react-bootstrap';
+import { Form, Input, Spin} from 'antd';
 
 import {agentDetail, getLicenceList, getThirdLicenceList} from '../../api/person';
 
@@ -199,14 +199,5 @@ class BaseInfo extends React.Component{
   
 }
 
-function FieldGroup({ id, label, help, ...props }) {
-  return (
-    <FormGroup controlId={id}>
-      <ControlLabel>{label}</ControlLabel>
-      <FormControl {...props} />
-      {help && <HelpBlock>{help}</HelpBlock>}
-    </FormGroup>
-  );
-}
 
 export default Form.create()(connect()(BaseInfo))

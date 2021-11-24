@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import { Button, Form, Input, message } from 'antd';
 
@@ -8,9 +7,9 @@ import { updatePassword } from '../../api/common'
 import './login.less';
 
 class UpdatePassword extends React.Component{
-  constructor(props){
-    super(props);
-  }
+  // constructor(props){
+  //   super(props);
+  // }
 
   handleUpdatePass=()=>{
     const { form } = this.props;
@@ -30,9 +29,7 @@ class UpdatePassword extends React.Component{
           }else{
             message.error(res.result.message)
           }
-          console.log(res, 'res 结果')
         })
-        console.log(values, '修改密码')
       }
     })
   }

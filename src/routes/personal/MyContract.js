@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Form, Table, DatePicker, Select, Col, Row, Button, Spin } from 'antd';
+import { Form, Table, DatePicker, Select, Col, Row, Button, Spin, Icon } from 'antd';
 import moment from 'moment';
 import { agentContractList } from '../../api/person'
 import { getDict } from '../../api/common'
@@ -81,9 +81,6 @@ class MyContract extends React.Component{
   }
 
   handleDownloadFile =(path)=>{
-    console.log(path, 'path')
-    const url1 = 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Ftupian.qqjay.com%2Fu%2F2018%2F0222%2F2_163119_13.jpg&refer=http%3A%2F%2Ftupian.qqjay.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1639646017&t=6706e6a6e90316cff959293b7ab06dac'
-    const fileName = path.substring(path.lastIndexOf("/")+1);
     const x = new XMLHttpRequest();
     x.open("GET", path);
     x.responseType = 'blob';
@@ -92,7 +89,6 @@ class MyContract extends React.Component{
         // 这个 URL 的生命周期和创建它的窗口中的 document 绑定。这个新的URL 对象表示指定的 File 对象或 Blob 对象。
         const url = window.URL.createObjectURL(x.response)
         const a = document.createElement('a');
-        console.log(a, 'aaaaa')
         a.href = url
         a.setAttribute('download','')
         a.click()
@@ -138,7 +134,7 @@ class MyContract extends React.Component{
       if(res&&res.data&&res.data.contractList){
         this.setState({contractList: res.data.contractList})
       }
-      console.log(res, 'res 合同列表')
+      // console.log(res, 'res 合同列表')
     })
   }
 
@@ -185,7 +181,6 @@ class MyContract extends React.Component{
     const { form } = this.props;
     form.validateFields((err, values) => {
       if(!err){
-        console.log(values, 'values')
         const requestVo = {};
         requestVo.contractStatus = values.status;
         requestVo.startDate = values.startTime ? moment(values.startTime).format('YYYY-MM-DD') : '';
@@ -193,12 +188,11 @@ class MyContract extends React.Component{
         this.getList(requestVo)
       }
     })
-    console.log('查询')
   }
 
   render(){
     const { form } = this.props;
-    const { startValue, endOpen, endValue, contractList, contractStatusList, loading } = this.state;
+    const { endOpen, contractList, contractStatusList, loading } = this.state;
     return (
       <Spin spinning={loading}>
         <div className='personBread'>
@@ -236,7 +230,7 @@ class MyContract extends React.Component{
                       />
                     )}
                   </Form.Item>
-                  <span style={{display:'inline-block',padding:'0 10px',color:'#888',height:'40px'}}>—</span>
+                  <span style={{display:'inline-block',padding:'0 10px',color:'#888',height:'40px'}}><Icon type="minus" /></span>
                   <Form.Item>
                     {form.getFieldDecorator('endTime')(
                       <DatePicker
@@ -252,7 +246,7 @@ class MyContract extends React.Component{
                   </Form.Item>
                 </Form.Item>
               </Col>
-              <Col md={4}>
+              <Col md={4} style={{marginLeft:10}}>
                 <Button type='primary' size={'large'} onClick={this.handleSearch}>查询</Button>
               </Col>
             </Row>

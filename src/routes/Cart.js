@@ -1,13 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {Link} from 'react-router-dom';
 import { Row, Col} from 'react-bootstrap';
 import { Checkbox,Icon, Input, Popconfirm, message, Spin, Button } from 'antd';
 import {cartList, delCart, updateGoodsNum} from '../api/cart';
 import action from '../store/action';
 
 import '../assets/css/cart.less';
-import { Item } from '../../node_modules/rc-menu/lib';
 
 class Cart extends React.Component{
   // eslint-disable-next-line no-useless-constructor

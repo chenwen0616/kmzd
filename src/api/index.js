@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Qs from 'qs';
+// import Qs from 'qs';
 const token = localStorage.getItem('token') || '';
 
 axios.defaults.baseURL = 'https://crmtest.chemclin.com/';

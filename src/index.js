@@ -12,7 +12,7 @@ import './assets/css/reset.min.css';
 import './assets/css/common.less'
 
 import Navs from './component/Navs';
-import NavBread from './component/NavBread';
+// import NavBread from './component/NavBread';
 import Footer from './component/Footer';
 import Home from './routes/Home';
 import Cart from './routes/Cart';

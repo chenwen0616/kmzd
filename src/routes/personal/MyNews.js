@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {ListGroup, ListGroupItem} from 'react-bootstrap'
+import {ListGroup} from 'react-bootstrap'
 import { Spin, Collapse } from 'antd';
 
 import { getMessage } from '../../api/common';
@@ -32,7 +32,7 @@ class MyNews extends React.Component{
       if(res&&res.data&&res.data.messageList){
         this.setState({messageList: res.data.messageList})
       }
-      console.log(res, 'res')
+      // console.log(res, 'res')
     })
   }
 

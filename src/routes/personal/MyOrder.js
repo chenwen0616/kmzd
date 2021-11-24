@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import {Link} from 'react-router-dom';
 import { Row, Col, Tab, Tabs} from 'react-bootstrap';
-import { DatePicker, Table, Spin, Popconfirm, message } from 'antd';
+import { DatePicker, Table, Spin, Popconfirm, message, Icon } from 'antd';
 import moment from 'moment';
 import {myOrderList, getOrderSign} from '../../api/person'
 
@@ -213,30 +213,30 @@ class MyOrder extends React.Component{
                 </Tab>
               </Tabs>
               <div className="dateBox">
-                <Col md={5}>
-                  <DatePicker
-                    disabledDate={this.disabledStartDate}
-                    format="YYYY-MM-DD"
-                    value={startValue}
-                    placeholder="开始"
-                    onChange={this.onStartChange}
-                    onOpenChange={this.handleStartOpenChange}
-                  />
-                </Col>
-                <Col md={1}>-</Col>
-                <Col md={5}>
-                  <DatePicker
-                    disabledDate={this.disabledEndDate}
-                    format="YYYY-MM-DD"
-                    value={endValue}
-                    placeholder="结束"
-                    onChange={this.onEndChange}
-                    open={endOpen}
-                    onOpenChange={this.handleEndOpenChange}
-                  />
-                </Col>
-                
-                
+                <div style={{display:'flex',alignItems:'center'}}>
+                  <Col md={5}>
+                    <DatePicker
+                      disabledDate={this.disabledStartDate}
+                      format="YYYY-MM-DD"
+                      value={startValue}
+                      placeholder="开始日期"
+                      onChange={this.onStartChange}
+                      onOpenChange={this.handleStartOpenChange}
+                    />
+                  </Col>
+                  <Col md={1} style={{display:'flex',justifyContent:'center'}}><Icon type="minus" /></Col>
+                  <Col md={5}>
+                    <DatePicker
+                      disabledDate={this.disabledEndDate}
+                      format="YYYY-MM-DD"
+                      value={endValue}
+                      placeholder="结束日期"
+                      onChange={this.onEndChange}
+                      open={endOpen}
+                      onOpenChange={this.handleEndOpenChange}
+                    />
+                  </Col>
+                </div>
               </div>
             </Col>
           </Row>

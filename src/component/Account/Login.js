@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { Button, Form, Input, message } from 'antd';
-import { Link, withRouter } from 'react-router-dom';
+// import { Link, withRouter } from 'react-router-dom';
 
 import { apiLogin } from '../../api/person';
 

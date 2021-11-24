@@ -29,7 +29,6 @@ class Navs extends React.Component{
   }
 
   render(){
-    const { cartLen} = this.state;
     return <div className='sNav'>
       <div className='nav container'>
         <Col md={2} sm={12} style={{height:'80px',display:'flex'}}>
