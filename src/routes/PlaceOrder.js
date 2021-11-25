@@ -158,6 +158,7 @@ class PlaceOrder extends React.Component{
         localStorage.removeItem('placeOrderIdList')
         message.success('成功')
         this.props.history.push('/home');
+        localStorage.removeItem('placeOrderIdList')
         cartList({agentId: Number(uInfo.roleId)}).then(response=>{
           this.setState({loading: false})
           if(response&&response.data&&response.data.shoppingCartList){
@@ -239,7 +240,9 @@ class PlaceOrder extends React.Component{
           <div className="addressInfo">
             <h3>地址信息</h3>
             <p className="selP">请选择配送地址</p>
-            <p className="tip">您想使用的是下方显示的地址吗？如果是，点击相应的“配送到这个地址”按钮，或者您可以输入一个新的送货地址：<Link to={{pathname: '/personal/addrmanage',search:'?placeType=1'}}>添加新地址</Link></p>
+            <p className="tip">您想使用的是下方显示的地址吗？如果是，点击相应的“配送到这个地址”按钮，或者您可以输入一个新的送货地址：
+              <Link to={{pathname: '/personal/addrmanage',query:{placeType:'1'}}}>添加新地址</Link>
+            </p>
             <div className="addrMsg">
               <h3>收货地址</h3>
               <div>

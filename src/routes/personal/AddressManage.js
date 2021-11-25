@@ -11,7 +11,7 @@ class AddressManage extends React.Component{
     super(props);
     this.state={
       data: [],
-      addrType: '1',
+      addrType: '2',
       addrVisible: false,
       regionOptions:[],
       listLoading: false,
@@ -25,14 +25,19 @@ class AddressManage extends React.Component{
       addrItem: {},
       curAddrId: '',
       addrTypeArr:[],
-      defaultKey:'2', // 默认显示
     }
   }
   componentDidMount(){
-    console.log(this.props, '初始');
-    this.getAddrList();
+    const {location} = this.props;
     this.getRegionList();
     this.getAddressTypeArr();
+    if(location&&location.query&&location.query.placeType){
+      this.setState({addrType: '1'},()=>{
+        this.getAddrList()
+      })
+    }else{
+      this.getAddrList();
+    }
   }
 
   getRegionList = ()=>{
@@ -197,8 +202,8 @@ class AddressManage extends React.Component{
   }
 
   render(){
-    const {addrVisible, addressInvoiceList, addressReceiveList, addressContractList, addressConfirmList, addrItem, listLoading, regionLoading,addrType, defaultKey} = this.state;
-    const { form } = this.props;
+    const {addrVisible, addressInvoiceList, addressReceiveList, addressContractList, addressConfirmList, addrItem, listLoading, regionLoading,addrType} = this.state;
+    const { form, location } = this.props;
     return (
     <Spin spinning={listLoading||regionLoading}>
       <div className='personBread'>
@@ -208,7 +213,7 @@ class AddressManage extends React.Component{
       <div className="discountStyle" style={{marginBottom:'50px'}}>
         <Row>
           <Col md={12}>
-            <Tabs defaultActiveKey={defaultKey} onSelect={this.handleSelAddrType} id="uncontrolled-tab-example" className="tabStyle">
+            <Tabs defaultActiveKey={(location.query&&location.query.placeType) ? '1':'2'} onSelect={this.handleSelAddrType} id="uncontrolled-tab-example" className="tabStyle">
               <Tab eventKey={'2'} title="收发票" bsClass='b-radius'>
                 <div>
                   {addressInvoiceList.length>0 ? addressInvoiceList.map((item,index)=>{
