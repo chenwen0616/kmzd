@@ -18,7 +18,6 @@ class OrderDetail extends React.Component{
   }
 
   componentDidMount(){
-    console.log(this.props, 'this.props')
     this.getDetail();
   }
 
@@ -26,7 +25,6 @@ class OrderDetail extends React.Component{
     const {location}= this.props;
     const query = location.search;
     const vars = query.split("=");
-    // console.log(vars, 'vars')
     return vars[1];
   }
 
@@ -38,7 +36,7 @@ class OrderDetail extends React.Component{
       if(res&&res.data){
         this.setState({orderDetail:res.data})
       }
-      console.log(res, 'res 订单详情')
+      // console.log(res, 'res 订单详情')
     })
   }
 

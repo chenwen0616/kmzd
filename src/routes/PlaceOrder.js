@@ -103,7 +103,6 @@ class PlaceOrder extends React.Component{
   }
 
   // checkDiscount=(rule, value, callback)=>{
-  //   console.log(value, 'value', rule)
   //   callback();
   // }
 
@@ -115,7 +114,7 @@ class PlaceOrder extends React.Component{
       }
     })
     this.getTotal(request)
-    console.log(request, 'request')
+    // console.log(request, 'request')
     this.setState({
       orderInfo: request,
     })
@@ -147,7 +146,6 @@ class PlaceOrder extends React.Component{
       }
     })
     const every = isFlag.every(item=>item);
-    // console.log(every, 'every', isFlag)
     if(!every) {
       message.warning('使用金额不能超过剩余金额或者付出金额');
       return;
@@ -158,15 +156,15 @@ class PlaceOrder extends React.Component{
         localStorage.removeItem('placeOrderIdList')
         message.success('成功')
         this.props.history.push('/home');
-        localStorage.removeItem('placeOrderIdList')
         cartList({agentId: Number(uInfo.roleId)}).then(response=>{
           this.setState({loading: false})
           if(response&&response.data&&response.data.shoppingCartList){
             this.props.getData(response.data.shoppingCartList)
           }
         })
+      }else{
+        message.error(res.result.message)
       }
-      console.log(res, 'res 下单后返回的结果')
     })
   }
 
@@ -196,7 +194,6 @@ class PlaceOrder extends React.Component{
       requestVo.agentId = uInfo.roleId;
       requestVo.def = '1';
       requestVo.addressId = this.state.addressId;
-      console.log(requestVo, 'requestVo 编辑地址')
       agentAddrUpdate(requestVo).then(res=>{
         this.setState({addrLoading:false})
         if(res&&res.result&&res.result.code ===200){

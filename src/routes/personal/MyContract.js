@@ -37,7 +37,6 @@ class MyContract extends React.Component{
       render: (text,record)=>{
         const {contractStatusList} = this.state;
         const status = contractStatusList.length>0 ?contractStatusList.find(item=>item.dictValue === String(text)).dictLabel : '';
-        console.log(status, 'status')
         return <span>{status}</span>
       }
     },
@@ -54,9 +53,6 @@ class MyContract extends React.Component{
       title: '操作',
       dataIndex: 'operation',
       render: (text, record)=>{
-        const path = record.attachmentPath;
-        const name=path.substring(path.lastIndexOf("/")+1);
-        console.log(name, 'name')
         return (
           <div>
             {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
@@ -100,7 +96,6 @@ class MyContract extends React.Component{
   getContractStatus = ()=>{
     getDict({dictType:'crm_contract_status'}).then(res=>{
       if(res&&res.data&&res.data.dictList&&res.data.dictList.length>0){
-        console.log(res.data.dictList, 'dictList 合同状态')
         this.setState({contractStatusList: res.data.dictList})
       }
     })
@@ -109,7 +104,7 @@ class MyContract extends React.Component{
   getContractType = () =>{
     getDict({dictType:'crm_contract_type'}).then(res=>{
       if(res&&res.data&&res.data.dictList&&res.data.dictList.length>0){
-        console.log(res.data.dictList, '合同类型')
+        // console.log(res.data.dictList, '合同类型')
         this.setState({contractTypeList: res.data.dictList})
       }
     })

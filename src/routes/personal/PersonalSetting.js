@@ -12,7 +12,6 @@ class PersonalSetting extends React.Component{
     }
   }
   editPass = (flag)=>{
-    console.log(flag, 'flag')
     this.setState({editVisible: !!flag})
   }
   
@@ -45,9 +44,7 @@ class PersonalSetting extends React.Component{
           }else{
             message.error(res.result.message)
           }
-          console.log(res, 'res 结果')
         })
-        console.log(values, '修改密码')
       }
     })
   }

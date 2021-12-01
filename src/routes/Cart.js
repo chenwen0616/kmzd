@@ -44,7 +44,6 @@ class Cart extends React.Component{
   handleChangeCart = (e,index)=>{
     const list = [...this.state.cartLists]
     list[index].checked = !list[index].checked;
-    console.log(e.target.value, 'eee')
     // 单选框中如果有一个是checked值为true
     const some = list.some((item,index)=>{
       return list[index].checked
@@ -122,7 +121,6 @@ class Cart extends React.Component{
       jsonList.push(nItem.shoppingCartId);
     })
     const newList = JSON.stringify(jsonList)
-    console.log(newList, 'newList')
     localStorage.setItem('placeOrderIdList', newList)
     this.props.history.push('/placeorder');
   }

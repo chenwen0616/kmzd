@@ -171,6 +171,11 @@ class MyDiscount extends React.Component{
 
   render(){
     const {discountList, startValue, endOpen, endValue, loading, disDetail} = this.state;
+    if(disDetail&&disDetail.discountUsedList&&disDetail.discountUsedList.length>0){
+      disDetail.discountUsedList.sort((a,b)=>{
+        return b.useTime < a.useTime ? -1 : 1
+      })
+    }
     return (
       <Spin spinning={loading}>
         <div className='personBread'>

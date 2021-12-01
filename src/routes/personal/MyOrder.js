@@ -72,6 +72,8 @@ class MyOrder extends React.Component{
       endOpen: false,
       orderList: [],
       loading: false,
+      pageNum: 1,
+      pageSize: 10,
     };
   }
   componentDidMount(){
@@ -79,7 +81,6 @@ class MyOrder extends React.Component{
   }
   // 签收
   handleReceive = (id,status)=>{
-    console.log(id, '签收货品', status)
     getOrderSign({
       orderId: id,
       status: '4',
@@ -93,7 +94,6 @@ class MyOrder extends React.Component{
 
   // // 取消订单
   // handleCancelOrder = id=>{
-  //   console.log(id, '取消订单')
   // }
 
   getList = (param)=>{
@@ -102,8 +102,8 @@ class MyOrder extends React.Component{
     this.setState({loading:true})
     myOrderList({
       agentId:Number(uInfo.roleId),
-      pageNum:1,
-      pageSize:10,
+      pageNum:this.state.pageNum,
+      pageSize:this.state.pageSize,
       ...param,
     }).then(res=>{
       this.setState({loading:false})
@@ -160,6 +160,16 @@ class MyOrder extends React.Component{
     this.setState({ endOpen: open });
   };
 
+  handlePageChange=(pagenation, flag)=>{
+    this.setState({
+      pageSize: pagenation.pageSize,
+      pageNum:pagenation.current
+    })
+    // this.getList(pagenation)
+    console.log(pagenation, 'pagenation')
+    console.log(flag, 'flag')
+  }
+
   render(){
     const {startValue, endOpen, endValue, orderList, loading} = this.state;
     let proList, payList, deliveryList, receiveList,cancelList;
@@ -169,6 +179,10 @@ class MyOrder extends React.Component{
       deliveryList = orderList.filter(item=>item.status==='3');  // 已发货
       receiveList = orderList.filter(item=>item.status==='4');  // 已收货
       cancelList = orderList.filter(item=>item.status==='5');  // 已取消
+    }
+    const newPages = {
+      current: this.state.pageNum,
+      pageSize: this.state.pageSize
     }
     
     return (
@@ -183,7 +197,13 @@ class MyOrder extends React.Component{
               <Tabs defaultActiveKey={1} id="uncontrolled-tab-example" className="tabStyle">
                 <Tab eventKey={1} title="全部订单" bsClass='b-radius'>
                   <div className="tableM">
-                    <Table rowKey='orderId' dataSource={orderList} columns={this.columns} />
+                    <Table 
+                      rowKey='orderId' 
+                      dataSource={orderList} 
+                      columns={this.columns} 
+                      pagination={newPages}
+                      onChange={(pagination)=>this.handlePageChange(pagination,1)} 
+                    />
                   </div>
                 </Tab>
                 <Tab eventKey={2} title="已订货">

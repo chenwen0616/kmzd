@@ -143,7 +143,6 @@ class Home extends React.Component{
   // 减数量
   handleClickMinus = (index)=>{
     const list = [...this.state.goodsList];
-    console.log(index, 'list')
     list[index].num--;
     list[index].num = list[index].num < 1 ? 1 : list[index].num;
     this.setState({goodsList:list})

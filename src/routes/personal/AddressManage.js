@@ -60,7 +60,6 @@ class AddressManage extends React.Component{
             }
           })
         })
-        // console.log(nextRegion, 'nextRegion')
         regionOptions.forEach(item=>{
           item.children = []
           nextRegion.forEach(oItem=>{
@@ -78,7 +77,6 @@ class AddressManage extends React.Component{
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
     this.setState({listLoading: true})
-    console.log(this.state.addrType, '重新加载')
     agentAddrList({
       agentId: uInfo.roleId,
       type: this.state.addrType
@@ -109,7 +107,6 @@ class AddressManage extends React.Component{
           newArr.push({addrLabel:item.dictLabel,addrValue:item.dictValue})
         })
       }
-      console.log(res, 'res 地址type')
     })
     this.setState({
       addrTypeArr:newArr
@@ -166,7 +163,6 @@ class AddressManage extends React.Component{
       }else{
         requestVo.addressId = this.state.curAddrId;
         agentAddrUpdate(requestVo).then(res=>{
-          console.log(res, '编辑地址 结果');
           if(res&&res.result&&res.result.code===200){
             message.success('成功！');
             this.handleCancelAddr();
@@ -183,7 +179,6 @@ class AddressManage extends React.Component{
     const requestVo = {...item};
     requestVo.def = '1';
     agentAddrUpdate(requestVo).then(res=>{
-      console.log(res, '设为默认结果');
       if(res&&res.result&&res.result.code===200){
         message.success('成功！');
         this.getAddrList();
