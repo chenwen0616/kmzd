@@ -96,7 +96,7 @@ class PlaceOrder extends React.Component{
     },0) : 0
 
     this.setState({
-      afterPrice: parseFloat(data.sumMoney) - parseFloat(disPrice) - data.fullReductionMoney,
+      afterPrice: (parseFloat(data.sumMoney)*10000 - parseFloat(disPrice)*10000 - data.fullReductionMoney*10000)/10000,
       discountPrice: disPrice,
       totalNum,
     })

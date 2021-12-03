@@ -74,6 +74,7 @@ class MyOrder extends React.Component{
       loading: false,
       pageNum: 1,
       pageSize: 10,
+      total: 0,
     };
   }
   componentDidMount(){
@@ -108,7 +109,11 @@ class MyOrder extends React.Component{
     }).then(res=>{
       this.setState({loading:false})
       if(res&&res.data&&res.data.orderList){
-        this.setState({orderList:res.data.orderList})
+        console.log(res, 'res 我的订单')
+        this.setState({
+          orderList:res.data.orderList,
+          total:res.data.total
+        })
       }
     })
   }
@@ -165,26 +170,44 @@ class MyOrder extends React.Component{
       pageSize: pagenation.pageSize,
       pageNum:pagenation.current
     })
-    // this.getList(pagenation)
-    console.log(pagenation, 'pagenation')
-    console.log(flag, 'flag')
+    this.getList({pageNum:pagenation.current,pageSize:pagenation.pageSize,status: flag})
+  }
+
+  handleTabChange=(key)=>{
+    const start = this.state.startValue ? moment(this.state.startValue).format('YYYY-MM-DD') : '';
+    const end = this.state.endValue ? moment(this.state.endValue).format('YYYY-MM-DD') : '';
+    if(key!=='0'){
+      this.getList({
+        startDate: start,
+        endDate: end,
+        status: key
+      })
+    }else{
+      this.getList({
+        startDate: start,
+        endDate: end,
+      })
+    }
+    this.setState({pageNum:1})
   }
 
   render(){
     const {startValue, endOpen, endValue, orderList, loading} = this.state;
-    let proList, payList, deliveryList, receiveList,cancelList;
-    if(orderList.length>0){
-      proList = orderList.filter(item=>item.status==='1');  // 已订货
-      payList = orderList.filter(item=>item.status==='2');  // 已付款
-      deliveryList = orderList.filter(item=>item.status==='3');  // 已发货
-      receiveList = orderList.filter(item=>item.status==='4');  // 已收货
-      cancelList = orderList.filter(item=>item.status==='5');  // 已取消
-    }
+    /**
+     * status
+     * 1 已订货
+     * 2 已付款
+     * 3 已发货
+     * 4 已收货
+     * 5 已取消
+     */
     const newPages = {
       current: this.state.pageNum,
-      pageSize: this.state.pageSize
+      pageSize: this.state.pageSize,
+      total: this.state.total
     }
     
+    console.log(orderList, 'orderList')
     return (
       <Spin spinning={loading}>
         <div className='personBread'>
@@ -194,41 +217,69 @@ class MyOrder extends React.Component{
         <div className="discountStyle">
           <Row>
             <Col md={12}>
-              <Tabs defaultActiveKey={1} id="uncontrolled-tab-example" className="tabStyle">
-                <Tab eventKey={1} title="全部订单" bsClass='b-radius'>
+              <Tabs defaultActiveKey={'0'} id="uncontrolled-tab-example" className="tabStyle" onSelect={this.handleTabChange}>
+                <Tab eventKey={'0'} title="全部订单" bsClass='b-radius'>
                   <div className="tableM">
                     <Table 
                       rowKey='orderId' 
                       dataSource={orderList} 
                       columns={this.columns} 
                       pagination={newPages}
-                      onChange={(pagination)=>this.handlePageChange(pagination,1)} 
+                      onChange={(pagination)=>this.handlePageChange(pagination,'')} 
                     />
                   </div>
                 </Tab>
-                <Tab eventKey={2} title="已订货">
+                <Tab eventKey={'1'} title="已订货">
                   <div className="tableM">
-                    <Table rowKey='orderId' dataSource={proList} columns={this.columns} />
+                    <Table 
+                      rowKey='orderId' 
+                      dataSource={orderList} 
+                      columns={this.columns} 
+                      pagination={newPages}
+                      onChange={(pagination)=>this.handlePageChange(pagination,'1')} 
+                    />
                   </div>
                 </Tab>
-                <Tab eventKey={3} title="已付款">
+                <Tab eventKey={'2'} title="已付款">
                   <div className="tableM">
-                    <Table dataSource={payList} columns={this.columns} />
+                    <Table 
+                      dataSource={orderList} 
+                      columns={this.columns} 
+                      pagination={newPages}
+                      onChange={(pagination)=>this.handlePageChange(pagination,'2')} 
+                    />
                   </div>
                 </Tab>
-                <Tab eventKey={4} title="已发货">
+                <Tab eventKey={'3'} title="已发货">
                   <div className="tableM">
-                    <Table rowKey='orderId' dataSource={deliveryList} columns={this.columns} />
+                    <Table 
+                      rowKey='orderId' 
+                      dataSource={orderList} 
+                      columns={this.columns} 
+                      pagination={newPages}
+                      onChange={(pagination)=>this.handlePageChange(pagination,'3')} 
+                    />
                   </div>
                 </Tab>
-                <Tab eventKey={5} title="已收货">
+                <Tab eventKey={'4'} title="已收货">
                   <div className="tableM">
-                    <Table rowKey='orderId' dataSource={receiveList} columns={this.columns} />
+                    <Table 
+                      rowKey='orderId' 
+                      dataSource={orderList} 
+                      columns={this.columns} 
+                      pagination={newPages}
+                      onChange={(pagination)=>this.handlePageChange(pagination,'4')} 
+                    />
                   </div>
                 </Tab>
-                <Tab eventKey={6} title="已取消">
+                <Tab eventKey={'5'} title="已取消">
                   <div className="tableM">
-                    <Table rowKey='orderId' dataSource={cancelList} columns={this.columns} />
+                    <Table 
+                      rowKey='orderId' 
+                      dataSource={orderList} columns={this.columns} 
+                      pagination={newPages}
+                      onChange={(pagination)=>this.handlePageChange(pagination,'5')} 
+                    />
                   </div>
                 </Tab>
               </Tabs>

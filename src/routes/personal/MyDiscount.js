@@ -87,10 +87,12 @@ class MyDiscount extends React.Component{
       loading: false,
       disDetail: {},
       statusList: [],
+      pageNum:1,
+      pageSize: 10,
     }
   }
   componentDidMount(){
-    this.getList();
+    this.getList({pageSize:this.state.pageSize,pageNum:this.state.pageNum});
     this.getStatus()
   }
 
@@ -100,14 +102,16 @@ class MyDiscount extends React.Component{
     this.setState({loading: true})
     agentDiscountList({
       agentId: uInfo.roleId,
-      pageNum: 1,
-      pageSize: 10,
+      pageNum:this.state.pageNum,
+      pageSize:this.state.pageSize,
       ...param
       // status: 1,
     }).then(res=>{
       this.setState({loading:false})
       if(res&&res.data&&res.data.discountList){
-        this.setState({discountList: res.data.discountList})
+        this.setState({
+          discountList: res.data.discountList
+        })
       }
     })
   }
@@ -136,6 +140,7 @@ class MyDiscount extends React.Component{
     return endValue.valueOf() <= startValue.valueOf();
   };
   onChange = (field, value) => {
+    const {pageNum, pageSize} = this.state;
     this.setState({
       [field]: value,
     },()=>{
@@ -144,7 +149,9 @@ class MyDiscount extends React.Component{
         const end = this.state.endValue ? moment(this.state.endValue).format('YYYY-MM-DD') : '';
         this.getList({
           startDate: start,
-          endDate: end
+          endDate: end,
+          pageSize,
+          pageNum
         })
       }
     });
@@ -169,12 +176,43 @@ class MyDiscount extends React.Component{
     this.setState({ endOpen: open });
   };
 
+  handleChangePage = (pagination,flag)=>{
+    this.setState({
+      pageSize: pagination.pageSize,
+      pageNum:pagination.current
+    })
+    this.getList({pageNum:pagination.current,pageSize:pagination.pageSize,status: flag})
+  }
+
+  handleTabChange=(key)=>{
+    const start = this.state.startValue ? moment(this.state.startValue).format('YYYY-MM-DD') : '';
+    const end = this.state.endValue ? moment(this.state.endValue).format('YYYY-MM-DD') : '';
+    if(key!=='-1'){
+      this.getList({
+        startDate: start,
+        endDate: end,
+        status: key
+      })
+    }else{
+      this.getList({
+        startDate: start,
+        endDate: end,
+      })
+    }
+    this.setState({pageNum:1})
+  }
+
   render(){
     const {discountList, startValue, endOpen, endValue, loading, disDetail} = this.state;
-    if(disDetail&&disDetail.discountUsedList&&disDetail.discountUsedList.length>0){
-      disDetail.discountUsedList.sort((a,b)=>{
-        return b.useTime < a.useTime ? -1 : 1
-      })
+    // if(disDetail&&disDetail.discountUsedList&&disDetail.discountUsedList.length>0){
+    //   disDetail.discountUsedList.sort((a,b)=>{
+    //     return b.useTime < a.useTime ? -1 : 1
+    //   })
+    // }
+    const newPagesTotal = {
+      current: this.state.pageNum,
+      pageSize: this.state.pageSize,
+      total: this.state.total
     }
     return (
       <Spin spinning={loading}>
@@ -185,18 +223,42 @@ class MyDiscount extends React.Component{
         <div className="discountStyle discountBox">
           <Row>
             <Col md={12}>
-              <Tabs defaultActiveKey={1} id="uncontrolled-tab-example" className="tabStyle">
-                <Tab eventKey={1} title="所有折扣" bsClass='b-radius'>
-                  <Table columns={this.cloumns} dataSource={discountList} rowKey='discountIssueId' />
+              <Tabs defaultActiveKey={'-1'} id="uncontrolled-tab-example" className="tabStyle" onSelect={this.handleTabChange}>
+                <Tab eventKey={'-1'} title="所有折扣" bsClass='b-radius'>
+                  <Table 
+                    columns={this.cloumns} 
+                    dataSource={discountList} 
+                    rowKey='discountIssueId' 
+                    pagination={newPagesTotal}
+                    onChange={(pagination)=>this.handleChangePage(pagination,'')}
+                  />
                 </Tab>
-                <Tab eventKey={2} title="使用中">
-                  <Table columns={this.cloumns} dataSource={discountList.length>0 ? discountList.filter(item=>item.status===0) : []} rowKey='discountIssueId' />
+                <Tab eventKey={'0'} title="使用中">
+                  <Table 
+                    columns={this.cloumns} 
+                    dataSource={discountList.length>0 ? discountList.filter(item=>item.status===0) : []} 
+                    rowKey='discountIssueId' 
+                    pagination={newPagesTotal}
+                    onChange={(pagination)=>this.handleChangePage(pagination,'0')}
+                  />
                 </Tab>
-                <Tab eventKey={3} title="已使用">
-                  <Table columns={this.cloumns} dataSource={discountList.length>0 ? discountList.filter(item=>item.status===1) : []} rowKey='discountIssueId' />
+                <Tab eventKey={'1'} title="已使用">
+                  <Table 
+                    columns={this.cloumns} 
+                    dataSource={discountList.length>0 ? discountList.filter(item=>item.status===1) : []} 
+                    rowKey='discountIssueId' 
+                    pagination={newPagesTotal}
+                    onChange={(pagination)=>this.handleChangePage(pagination,'1')}
+                  />
                 </Tab>
-                <Tab eventKey={4} title="已过期">
-                  <Table columns={this.cloumns} dataSource={discountList.length>0 ? discountList.filter(item=>item.status===2) : []} rowKey='discountIssueId' />
+                <Tab eventKey={'2'} title="已过期">
+                  <Table 
+                    columns={this.cloumns} 
+                    dataSource={discountList.length>0 ? discountList.filter(item=>item.status===2) : []} 
+                    rowKey='discountIssueId' 
+                    pagination={newPagesTotal}
+                    onChange={(pagination)=>this.handleChangePage(pagination,'2')}
+                  />
                 </Tab>
               </Tabs>
               <div className="dateBox">

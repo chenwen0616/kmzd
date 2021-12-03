@@ -55,8 +55,8 @@ class MyNews extends React.Component{
           <ListGroup>
             {messageList.length>0 ? messageList.map(item=>{
               return (
-                <Collapse defaultActiveKey={[]} bordered={false}>
-                  <Panel header={this.getTitle(item)} key="1">
+                <Collapse defaultActiveKey={[]} bordered={false} key={item.messageId}>
+                  <Panel header={this.getTitle(item)}>
                     <p style={{fontWeight:'bold'}}>{item.title}</p>
                     <p style={{color:'#999'}}>{item.createTime.slice(0,11)}</p>
                     <p style={{marginTop:10}}>{item.message}</p>
