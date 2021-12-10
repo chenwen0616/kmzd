@@ -27,6 +27,8 @@ class AddressManage extends React.Component{
       addrTypeArr:[],
     }
   }
+
+  // 页面加载进来后需要完成的事情
   componentDidMount(){
     const {location} = this.props;
     this.getRegionList();
@@ -40,6 +42,7 @@ class AddressManage extends React.Component{
     }
   }
 
+  // 省市级
   getRegionList = ()=>{
     this.setState({regionLoading: true})
     getRegion().then(res=>{
@@ -73,6 +76,7 @@ class AddressManage extends React.Component{
     })
   }
   
+  // 获取地址列表
   getAddrList(){
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
@@ -113,6 +117,7 @@ class AddressManage extends React.Component{
     })
   }
 
+  // 不同地址type下的列表
   handleSelAddrType=ev=>{
     this.setState({addrType: ev},()=>{
       this.getAddrList();
@@ -120,6 +125,7 @@ class AddressManage extends React.Component{
     
   }
 
+  // 新增or编辑 对话框是否弹出
   handleAddModalVisible =(flag, tag, addrId)=>{
     let addrItem;
     if(addrId){
@@ -134,6 +140,7 @@ class AddressManage extends React.Component{
       addrItem
     })
   }
+  // 新增or编辑地址对话框隐藏
   handleCancelAddr = ()=>{
     this.setState({addrVisible: false})
   }

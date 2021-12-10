@@ -19,6 +19,7 @@ class MyNews extends React.Component{
     this.getList();
   }
 
+  // 获取我的消息列表
   getList = ()=>{
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
@@ -36,6 +37,7 @@ class MyNews extends React.Component{
     })
   }
 
+  // 消息详细信息
   getTitle=(item)=>{
     const header = <div style={{display:'flex'}}>
       <span className="s-l-txt">{item.title}</span>

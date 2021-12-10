@@ -61,20 +61,22 @@ class Home extends React.Component{
       // testItemId: ''  // 4
     }).then(res=>{
       this.setState({ loading: false })
-      if(res&&res.data&&res.data.goodsList&&res.data.goodsList.length>0){
+      if(res&&res.data){
         const arr =[];
-        res.data.goodsList.forEach(item=>{
-          arr.push({
-            ...item, 
-            num:1,
-            payType: 2,
+        if(res.data.goodsList&&res.data.goodsList.length>0){
+          res.data.goodsList.forEach(item=>{
+            arr.push({
+              ...item, 
+              num:1,
+              payType: 2,
+            })
           })
-        })
+        }
         this.setState({
-          goodsList: arr,
           pageNum: res.data.pageNum,
           pageSize: res.data.pageSize,
-          total: res.data.total
+          total: res.data.total,
+          goodsList: arr,
         })
       }
     }).catch((err)=>{

@@ -97,6 +97,7 @@ class MyOrder extends React.Component{
   // handleCancelOrder = id=>{
   // }
 
+  // 获取我的订单列表
   getList = (param)=>{
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
@@ -117,6 +118,8 @@ class MyOrder extends React.Component{
       }
     })
   }
+
+  // 开始日期不能大于结束日期
   disabledStartDate = startValue => {
     const { endValue } = this.state;
     if (!startValue || !endValue) {
@@ -125,6 +128,7 @@ class MyOrder extends React.Component{
     return startValue.valueOf() > endValue.valueOf();
   };
 
+  // 结束日期不能小于开始日期
   disabledEndDate = endValue => {
     const { startValue } = this.state;
     if (!endValue || !startValue) {
@@ -132,6 +136,7 @@ class MyOrder extends React.Component{
     }
     return endValue.valueOf() <= startValue.valueOf();
   };
+  // 选择日期变化时的回调
   onChange = (field, value) => {
     this.setState({
       [field]: value,
@@ -146,25 +151,27 @@ class MyOrder extends React.Component{
       }
     });
   };
-  
+  // 开始日期变化时
   onStartChange = value => {
     this.onChange('startValue', value);
   };
-  
+  // 结束日期变化时
   onEndChange = value => {
     this.onChange('endValue', value);
   };
   
+  // 开始日期面板是否展开
   handleStartOpenChange = open => {
     if (!open) {
       this.setState({ endOpen: true });
     }
   };
-  
+  // 结束日期面板是否展开
   handleEndOpenChange = open => {
     this.setState({ endOpen: open });
   };
 
+  // 分页回调
   handlePageChange=(pagenation, flag)=>{
     this.setState({
       pageSize: pagenation.pageSize,
@@ -173,6 +180,7 @@ class MyOrder extends React.Component{
     this.getList({pageNum:pagenation.current,pageSize:pagenation.pageSize,status: flag})
   }
 
+  // tab页切换时的回调
   handleTabChange=(key)=>{
     const start = this.state.startValue ? moment(this.state.startValue).format('YYYY-MM-DD') : '';
     const end = this.state.endValue ? moment(this.state.endValue).format('YYYY-MM-DD') : '';

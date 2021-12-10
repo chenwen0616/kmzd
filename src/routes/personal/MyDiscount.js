@@ -96,6 +96,7 @@ class MyDiscount extends React.Component{
     this.getStatus()
   }
 
+  // 获取折扣列表数据
   getList = (param)=>{
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
@@ -115,7 +116,7 @@ class MyDiscount extends React.Component{
       }
     })
   }
-
+  // 获取折扣状态
   getStatus = ()=>{
     getDict({dictType:'crm_discount_use_flag'}).then(res=>{
       if(res&&res.data&&res.data.dictList){
@@ -123,7 +124,7 @@ class MyDiscount extends React.Component{
       }
     })
   }
-
+  // 开始日期不能大于结束日期
   disabledStartDate = startValue => {
     const { endValue } = this.state;
     if (!startValue || !endValue) {
@@ -132,6 +133,7 @@ class MyDiscount extends React.Component{
     return startValue.valueOf() > endValue.valueOf();
   };
 
+  // 结束日期不能小于开始日期
   disabledEndDate = endValue => {
     const { startValue } = this.state;
     if (!endValue || !startValue) {
@@ -139,6 +141,8 @@ class MyDiscount extends React.Component{
     }
     return endValue.valueOf() <= startValue.valueOf();
   };
+
+  // 日期改变时执行的回调
   onChange = (field, value) => {
     const {pageNum, pageSize} = this.state;
     this.setState({
@@ -155,27 +159,27 @@ class MyDiscount extends React.Component{
         })
       }
     });
-    
   };
-  
+  // 开始日期改变时执行的回调
   onStartChange = value => {
     this.onChange('startValue', value);
   };
-  
+  // 结束日期改变时执行的回调
   onEndChange = value => {
     this.onChange('endValue', value);
   };
-  
+
+  // 日期面板是否展开
   handleStartOpenChange = open => {
     if (!open) {
       this.setState({ endOpen: true });
     }
   };
-  
   handleEndOpenChange = open => {
     this.setState({ endOpen: open });
   };
 
+  // 分页执行回调
   handleChangePage = (pagination,flag)=>{
     this.setState({
       pageSize: pagination.pageSize,
@@ -184,6 +188,7 @@ class MyDiscount extends React.Component{
     this.getList({pageNum:pagination.current,pageSize:pagination.pageSize,status: flag})
   }
 
+  // tab页切换时不同状态下请求的数据
   handleTabChange=(key)=>{
     const start = this.state.startValue ? moment(this.state.startValue).format('YYYY-MM-DD') : '';
     const end = this.state.endValue ? moment(this.state.endValue).format('YYYY-MM-DD') : '';
@@ -202,6 +207,7 @@ class MyDiscount extends React.Component{
     this.setState({pageNum:1})
   }
 
+  // 我的折扣-页面
   render(){
     const {discountList, startValue, endOpen, endValue, loading, disDetail} = this.state;
     // if(disDetail&&disDetail.discountUsedList&&disDetail.discountUsedList.length>0){
@@ -215,6 +221,7 @@ class MyDiscount extends React.Component{
       total: this.state.total
     }
     return (
+      // loading （Spin）
       <Spin spinning={loading}>
         <div className='personBread'>
           <a href='/#/home'>首页</a>
@@ -291,7 +298,7 @@ class MyDiscount extends React.Component{
               </div>
             </Col>
           </Row>
-
+          {/* 点击查看详情的对话框 */}
           <Modal
             show={this.state.detailModalVisible}
             onHide={this.handleHide}

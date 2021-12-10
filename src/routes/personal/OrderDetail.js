@@ -21,6 +21,7 @@ class OrderDetail extends React.Component{
     this.getDetail();
   }
 
+  // 获取地址栏参数
   getQueryVariable=(variable)=>{
     const {location}= this.props;
     const query = location.search;
@@ -28,6 +29,7 @@ class OrderDetail extends React.Component{
     return vars[1];
   }
 
+  // 获取订单详情
   getDetail=()=>{
     this.setState({loading: true});
     const param = this.getQueryVariable()

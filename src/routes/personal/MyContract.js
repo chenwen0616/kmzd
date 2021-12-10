@@ -8,6 +8,7 @@ import { getDict } from '../../api/common'
 const { Option } = Select;
 
 class MyContract extends React.Component{
+  // 表格表头
   columns = [
     {
       title: '序号',
@@ -63,6 +64,7 @@ class MyContract extends React.Component{
       }
     },
   ]
+  
   constructor(props){
     super(props);
     this.state = {
