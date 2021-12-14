@@ -78,6 +78,10 @@ class Home extends React.Component{
           total: res.data.total,
           goodsList: arr,
         })
+      }else{
+        console.log(res, '货品')
+        message.error(res.result.message)
+        this.setState({goodsList:[]})
       }
     }).catch((err)=>{
       this.setState({ loading: false })
@@ -306,6 +310,14 @@ class Home extends React.Component{
                               <Radio value={2}>开票价：<span className="price">￥{item.fare?item.fare:0}</span></Radio>
                               <Radio value={1}>LP价：<span className="price">￥{item.lp ? item.lp : 0}</span></Radio>
                             </Radio.Group>
+                          )}
+                        </Form.Item>
+                        <Form.Item>
+                          {getFieldDecorator('show')(
+                            <p>
+                              <span>瓶型：</span>
+                              <span>地域：</span>
+                            </p>
                           )}
                         </Form.Item>
                         
