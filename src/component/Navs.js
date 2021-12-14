@@ -19,13 +19,17 @@ class Navs extends React.Component{
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
     if(uInfo){
-      cartList({agentId: Number(uInfo.roleId)}).then(res=>{
-        if(res&&res.data&&res.data.shoppingCartList){
-          this.setState({cartLen:res.data.shoppingCartList.length})
-        }
-      })
+      this.reduxGetCartData(uInfo)
     }
-    
+  }
+
+  // 存入redux
+  reduxGetCartData=(uInfo)=>{
+    cartList({agentId: Number(uInfo.roleId)}).then(response=>{
+      if(response&&response.data&&response.data.shoppingCartList){
+        this.props.getData(response.data.shoppingCartList)
+      }
+    })
   }
 
   render(){

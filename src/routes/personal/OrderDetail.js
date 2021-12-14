@@ -82,7 +82,7 @@ class OrderDetail extends React.Component{
                       return (
                         <li className="proList">
                           <div className="proDiv">
-                            <div className="col-md-10 cartLeft">
+                            <div className="col-md-7 cartLeft">
                               <div className="imgBox">
                                 <img src={item.url?item.url:''} alt={''} style={{width:'98%'}} />
                               </div>
@@ -93,6 +93,10 @@ class OrderDetail extends React.Component{
                                   <p className="proPrice">开票价：<span>￥{item.price?item.price:''}</span></p>
                                 </div>
                               </div>
+                            </div>
+                            <div className="col-md-3">
+                              <p>瓶型：</p>
+                              <p>地域：</p>
                             </div>
                             <div className="col-md-1">
                               X{item.num?item.num:0}
