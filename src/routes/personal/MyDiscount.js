@@ -15,8 +15,17 @@ class MyDiscount extends React.Component{
       dataIndex: 'discountIssueId',
     },
     {
-      title: '已使用金券',
-      dataIndex: '',
+      title: '已使用金额',
+      dataIndex: 'usedMoney',
+      render: (text,record)=>{
+        let usedPay = 0;
+        const discount = record.discount ? record.discount : 0;
+        const balance = record.balance ? record.balance : 0;
+        usedPay = discount - balance;
+        return (
+          <div>{usedPay}</div>
+        )
+      }
     },
     {
       title: '剩余金额',
@@ -314,7 +323,7 @@ class MyDiscount extends React.Component{
                 <h2>基础信息</h2>
                 <Row>
                   <Col md={12} className="colStyle">折扣编号：{disDetail&&disDetail.discountDetail&&disDetail.discountDetail.discountIssueId ? disDetail.discountDetail.discountIssueId : ''}</Col>
-                  <Col md={6} className="colStyle">使用金额：<span>￥{disDetail&&disDetail.discountDetail&&disDetail.discountDetail.discount ? disDetail.discountDetail.discount : ''}</span></Col>
+                  <Col md={6} className="colStyle">折扣总额：<span>￥{disDetail&&disDetail.discountDetail&&disDetail.discountDetail.discount ? disDetail.discountDetail.discount : ''}</span></Col>
                   <Col md={6} className="colStyle">剩余金额：<span>￥{disDetail&&disDetail.discountDetail&&disDetail.discountDetail.balance ? disDetail.discountDetail.balance : ''}</span></Col>
                 </Row>
                 <h2>使用商品</h2>

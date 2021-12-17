@@ -7,7 +7,7 @@ export default function cart (state={
   switch(action.type){
     case TYPES.CARTDATA:
       const {payload} = action;
-      console.log(payload, 'payload')
+      // console.log(payload, 'payload')
       state = {...state, orderData: [...payload]};
       break;
   }

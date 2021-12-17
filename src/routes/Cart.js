@@ -4,6 +4,7 @@ import { Row, Col} from 'react-bootstrap';
 import { Checkbox,Icon, Input, Popconfirm, message, Spin, Button } from 'antd';
 import {cartList, delCart, updateGoodsNum} from '../api/cart';
 import action from '../store/action';
+import {getDict} from '../api/common';
 
 import '../assets/css/cart.less';
 
@@ -15,11 +16,16 @@ class Cart extends React.Component{
       cartLists: [],
       loading: false,
       // numLoading: false,
+      bottleData:[],
+      regionData:[],
+      allChecked: false,  // 全选选择初始值
     }
   }
 
   componentDidMount(){
-    this.getCartList()
+    this.getCartList();
+    this.getBottleData();
+    this.getRegionData();
   }
 
   getCartList = ()=>{
@@ -28,7 +34,7 @@ class Cart extends React.Component{
     this.setState({loading:true})
     cartList({agentId: Number(uInfo.roleId)}).then(res=>{
       this.setState({loading: false})
-      if(res&&res.data&&res.data.shoppingCartList){
+      if(res&&res.data&&res.data.shoppingCartList&&res.result.code===200){
         const newData = [];
         if(res.data.shoppingCartList.length>0){
           res.data.shoppingCartList.forEach(item=>{
@@ -37,6 +43,37 @@ class Cart extends React.Component{
         }
         this.props.getData(res.data.shoppingCartList)
         this.setState({cartLists:newData})
+      }else{
+        message.error(res.result.message)
+      }
+    })
+  }
+
+  // 获取瓶型字典
+  getBottleData=()=>{
+    getDict({
+      dictType: 'crm_reagent_bottle'
+    }).then(res=>{
+      if(res&&res.data){
+        if(res.data.dictList&&res.data.dictList.length>0){
+          this.setState({bottleData:res.data.dictList})
+        }
+      }else{
+        message.error(res.result.message)
+      }
+    })
+  }
+
+  // 获取地域字典
+  getRegionData=()=>{
+    getDict({dictType: 'crm_reagent_region'}).then(res=>{
+      console.log(res, '地域')
+      if(res&&res.data){
+        if(res.data.dictList&&res.data.dictList.length>0){
+          this.setState({regionData:res.data.dictList})
+        }
+      }else{
+        message.error(res.result.message)
       }
     })
   }
@@ -48,9 +85,11 @@ class Cart extends React.Component{
     const some = list.some((item,index)=>{
       return list[index].checked
     })
+    const every = list.every(item=>item.checked)
     this.setState({
       cartLists: list,
       currentOne: some,
+      allChecked: every,
     })
   }
 
@@ -69,6 +108,19 @@ class Cart extends React.Component{
     list[index].num++;
     // this.setState({numLoading: true})
     this.updateNum(index)
+  }
+
+  // 全选
+  allCheck = (e)=>{
+    // e.preventDefault();
+    const list = [...this.state.cartLists]
+    const isChecked = !this.state.allChecked
+    console.log(isChecked, 'isChecked')
+    list.map(item => item.checked = isChecked)
+    this.setState({
+      cartLists:list,
+      allChecked:isChecked
+    })
   }
 
   handleChangeNumber=(e, index, flag)=>{
@@ -140,7 +192,8 @@ class Cart extends React.Component{
   }
 
   render(){
-    const { cartLists, loading} = this.state;
+    const { cartLists, loading, bottleData, regionData} = this.state;
+    // console.log(bottleData, 'bottleData')
     return (
       <Spin spinning={loading}>
         <div className='navBreadTitle'>
@@ -149,13 +202,13 @@ class Cart extends React.Component{
             <span> / 购物车</span>
           </div>
         </div>
-        <div className="cartBox" style={{minHeight:'85vh'}}>
+        <div className="cartBox" style={{minHeight:'77vh'}}>
           <div className="mainCart" style={{position:'relative'}}>
             <h2>购物车信息</h2>
-            <ul className="row cartUl" style={{minHeight:'60vh'}}>
+            <ul className="row cartUl" style={{minHeight:'40vh'}}>
               {cartLists.length>0 ? cartLists.map((item,index)=>{
                 return (
-                  <li className="proList" key={index}>
+                  <li className="proList" key={item.shoppingCartId+index}>
                     <Checkbox checked={!!item.checked} onChange={(e)=>this.handleChangeCart(e,index)} />
                     <div className="proDiv">
                       <div className="col-md-10 cartLeft">
@@ -164,9 +217,9 @@ class Cart extends React.Component{
                           <div>
                             <p className="proTitle">{item.name ? item.name : ''}</p>
                             <p className="proType">
-                              <span>{item.instrumentType?item.instrumentType: ''}</span>
-                              <span>{item.instrumentType?item.instrumentType: ''}</span>
-                              <span>{item.instrumentType?item.instrumentType: ''}</span>
+                              {item.instrumentTypeName?<span style={{display:'inline-block',marginRight:20}}>{item.instrumentTypeName}</span>: ''}
+                              <span style={{marginRight:15,minWidth:50,display:'inline-block'}}>瓶型：{(item.bottleType&&bottleData.length>0)?bottleData.find(b=>b.dictValue===item.bottleType).dictLabel : ''}</span>
+                              <span>地域：{(item.regionCode&&regionData.length>0)?regionData.find(r=>r.dictValue===item.regionCode).dictLabel:''}</span>
                             </p>
                             <p className="proPrice">价格：<span>￥{item.price}</span></p>
                           </div>
@@ -201,21 +254,27 @@ class Cart extends React.Component{
                     </div>
                   </li>
                 )
-              }) : null}
-      
+              }) : <p style={{marginLeft:15,fontSize:14,color:'#777'}}>暂无数据</p>}
             </ul>
-            
-            <div className="cartBtnBox">
-              <Popconfirm
-                title="确定要删除当前商品吗?"
-                onConfirm={this.handleDelOrder}
-                okText="确定"
-                cancelText="取消"
-              >
-                <Button type='danger' style={{marginRight:10}}>删除选中商品</Button>
-              </Popconfirm>
-              <Button type='primary' onClick={this.handlePlaceOrder}>下单</Button>
-            </div>
+            {cartLists.length>0 ? 
+              <div style={{display:'flex'}}>
+                <div style={{width:'100px',display:'flex',alignItems:'center'}}>
+                  <Checkbox checked={this.state.allChecked} onChange={(e)=>this.allCheck(e)} />
+                  <span style={{display:'inline-block',paddingLeft:10}}>全选</span>
+                </div>
+                <div className="cartBtnBox">
+                  <Popconfirm
+                    title="确定要删除当前商品吗?"
+                    onConfirm={this.handleDelOrder}
+                    okText="确定"
+                    cancelText="取消"
+                  >
+                    <Button type='danger' style={{marginRight:10}}>删除选中商品</Button>
+                  </Popconfirm>
+                  <Button type='primary' onClick={this.handlePlaceOrder}>下单</Button>
+                </div>
+              </div> : null
+            }
           </div>
         </div>
       </Spin>

@@ -106,7 +106,7 @@ class BaseInfo extends React.Component{
                 </Col>
                 <Col md={5}>
                   <Form.Item label="注册资金">
-                    <Input value={agentDetail&&agentDetail.registrationCapital ? agentDetail.registrationCapital : '-'} />
+                    <Input value={agentDetail&&agentDetail.registrationCapital ? agentDetail.registrationCapital+'万元' : '-'} />
                   </Form.Item>
                 </Col>
               </Row>
@@ -118,7 +118,7 @@ class BaseInfo extends React.Component{
                 </Col>
                 <Col md={5}>
                   <Form.Item label="营业期限">
-                    <Input value={agentDetail&&agentDetail.businessTerm ? agentDetail.businessTerm : '-'} />
+                    <Input value={agentDetail&&agentDetail.businessTerm ? agentDetail.businessTerm+'年' : '-'} />
                   </Form.Item>
                 </Col>
               </Row>

@@ -1,9 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {Row, Col} from 'react-bootstrap';
-import { Spin } from 'antd'
+import { Spin, message } from 'antd'
 
-import {myOrderDetail} from '../../api/person'
+import {myOrderDetail} from '../../api/person';
+import {getDict} from '../../api/common';  // 调用字典接口
 
 import '../../assets/css/cart.less';
 import '../../assets/css/personal.less';
@@ -14,11 +15,15 @@ class OrderDetail extends React.Component{
     this.state={
       orderDetail: [],
       loading: false,
+      bottleData: [],
+      regionData: []
     }
   }
 
   componentDidMount(){
     this.getDetail();
+    this.getBottleData();
+    this.getRegionData();
   }
 
   // 获取地址栏参数
@@ -42,8 +47,36 @@ class OrderDetail extends React.Component{
     })
   }
 
+  // 获取瓶型字典
+  getBottleData=()=>{
+    getDict({
+      dictType: 'crm_reagent_bottle'
+    }).then(res=>{
+      if(res&&res.data){
+        if(res.data.dictList&&res.data.dictList.length>0){
+          this.setState({bottleData:res.data.dictList})
+        }
+      }else{
+        message.error(res.result.message)
+      }
+    })
+  }
+
+  // 获取地域字典
+  getRegionData=()=>{
+    getDict({dictType: 'crm_reagent_region'}).then(res=>{
+      if(res&&res.data){
+        if(res.data.dictList&&res.data.dictList.length>0){
+          this.setState({regionData:res.data.dictList})
+        }
+      }else{
+        message.error(res.result.message)
+      }
+    })
+  }
+
   render(){
-    const {orderDetail,loading} = this.state;
+    const {orderDetail,loading, bottleData, regionData} = this.state;
     const orderStatus = [
       {label: '已订货', value: '1'},
       {label: '已付款', value: '2'},
@@ -89,14 +122,14 @@ class OrderDetail extends React.Component{
                               <div className="proParameter">
                                 <div>
                                   <p className="proTitle">{item.name?item.name:''}</p>
-                                  <p className="proType">{item.instrumentType?item.instrumentType:''}</p>
+                                  <p className="proType">{item.instrumentTypeName?item.instrumentTypeName:''}</p>
                                   <p className="proPrice">开票价：<span>￥{item.price?item.price:''}</span></p>
                                 </div>
                               </div>
                             </div>
                             <div className="col-md-3">
-                              <p>瓶型：</p>
-                              <p>地域：</p>
+                              <p>瓶型：{(item.bottleType&&bottleData.length>0)?bottleData.find(b=>b.dictValue===item.bottleType).dictLabel : ''}</p>
+                              <p>地域：{(item.regionCode&&regionData.length>0)?regionData.find(r=>r.dictValue===item.regionCode).dictLabel:''}</p>
                             </div>
                             <div className="col-md-1">
                               X{item.num?item.num:0}

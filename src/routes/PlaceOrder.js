@@ -5,6 +5,7 @@ import { confirmOrderInfo, orderAdd, cartList } from '../api/cart'
 import {Link} from 'react-router-dom';
 import action from '../store/action'
 import { agentAddrUpdate, agentAddrDel } from '../api/person';
+import {getDict} from '../api/common';  // 调用字典接口
 
 import '../assets/css/cart.less';
 
@@ -39,9 +40,11 @@ class PlaceOrder extends React.Component{
         return (
         <Form.Item style={{marginBottom:0}}>
           {this.props.form.getFieldDecorator('useDiscount' + record.discountIssueId, {
-            // rules:[
-            //   {validator: this.checkDiscount,},
-            // ],
+            rules:[
+              {
+                validator: this.checkDiscount
+              },
+            ],
             initialValue: record.useDiscount ? record.useDiscount : 0
           })(<Input placeholder="请输入" onChange={(e)=>this.changeUseDiscount(e,record.discountIssueId)} />)}
         </Form.Item>
@@ -65,11 +68,24 @@ class PlaceOrder extends React.Component{
       addrVisible: false,
       addrType: 1, // 收货地址 or 发票地址,
       addressId: 0,
+      bottleData: [],
+      regionData: [],
     }
   }
 
   componentDidMount(){
     this.getOrderInfo();
+    this.getRegionData();
+    this.getBottleData();
+  }
+
+  checkDiscount= (rule, value, callback)=>{
+    var reg = /^\d+(?=\.{0,1}\d+$|$)/;
+    if (!reg.test(value)){
+      callback('请输入正确的数值')
+    }else{
+      callback()
+    }
   }
 
   getOrderInfo = ()=>{
@@ -88,8 +104,9 @@ class PlaceOrder extends React.Component{
   // }
 
   getTotal=(data)=>{
+    console.log(data.discountList, 'discountlist')
     const disPrice = data.discountList&&data.discountList.length>0 ? data.discountList.reduce((cur,next)=>{
-      return cur + next.useDiscount ? next.useDiscount : 0
+      return cur + next.useDiscount
     },0) : 0
     const totalNum = data.orderItemList&&data.orderItemList.length>0 ? data.orderItemList.reduce((cur,next)=>{
       return cur + next.num
@@ -99,6 +116,34 @@ class PlaceOrder extends React.Component{
       afterPrice: (parseFloat(data.sumMoney)*10000 - parseFloat(disPrice)*10000 - data.fullReductionMoney*10000)/10000,
       discountPrice: disPrice,
       totalNum,
+    })
+  }
+
+  // 获取瓶型字典
+  getBottleData=()=>{
+    getDict({
+      dictType: 'crm_reagent_bottle'
+    }).then(res=>{
+      if(res&&res.data){
+        if(res.data.dictList&&res.data.dictList.length>0){
+          this.setState({bottleData:res.data.dictList})
+        }
+      }else{
+        message.error(res.result.message)
+      }
+    })
+  }
+
+  // 获取地域字典
+  getRegionData=()=>{
+    getDict({dictType: 'crm_reagent_region'}).then(res=>{
+      if(res&&res.data){
+        if(res.data.dictList&&res.data.dictList.length>0){
+          this.setState({regionData:res.data.dictList})
+        }
+      }else{
+        message.error(res.result.message)
+      }
     })
   }
 
@@ -147,10 +192,9 @@ class PlaceOrder extends React.Component{
     })
     const every = isFlag.every(item=>item);
     if(!every) {
-      message.warning('使用金额不能超过剩余金额或者付出金额');
+      message.warning('使用金额不能超过剩余金额或者应付金额');
       return;
     };
-    
     orderAdd(requestVo).then(res=>{
       if(res&&res.result&&res.result.code&&res.result.code === 200){
         localStorage.removeItem('placeOrderIdList')
@@ -216,7 +260,7 @@ class PlaceOrder extends React.Component{
   }
 
   render(){
-    const { discountPrice, orderInfo, addrVisible, addrLoading, addrType } = this.state;
+    const { discountPrice, orderInfo, addrVisible, addrLoading, addrType, bottleData, regionData } = this.state;
     const {form} = this.props;
     let consignee;
     let address;
@@ -237,7 +281,7 @@ class PlaceOrder extends React.Component{
           <div className="addressInfo">
             <h3>地址信息</h3>
             <p className="selP">请选择配送地址</p>
-            <p className="tip">您想使用的是下方显示的地址吗？如果是，点击相应的“配送到这个地址”按钮，或者您可以输入一个新的送货地址：
+            <p className="tip">您想使用的是下方显示的地址吗？如果不是，您可以选择另一个地址或者输入一个新的送货地址：选择或
               <Link to={{pathname: '/personal/addrmanage',query:{placeType:'1'}}}>添加新地址</Link>
             </p>
             <div className="addrMsg">
@@ -278,7 +322,11 @@ class PlaceOrder extends React.Component{
                       <div className="proParameter">
                         <div>
                           <p className="proTitle">{item.name}</p>
-                          <p className="proType">{item.instrumentType}</p>
+                          <p className="proType">
+                            {item.instrumentTypeName?<span style={{display:'inline-block',marginRight:20}}>{item.instrumentTypeName}</span>: ''}
+                            <span style={{marginRight:15,minWidth:50,display:'inline-block'}}>瓶型：{(item.bottleType&&bottleData.length>0)?bottleData.find(b=>b.dictValue===item.bottleType).dictLabel : ''}</span>
+                            <span>地域：{(item.regionCode&&regionData.length>0)?regionData.find(r=>r.dictValue===item.regionCode).dictLabel:''}</span>
+                          </p>
                           <p className="proPrice">开票价：<span>￥{item.price}</span></p>
                           <p className='proType'>{item.discountDescription}</p>
                         </div>
@@ -347,6 +395,10 @@ class PlaceOrder extends React.Component{
               {form.getFieldDecorator('phone',{
                 rules: [
                   { required: true, message: '请输入手机号码!' },
+                  {
+                    pattern: /^[1][3,4,5,7,8,9][0-9]{9}$/,
+                    message: '手机号格式错误！',
+                  },
                 ],
                 initialValue: phone
               })(<Input placeholder='请输入' />)}

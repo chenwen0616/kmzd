@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import { connect } from 'react-redux';
 import { Form, Table, DatePicker, Select, Col, Row, Button, Spin, Icon } from 'antd';
 import moment from 'moment';
@@ -46,7 +46,7 @@ class MyContract extends React.Component{
       dataIndex: 'attachmentPath ',
       render(text,record){
         const path = record.attachmentPath;
-        const name=path.substring(path.lastIndexOf("/")+1);
+        const name=path ? path.substring(path.lastIndexOf("/")+1) :'';
         return <span>{name}</span>
       }
     },
@@ -56,9 +56,14 @@ class MyContract extends React.Component{
       render: (text, record)=>{
         return (
           <div>
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-            <a style={{paddingRight:10}} onClick={()=>this.handleDownloadFile(record.attachmentPath)}>下载</a>
-            <a href={record.attachmentPath} target='_blank' rel="noreferrer">查看详情</a>
+            {record.attachmentPath ? <Fragment>
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+              <a style={{paddingRight:10}} onClick={()=>this.handleDownloadFile(record.attachmentPath)}>下载</a>
+              <a href={record.attachmentPath} target='_blank' rel="noreferrer">查看详情</a>
+            </Fragment> : <Fragment>
+              <span style={{paddingRight:10,color:'#999'}}>下载</span>
+              <span style={{color:'#999'}}>查看详情</span>
+            </Fragment>}
           </div>
         )
       }
