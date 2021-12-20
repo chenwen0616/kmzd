@@ -54,6 +54,7 @@ class Home extends React.Component {
 
   // 获取货品列表数据
   getGoodsList = (pNum, param) => {
+    console.log(param, 'param')
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
     this.setState({ loading: true })
@@ -62,9 +63,6 @@ class Home extends React.Component {
       pageSize: 15,
       pageNum: pNum ? pNum : 1,
       ...param,
-      // instrumentTypeId: '',  // 1
-      // productSeries:'',  //01
-      // testItemId: ''  // 4
     }).then(res => {
       this.setState({ loading: false })
       if (res && res.data) {
@@ -103,6 +101,8 @@ class Home extends React.Component {
         }, () => {
           this.getProductList();
         })
+      }else{
+        message.error(res.result.message)
       }
     }).catch(err => {
       console.log(err, 'err')
@@ -212,14 +212,15 @@ class Home extends React.Component {
           productSeries: values.productSeries,
           testItemId: values.testItemId,
         }
+        console.log(objectVo, 'objectVo')
         this.getGoodsList(pageNum, objectVo);
+        form.resetFields();
       }
     })
   }
 
   handleAddCart = (index) => {
     const lists = this.state.goodsList;
-    console.log(lists[index], '当前购物车数据')
     const item = lists[index];
     item.bottleType = item.bottleType ? item.bottleType : '';
     item.regionCode = item.regionCode ? item.regionCode : '';
@@ -234,7 +235,7 @@ class Home extends React.Component {
           goodsId: item.goodsId,
           num: item.num,
           hospitalId: values['hospitalId'+uuid],
-          instrumentTypeId: item.instrumentTypeId,
+          instrumentTypeId: item.instrumentTypeId2,
           name: item.name,
           url: item.url,
           regionCode: item.regionCode,
@@ -245,7 +246,7 @@ class Home extends React.Component {
           type: item.type,
           instrumentTypeName: item.instrumentTypeName,
         }
-        console.log(requestVo, '添加购物车参数')
+        // console.log(requestVo, '添加购物车参数')
         addCart(requestVo).then(res=>{
           if(res&&res.result&&res.result.code===200){
             message.success('添加成功');
@@ -268,12 +269,13 @@ class Home extends React.Component {
   }
 
   productsSelect = (e) => {
-    this.props.form.resetFields('testItemId')
+    this.props.form.resetFields(['testItemId','instrumentTypeId'])
   }
 
   render() {
     const { loading, instrumentTypeList, reagentTypeList, goodsList, productsList, bottleData, regionData } = this.state;
     const { form: { getFieldDecorator } } = this.props;
+    console.log(instrumentTypeList, 'instrumentTypeList')
     const proSelId = this.props.form.getFieldValue('productSeries');
     return <Spin spinning={loading}>
       <div className='navBreadTitle'>
@@ -362,7 +364,7 @@ class Home extends React.Component {
                           })(<h3 className="proTitle">{item.name ? item.name : ''}<span style={{display:'inline-block',paddingLeft:10}}>{item.specifications?item.specifications:''}</span></h3>)}
                         </Form.Item>
                         <Form.Item>
-                          {getFieldDecorator('instrumentTypeId', {
+                          {getFieldDecorator('instrumentTypeId2', {
                             initialValue: item.instrumentTypeId
                           })(<p className="proType">{item.instrumentTypeName ? item.instrumentTypeName : ''}</p>)}
                         </Form.Item>

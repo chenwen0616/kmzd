@@ -1,15 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {Button, Table, Input, Form, message, Modal, Popconfirm} from 'antd';
+import { Button, Table, Input, Form, message, Modal, Popconfirm } from 'antd';
 import { confirmOrderInfo, orderAdd, cartList } from '../api/cart'
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import action from '../store/action'
 import { agentAddrUpdate, agentAddrDel } from '../api/person';
-import {getDict} from '../api/common';  // 调用字典接口
+import { getDict } from '../api/common';  // 调用字典接口
 
 import '../assets/css/cart.less';
+import { strictEqual } from 'assert';
 
-class PlaceOrder extends React.Component{
+class PlaceOrder extends React.Component {
   columns = [
     {
       title: '序号',
@@ -23,11 +24,11 @@ class PlaceOrder extends React.Component{
     {
       title: '剩余金额',
       dataIndex: 'balance',
-      render: (text,record)=>{
+      render: (text, record) => {
         return (
-          <Form.Item style={{marginBottom:0}}>
+          <Form.Item style={{ marginBottom: 0 }}>
             {this.props.form.getFieldDecorator('balance' + record.discountIssueId)(
-              <span>{text}</span>
+              <span>{text? text.toFixed(2) : 0}</span>
             )}
           </Form.Item>
         )
@@ -36,29 +37,29 @@ class PlaceOrder extends React.Component{
     {
       title: '使用金额',
       dataIndex: 'useDiscount',
-      render:(text,record)=>{
+      render: (text, record) => {
         return (
-        <Form.Item style={{marginBottom:0}}>
-          {this.props.form.getFieldDecorator('useDiscount' + record.discountIssueId, {
-            rules:[
-              {
-                validator: this.checkDiscount
-              },
-            ],
-            initialValue: record.useDiscount ? record.useDiscount : 0
-          })(<Input placeholder="请输入" onChange={(e)=>this.changeUseDiscount(e,record.discountIssueId)} />)}
-        </Form.Item>
+          <Form.Item style={{ marginBottom: 0 }}>
+            {this.props.form.getFieldDecorator('useDiscount' + record.discountIssueId, {
+              rules: [
+                {
+                  validator: this.checkDiscount
+                },
+              ],
+              initialValue: record.useDiscount ? record.useDiscount : 0
+            })(<Input placeholder="请输入" onChange={(e) => this.changeUseDiscount(e, record.discountIssueId)} />)}
+          </Form.Item>
         )
       }
     }
   ];
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.state={
-      addressList:[],
+    this.state = {
+      addressList: [],
       addressInvoiceList: {},
       addressReceiveList: {},
-      placeOrderList:[],
+      placeOrderList: [],
       discountPrice: 0,
       totalNum: 0,
       afterPrice: 0,
@@ -73,26 +74,26 @@ class PlaceOrder extends React.Component{
     }
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.getOrderInfo();
     this.getRegionData();
     this.getBottleData();
   }
 
-  checkDiscount= (rule, value, callback)=>{
+  checkDiscount = (rule, value, callback) => {
     var reg = /^\d+(?=\.{0,1}\d+$|$)/;
-    if (!reg.test(value)){
+    if (!reg.test(value)) {
       callback('请输入正确的数值')
-    }else{
+    } else {
       callback()
     }
   }
 
-  getOrderInfo = ()=>{
+  getOrderInfo = () => {
     const orderIdList = JSON.parse(localStorage.getItem('placeOrderIdList'));
-    confirmOrderInfo({shoppingCartIdList: orderIdList}).then(res=>{
-      if(res&&res.data){
-        this.setState({orderInfo:res.data},()=>{
+    confirmOrderInfo({ shoppingCartIdList: orderIdList }).then(res => {
+      if (res && res.data) {
+        this.setState({ orderInfo: res.data }, () => {
           this.getTotal(res.data)
         })
       }
@@ -103,45 +104,43 @@ class PlaceOrder extends React.Component{
   //   localStorage.removeItem('placeOrderIdList')
   // }
 
-  getTotal=(data)=>{
-    console.log(data.discountList, 'discountlist')
-    const disPrice = data.discountList&&data.discountList.length>0 ? data.discountList.reduce((cur,next)=>{
-      return cur + next.useDiscount
-    },0) : 0
-    const totalNum = data.orderItemList&&data.orderItemList.length>0 ? data.orderItemList.reduce((cur,next)=>{
+  getTotal = (data) => {
+    const disPrice = data.discountList && data.discountList.length > 0 ? data.discountList.reduce((cur, next) => {
+      return ((cur*10000 + next.useDiscount*10000)/10000).toFixed(2)
+    }, 0) : 0
+    const totalNum = data.orderItemList && data.orderItemList.length > 0 ? data.orderItemList.reduce((cur, next) => {
       return cur + next.num
-    },0) : 0
-
+    }, 0) : 0
     this.setState({
-      afterPrice: (parseFloat(data.sumMoney)*10000 - parseFloat(disPrice)*10000 - data.fullReductionMoney*10000)/10000,
+      afterPrice: ((parseFloat(data.sumMoney) * 100000 - parseFloat(disPrice) * 100000 - data.fullReductionMoney * 100000) / 100000).toFixed(2),
       discountPrice: disPrice,
       totalNum,
     })
   }
 
   // 获取瓶型字典
-  getBottleData=()=>{
+  getBottleData = () => {
     getDict({
       dictType: 'crm_reagent_bottle'
-    }).then(res=>{
-      if(res&&res.data){
-        if(res.data.dictList&&res.data.dictList.length>0){
-          this.setState({bottleData:res.data.dictList})
+    }).then(res => {
+      if (res && res.data) {
+        if (res.data.dictList && res.data.dictList.length > 0) {
+          this.setState({ bottleData: res.data.dictList })
         }
-      }else{
+      } else {
         message.error(res.result.message)
       }
     })
   }
 
   // 获取地域字典
-  getRegionData=()=>{
-    getDict({dictType: 'crm_reagent_region'}).then(res=>{
-      if(res&&res.data){
-        if(res.data.dictList&&res.data.dictList.length>0){
-          this.setState({regionData:res.data.dictList})
+  getRegionData = () => {
+    getDict({ dictType: 'crm_reagent_region' }).then(res => {
+      if (res && res.data) {
+        if (res.data.dictList && res.data.dictList.length > 0) {
+          this.setState({ regionData: res.data.dictList })
         }
-      }else{
+      } else {
         message.error(res.result.message)
       }
     })
@@ -151,10 +150,10 @@ class PlaceOrder extends React.Component{
   //   callback();
   // }
 
-  changeUseDiscount=(e,id)=>{
-    const request = {...this.state.orderInfo};
-    request.discountList.forEach(item=>{
-      if(item.discountIssueId === id){
+  changeUseDiscount = (e, id) => {
+    const request = { ...this.state.orderInfo };
+    request.discountList.forEach(item => {
+      if (item.discountIssueId === id) {
         item.useDiscount = parseFloat(e.target.value)
       }
     })
@@ -166,35 +165,39 @@ class PlaceOrder extends React.Component{
   }
 
   // 下单提交
-  handleOrderAdd = ()=>{
+  handleOrderAdd = () => {
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
-    const {orderInfo} = this.state;
+    const { orderInfo } = this.state;
     const requestVo = {};
     Object.assign(requestVo, orderInfo);
     const newArr = [];
     const isFlag = [];
     requestVo.useMoney = this.state.discountPrice ? this.state.discountPrice : 0;
     requestVo.payMoney = this.state.afterPrice;
-    orderInfo.discountList.forEach(item=>{
-      if(!item.useDiscount){
-        item.useDiscount =0;
+    orderInfo.discountList.forEach(item => {
+      if (!item.useDiscount) {
+        item.useDiscount = 0;
       }
       newArr.push(item)
     })
     requestVo.discountList = newArr;
-    requestVo.discountList.forEach(item=>{
-      if(item.useDiscount>item.balance || item.useDiscount > requestVo.sumMoney){
+    requestVo.discountList.forEach(item => {
+      if (item.useDiscount > item.balance || item.useDiscount > requestVo.sumMoney) {
         isFlag.push(false)
-      }else{
+      } else {
         isFlag.push(true);
       }
     })
-    const every = isFlag.every(item=>item);
-    if(!every) {
+    const every = isFlag.every(item => item);
+    if (!every) {
       message.warning('使用金额不能超过剩余金额或者应付金额');
       return;
     };
+    const someD = requestVo.discountList.some(dis => Number(dis.useDiscount) < 0);
+    if (someD) {
+      return;
+    }
     orderAdd(requestVo).then(res=>{
       if(res&&res.result&&res.result.code&&res.result.code === 200){
         localStorage.removeItem('placeOrderIdList')
@@ -213,23 +216,23 @@ class PlaceOrder extends React.Component{
   }
 
   // 编辑默认地址
-  handleAddVisible = (flag, addrType, addrId)=>{
+  handleAddVisible = (flag, addrType, addrId) => {
     this.setState({
-      addrVisible:true,
+      addrVisible: true,
       addrType,
-      addressId:addrId
+      addressId: addrId
     })
   }
-  handleCancelAddr = ()=>{
-    this.setState({addrVisible:false})
+  handleCancelAddr = () => {
+    this.setState({ addrVisible: false })
   }
-  handleAdd = ()=>{
+  handleAdd = () => {
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
-    const {form} = this.props;
+    const { form } = this.props;
     form.validateFields((err, values) => {
-      if(err) return;
-      this.setState({addrLoading:true})
+      if (err) return;
+      this.setState({ addrLoading: true })
       const requestVo = {};
       Object.assign(requestVo, values);
       requestVo.type = this.state.addrType;
@@ -238,9 +241,9 @@ class PlaceOrder extends React.Component{
       requestVo.agentId = uInfo.roleId;
       requestVo.def = '1';
       requestVo.addressId = this.state.addressId;
-      agentAddrUpdate(requestVo).then(res=>{
-        this.setState({addrLoading:false})
-        if(res&&res.result&&res.result.code ===200){
+      agentAddrUpdate(requestVo).then(res => {
+        this.setState({ addrLoading: false })
+        if (res && res.result && res.result.code === 200) {
           message.success('成功！');
           this.handleCancelAddr();
           this.getOrderInfo();
@@ -250,82 +253,82 @@ class PlaceOrder extends React.Component{
   }
 
   // 删除地址
-  handleDel=(addrId)=>{
-    agentAddrDel({addressId:addrId}).then(res=>{
-      if(res&&res.result&&res.result.code===200){
+  handleDel = (addrId) => {
+    agentAddrDel({ addressId: addrId }).then(res => {
+      if (res && res.result && res.result.code === 200) {
         message.success('成功！');
         this.getOrderInfo();
       }
     })
   }
 
-  render(){
+  render() {
     const { discountPrice, orderInfo, addrVisible, addrLoading, addrType, bottleData, regionData } = this.state;
-    const {form} = this.props;
+    const { form } = this.props;
     let consignee;
     let address;
     let phone;
-    if(addrType===1){
-      consignee = orderInfo&&orderInfo.goodAddress&&orderInfo.goodAddress.consignee ? orderInfo.goodAddress.consignee : '';
-      address = orderInfo&&orderInfo.goodAddress&&orderInfo.goodAddress.address ? orderInfo.goodAddress.address : '';
-      phone = orderInfo&&orderInfo.goodAddress&&orderInfo.goodAddress.phone ? orderInfo.goodAddress.phone : '';
-    }else{
-      consignee = orderInfo&&orderInfo.invoiceAddress&&orderInfo.invoiceAddress.consignee ? orderInfo.invoiceAddress.consignee :'';
-      address = orderInfo&&orderInfo.invoiceAddress&&orderInfo.invoiceAddress.address ? orderInfo.invoiceAddress.address :'';
-      phone = orderInfo&&orderInfo.invoiceAddress&&orderInfo.invoiceAddress.phone ? orderInfo.invoiceAddress.phone :'';
+    if (addrType === 1) {
+      consignee = orderInfo && orderInfo.goodAddress && orderInfo.goodAddress.consignee ? orderInfo.goodAddress.consignee : '';
+      address = orderInfo && orderInfo.goodAddress && orderInfo.goodAddress.address ? orderInfo.goodAddress.address : '';
+      phone = orderInfo && orderInfo.goodAddress && orderInfo.goodAddress.phone ? orderInfo.goodAddress.phone : '';
+    } else {
+      consignee = orderInfo && orderInfo.invoiceAddress && orderInfo.invoiceAddress.consignee ? orderInfo.invoiceAddress.consignee : '';
+      address = orderInfo && orderInfo.invoiceAddress && orderInfo.invoiceAddress.address ? orderInfo.invoiceAddress.address : '';
+      phone = orderInfo && orderInfo.invoiceAddress && orderInfo.invoiceAddress.phone ? orderInfo.invoiceAddress.phone : '';
     }
-    
-    return(
+
+    return (
       <div className="cartBox">
         <div className="mainCart">
           <div className="addressInfo">
             <h3>地址信息</h3>
             <p className="selP">请选择配送地址</p>
             <p className="tip">您想使用的是下方显示的地址吗？如果不是，您可以选择另一个地址或者输入一个新的送货地址：选择或
-              <Link to={{pathname: '/personal/addrmanage',query:{placeType:'1'}}}>添加新地址</Link>
+              <Link to={{ pathname: '/personal/addrmanage', query: { placeType: '1' } }}>添加新地址</Link>
             </p>
             <div className="addrMsg">
               <h3>收货地址</h3>
               <div>
-                <p>联系人：{((orderInfo&&orderInfo.goodAddress&&orderInfo.goodAddress.consignee))?orderInfo.goodAddress.consignee : ''}</p>
-                <p>地址：{(orderInfo&&orderInfo.goodAddress&&orderInfo.goodAddress.address) ? orderInfo.goodAddress.address : ''}</p>
-                <p>手机号：{(orderInfo&&orderInfo.goodAddress&&orderInfo.goodAddress.phone) ? orderInfo.goodAddress.phone : ''}</p>
+                <p>联系人：{((orderInfo && orderInfo.goodAddress && orderInfo.goodAddress.consignee)) ? orderInfo.goodAddress.consignee : ''}</p>
+                <p>地址：{(orderInfo && orderInfo.goodAddress && orderInfo.goodAddress.address) ? orderInfo.goodAddress.address : ''}</p>
+                <p>手机号：{(orderInfo && orderInfo.goodAddress && orderInfo.goodAddress.phone) ? orderInfo.goodAddress.phone : ''}</p>
               </div>
               <Popconfirm
                 title="是否确认删除该地址?"
-                onConfirm={()=>this.handleDel(orderInfo.goodAddress.addressId)}
+                onConfirm={() => this.handleDel(orderInfo.goodAddress.addressId)}
                 okText="确定"
                 cancelText="取消"
               >
-                <div className='backImg addrPosition' style={{cursor:'pointer'}}></div>
+                <div className='backImg addrPosition' style={{ cursor: 'pointer' }}></div>
               </Popconfirm>
-              <div className='editTxt' onClick={()=>this.handleAddVisible(true, 1, orderInfo.goodAddress.addressId)}>编辑</div>
+              <div className='editTxt' onClick={() => this.handleAddVisible(true, 1, orderInfo.goodAddress.addressId)}>编辑</div>
             </div>
             <div className="addrMsg">
               <h3>发票地址</h3>
               <div>
                 {/* <p>所在地区：{}</p> */}
-                <p>联系人：{((orderInfo&&orderInfo.invoiceAddress&&orderInfo.invoiceAddress.consignee))?orderInfo.invoiceAddress.consignee : ''}</p>
-                <p>地址：{(orderInfo&&orderInfo.invoiceAddress&&orderInfo.invoiceAddress.address) ? orderInfo.invoiceAddress.address : ''}</p>
-                <p>手机号：{(orderInfo&&orderInfo.invoiceAddress&&orderInfo.invoiceAddress.phone) ? orderInfo.invoiceAddress.phone : ''}</p>
+                <p>联系人：{((orderInfo && orderInfo.invoiceAddress && orderInfo.invoiceAddress.consignee)) ? orderInfo.invoiceAddress.consignee : ''}</p>
+                <p>地址：{(orderInfo && orderInfo.invoiceAddress && orderInfo.invoiceAddress.address) ? orderInfo.invoiceAddress.address : ''}</p>
+                <p>手机号：{(orderInfo && orderInfo.invoiceAddress && orderInfo.invoiceAddress.phone) ? orderInfo.invoiceAddress.phone : ''}</p>
               </div>
-              <div className='editTxt' onClick={()=>this.handleAddVisible(true, 2,orderInfo.invoiceAddress.addressId)}>编辑</div>
+              <div className='editTxt' onClick={() => this.handleAddVisible(true, 2, orderInfo.invoiceAddress.addressId)}>编辑</div>
             </div>
           </div>
           <ul className="row cartUl pOul">
-            {orderInfo.orderItemList&&orderInfo.orderItemList.length>0 ? orderInfo.orderItemList.map(item=>{
+            {orderInfo.orderItemList && orderInfo.orderItemList.length > 0 ? orderInfo.orderItemList.map(item => {
               return (
                 <li className="proList" key={item.shoppingCartId}>
                   <div className="proDiv">
                     <div className="col-md-9 cartLeft">
-                      <div className="imgBox"><img src={item.url} alt={item.url} style={{width:'98%'}} /></div>
+                      <div className="imgBox"><img src={item.url} alt={item.url} style={{ width: '98%' }} /></div>
                       <div className="proParameter">
                         <div>
                           <p className="proTitle">{item.name}</p>
                           <p className="proType">
-                            {item.instrumentTypeName?<span style={{display:'inline-block',marginRight:20}}>{item.instrumentTypeName}</span>: ''}
-                            <span style={{marginRight:15,minWidth:50,display:'inline-block'}}>瓶型：{(item.bottleType&&bottleData.length>0)?bottleData.find(b=>b.dictValue===item.bottleType).dictLabel : ''}</span>
-                            <span>地域：{(item.regionCode&&regionData.length>0)?regionData.find(r=>r.dictValue===item.regionCode).dictLabel:''}</span>
+                            {item.instrumentTypeName ? <span style={{ display: 'inline-block', marginRight: 20 }}>{item.instrumentTypeName}</span> : ''}
+                            <span style={{ marginRight: 15, minWidth: 50, display: 'inline-block' }}>瓶型：{(item.bottleType && bottleData.length > 0) ? bottleData.find(b => b.dictValue === item.bottleType).dictLabel : ''}</span>
+                            <span>地域：{(item.regionCode && regionData.length > 0) ? regionData.find(r => r.dictValue === item.regionCode).dictLabel : ''}</span>
                           </p>
                           <p className="proPrice">开票价：<span>￥{item.price}</span></p>
                           <p className='proType'>{item.discountDescription}</p>
@@ -336,38 +339,38 @@ class PlaceOrder extends React.Component{
                       X{item.num}
                     </div>
                     <div className="col-md-2">
-                      总价：{item.price&&item.num ? `￥${Number(item.price)*item.num}` : 0}
+                      总价：{item.price && item.num ? `￥${Number(item.price) * item.num}` : 0}
                     </div>
                   </div>
                 </li>
               )
             }) : null}
-            
+
           </ul>
           <div className="orderTable">
-            <Table 
-              columns={this.columns} 
-              dataSource={orderInfo.discountList?orderInfo.discountList:[]} 
+            <Table
+              columns={this.columns}
+              dataSource={orderInfo.discountList ? orderInfo.discountList : []}
               pagination={false}
               bordered={true}
             />
           </div>
 
           <div className="totalBox">
-            {discountPrice ? 
-            <p>
-              <span>{`使用优惠券，一共优惠${discountPrice}元，`}</span>
-              <span className="totalNum">共{this.state.totalNum}件商品，一共￥{this.state.afterPrice}元</span>
-            </p>
-            : null}
+            {discountPrice ?
+              <p>
+                <span>{`使用优惠券，一共优惠${discountPrice}元，`}</span>
+                <span className="totalNum">共{this.state.totalNum}件商品，一共￥{this.state.afterPrice}元</span>
+              </p>
+              : null}
             <Button type="primary" onClick={this.handleOrderAdd}>提交</Button>
           </div>
-          
+
         </div>
 
-        {addrVisible? 
-        
-        <Modal
+        {addrVisible ?
+
+          <Modal
             title='编辑地址'
             className='addrBox'
             visible={addrVisible}
@@ -376,7 +379,7 @@ class PlaceOrder extends React.Component{
             confirmLoading={addrLoading}
           >
             <Form.Item label={'收货人'}>
-              {form.getFieldDecorator('consignee',{
+              {form.getFieldDecorator('consignee', {
                 rules: [
                   { required: true, message: '请输入收货人!' },
                 ],
@@ -384,7 +387,7 @@ class PlaceOrder extends React.Component{
               })(<Input placeholder='请输入' />)}
             </Form.Item>
             <Form.Item label={'详细地址'}>
-              {form.getFieldDecorator('detailAddr',{
+              {form.getFieldDecorator('detailAddr', {
                 rules: [
                   { required: true, message: '请输入详细地址!' },
                 ],
@@ -392,7 +395,7 @@ class PlaceOrder extends React.Component{
               })(<Input placeholder='请输入' />)}
             </Form.Item>
             <Form.Item label={'手机号码'}>
-              {form.getFieldDecorator('phone',{
+              {form.getFieldDecorator('phone', {
                 rules: [
                   { required: true, message: '请输入手机号码!' },
                   {
@@ -427,4 +430,4 @@ class PlaceOrder extends React.Component{
   }
 }
 
-export default Form.create()(connect(state=>({...state.cart}),action.cart)(PlaceOrder));
+export default Form.create()(connect(state => ({ ...state.cart }), action.cart)(PlaceOrder));

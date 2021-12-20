@@ -21,7 +21,7 @@ class MyDiscount extends React.Component{
         let usedPay = 0;
         const discount = record.discount ? record.discount : 0;
         const balance = record.balance ? record.balance : 0;
-        usedPay = discount - balance;
+        usedPay = ((discount*10000 - balance*10000)/10000).toFixed(2);
         return (
           <div>{usedPay}</div>
         )
