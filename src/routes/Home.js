@@ -214,7 +214,7 @@ class Home extends React.Component {
         }
         console.log(objectVo, 'objectVo')
         this.getGoodsList(pageNum, objectVo);
-        form.resetFields();
+        // form.resetFields();
       }
     })
   }
@@ -229,13 +229,14 @@ class Home extends React.Component {
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
     form.validateFields((err, values) => {
+      console.log(values, 'valuess')
       if (!err) {
         const requestVo = {
           agentId: Number(uInfo.roleId),
           goodsId: item.goodsId,
           num: item.num,
           hospitalId: values['hospitalId'+uuid],
-          instrumentTypeId: item.instrumentTypeId2,
+          instrumentTypeId: values.instrumentTypeId2,
           name: item.name,
           url: item.url,
           regionCode: item.regionCode,
@@ -246,7 +247,7 @@ class Home extends React.Component {
           type: item.type,
           instrumentTypeName: item.instrumentTypeName,
         }
-        // console.log(requestVo, '添加购物车参数')
+        console.log(requestVo, '添加购物车参数')
         addCart(requestVo).then(res=>{
           if(res&&res.result&&res.result.code===200){
             message.success('添加成功');

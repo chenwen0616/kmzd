@@ -166,6 +166,7 @@ class PlaceOrder extends React.Component {
 
   // 下单提交
   handleOrderAdd = () => {
+    const {form} = this.props;
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
     const { orderInfo } = this.state;
@@ -198,20 +199,23 @@ class PlaceOrder extends React.Component {
     if (someD) {
       return;
     }
-    orderAdd(requestVo).then(res=>{
-      if(res&&res.result&&res.result.code&&res.result.code === 200){
-        localStorage.removeItem('placeOrderIdList')
-        message.success('成功')
-        this.props.history.push('/home');
-        cartList({agentId: Number(uInfo.roleId)}).then(response=>{
-          this.setState({loading: false})
-          if(response&&response.data&&response.data.shoppingCartList){
-            this.props.getData(response.data.shoppingCartList)
-          }
-        })
-      }else{
-        message.error(res.result.message)
-      }
+    form.validateFields((err,values)=>{
+      if(err) {return}
+      orderAdd(requestVo).then(res=>{
+        if(res&&res.result&&res.result.code&&res.result.code === 200){
+          localStorage.removeItem('placeOrderIdList')
+          message.success('成功')
+          this.props.history.push('/home');
+          cartList({agentId: Number(uInfo.roleId)}).then(response=>{
+            this.setState({loading: false})
+            if(response&&response.data&&response.data.shoppingCartList){
+              this.props.getData(response.data.shoppingCartList)
+            }
+          })
+        }else{
+          message.error(res.result.message)
+        }
+      })
     })
   }
 
