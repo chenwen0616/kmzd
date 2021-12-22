@@ -236,7 +236,7 @@ class Home extends React.Component {
           goodsId: item.goodsId,
           num: item.num,
           hospitalId: values['hospitalId'+uuid],
-          instrumentTypeId: values.instrumentTypeId2,
+          instrumentTypeId: item.instrumentTypeId,
           name: item.name,
           url: item.url,
           regionCode: item.regionCode,

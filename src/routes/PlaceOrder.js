@@ -199,6 +199,7 @@ class PlaceOrder extends React.Component {
     if (someD) {
       return;
     }
+    console.log(requestVo, 'requestVo 下单提交')
     form.validateFields((err,values)=>{
       if(err) {return}
       orderAdd(requestVo).then(res=>{
@@ -329,6 +330,7 @@ class PlaceOrder extends React.Component {
                       <div className="proParameter">
                         <div>
                           <p className="proTitle">{item.name}</p>
+                          <p className="proType">医院名称：{item.hospitalName?item.hospitalName:''}</p>
                           <p className="proType">
                             {item.instrumentTypeName ? <span style={{ display: 'inline-block', marginRight: 20 }}>{item.instrumentTypeName}</span> : ''}
                             <span style={{ marginRight: 15, minWidth: 50, display: 'inline-block' }}>瓶型：{(item.bottleType && bottleData.length > 0) ? bottleData.find(b => b.dictValue === item.bottleType).dictLabel : ''}</span>

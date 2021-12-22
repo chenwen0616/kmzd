@@ -122,6 +122,7 @@ class OrderDetail extends React.Component{
                               <div className="proParameter">
                                 <div>
                                   <p className="proTitle">{item.name?item.name:''}</p>
+                                  <p className="proType">医院名称：{item.hospitalName?item.hospitalName:''}</p>
                                   <p className="proType">{item.instrumentTypeName?item.instrumentTypeName:''}</p>
                                   <p className="proPrice">开票价：<span>￥{item.price?item.price:''}</span></p>
                                 </div>
