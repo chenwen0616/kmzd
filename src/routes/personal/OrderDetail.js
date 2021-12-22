@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import {Row, Col} from 'react-bootstrap';
 import { Spin, message } from 'antd'
@@ -98,14 +98,14 @@ class OrderDetail extends React.Component{
                 <Row className="detailInfoStyle">
                   <Col md={5}>订单编号：{orderDetail&&orderDetail.orderId ? orderDetail.orderId : ''}</Col>
                   <Col md={7}>订单状态：{orderDetail&&orderDetail.status ? orderStatus.find(item=>item.value === orderDetail.status).label : ''}</Col>
-                  <Col md={5}>下单时间：{orderDetail&&orderDetail.orderTime ? orderDetail.orderTime : ''}</Col>
+                  <Col md={5}>下单时间：{orderDetail&&orderDetail.orderTime ? orderDetail.orderTime.slice(0,11) : ''}</Col>
                   <Col md={7}>订单金额：￥{orderDetail&&orderDetail.payMoney ? orderDetail.payMoney : ''}</Col>
                   <Col md={5}>实际支付：￥{orderDetail&&orderDetail.sumMoney ? orderDetail.sumMoney : ''}</Col>
-                  <Col md={7}>发货时间：{orderDetail&&orderDetail.sendTime ? orderDetail.sendTime : ''}</Col>
+                  <Col md={7}>发货时间：{orderDetail&&orderDetail.sendTime ? orderDetail.sendTime.slice(0,11) : ''}</Col>
                   <Col md={5}>使用折扣：￥{orderDetail&&orderDetail.useDiscount ? orderDetail.useDiscount : 0}</Col>
                   <Col md={7}>快递单号：{orderDetail&&orderDetail.oddNumber ? orderDetail.oddNumber : ''}</Col>
                   <Col md={5}>快递名称：{orderDetail&&orderDetail.oddCompany ? orderDetail.oddCompany : ''}</Col>
-                  <Col md={7}>收货日期：{orderDetail&&orderDetail.signTime ? orderDetail.signTime : ''}</Col>
+                  <Col md={7}>收货日期：{orderDetail&&orderDetail.signTime ? orderDetail.signTime.slice(0,11) : ''}</Col>
                 </Row>
               </Row>
               <Row>
@@ -121,16 +121,22 @@ class OrderDetail extends React.Component{
                               </div>
                               <div className="proParameter">
                                 <div>
-                                  <p className="proTitle">{item.name?item.name:''}</p>
-                                  <p className="proType">医院名称：{item.hospitalName?item.hospitalName:''}</p>
+                                  <p className="proTitle">{item.name?item.name:''}
+                                    <span style={{display:'inline-block',paddingLeft:10}}>{item.specifications?item.specifications:''}</span>
+                                  </p>
+                                  {item.type&&item.type!==2 ? <p className="proType">医院名称：{item.hospitalName?item.hospitalName:''}</p> : null}
                                   <p className="proType">{item.instrumentTypeName?item.instrumentTypeName:''}</p>
                                   <p className="proPrice">开票价：<span>￥{item.price?item.price:''}</span></p>
                                 </div>
                               </div>
                             </div>
                             <div className="col-md-3">
-                              <p>瓶型：{(item.bottleType&&bottleData.length>0)?bottleData.find(b=>b.dictValue===item.bottleType).dictLabel : ''}</p>
-                              <p>地域：{(item.regionCode&&regionData.length>0)?regionData.find(r=>r.dictValue===item.regionCode).dictLabel:''}</p>
+                              {item.type&&item.type!==2 ? 
+                              <Fragment>
+                                <p>瓶型：{(item.bottleType&&bottleData.length>0)?bottleData.find(b=>b.dictValue===item.bottleType).dictLabel : ''}</p>
+                                <p>地域：{(item.regionCode&&regionData.length>0)?regionData.find(r=>r.dictValue===item.regionCode).dictLabel:''}</p>
+                              </Fragment>
+                              : null}
                             </div>
                             <div className="col-md-1">
                               X{item.num?item.num:0}

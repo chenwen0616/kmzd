@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import { connect } from 'react-redux';
 import { Row, Col} from 'react-bootstrap';
 import { Checkbox,Icon, Input, Popconfirm, message, Spin, Button } from 'antd';
@@ -215,12 +215,17 @@ class Cart extends React.Component{
                         <div className="imgBox"><img src={item.url} alt='' style={{width:'97%'}} /></div>
                         <div className="proParameter">
                           <div>
-                            <p className="proTitle">{item.name ? item.name : ''}</p>
-                            <p className="proType">医院名称：{item.hospitalName?item.hospitalName:''}</p>
+                            <p className="proTitle">{item.name ? item.name : ''}
+                              <span style={{display:'inline-block',paddingLeft:10}}>{item.specifications?item.specifications:''}</span>
+                            </p>
+                            {item.type&&item.type!==2 ? <p className="proType">医院名称：{item.hospitalName?item.hospitalName:''}</p> : null}
+                            
                             <p className="proType">
                               {item.instrumentTypeName?<span style={{display:'inline-block',marginRight:20}}>{item.instrumentTypeName}</span>: ''}
-                              <span style={{marginRight:15,minWidth:50,display:'inline-block'}}>瓶型：{(item.bottleType&&bottleData.length>0)?bottleData.find(b=>b.dictValue===item.bottleType).dictLabel : ''}</span>
-                              <span>地域：{(item.regionCode&&regionData.length>0)?regionData.find(r=>r.dictValue===item.regionCode).dictLabel:''}</span>
+                              {item.type&&item.type!==2 ? <Fragment>
+                                <span style={{marginRight:15,minWidth:50,display:'inline-block'}}>瓶型：{(item.bottleType&&bottleData.length>0)?bottleData.find(b=>b.dictValue===item.bottleType).dictLabel : ''}</span>
+                                <span>地域：{(item.regionCode&&regionData.length>0)?regionData.find(r=>r.dictValue===item.regionCode).dictLabel:''}</span>
+                              </Fragment> : null}
                             </p>
                             <p className="proPrice">价格：<span>￥{item.price}</span></p>
                           </div>

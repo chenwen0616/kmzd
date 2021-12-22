@@ -30,7 +30,18 @@ class MyContract extends React.Component{
     },
     {
       title: '有效期',
-      dataIndex: 'signDate'
+      dataIndex: 'signDate',
+      render: (text,record)=>{
+        const sTime = record.signDate ? record.signDate.slice(0,11) : '';
+        const eTime = record.endDate ? record.endDate.slice(0,11) : '';
+        let dates = '';
+        if(sTime || (sTime&&eTime)){
+          dates = `${sTime} - ${eTime}`
+        }else if(eTime){
+          dates = eTime
+        }
+        return <span>{dates}</span>
+      }
     },
     {
       title: '状态',

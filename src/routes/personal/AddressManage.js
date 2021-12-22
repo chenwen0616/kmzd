@@ -258,7 +258,7 @@ class AddressManage extends React.Component{
                         <h3>收货地址</h3>
                         <div>
                           <p>收货人：{item.consignee? item.consignee : ''}</p>
-                          <p>所在地区：{}</p>
+                          {/* <p>所在地区：{}</p> */}
                           <p>地址：{item.address ? item.address : ''}</p>
                           <p>合同地址：{item.address ? item.address : ''}</p>
                           <p>手机号：{item.phone?item.phone:''}</p>

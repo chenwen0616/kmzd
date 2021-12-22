@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import { connect } from "react-redux";
 // import { ControlLabel, FormGroup, FormControl} from 'react-bootstrap';
 import { Icon, Spin, Form, Select, Pagination, Button, Input, Radio, message } from 'antd';
@@ -27,6 +27,7 @@ class Home extends React.Component {
       productsList: [], // 产品系列
       bottleData: [], // 瓶型
       regionData: [], // 地域
+      tag: -1,
     }
   }
 
@@ -270,12 +271,17 @@ class Home extends React.Component {
   }
 
   productsSelect = (e) => {
-    this.props.form.resetFields(['testItemId','instrumentTypeId'])
+    this.props.form.resetFields(['testItemId','instrumentTypeId']);
+    this.setState({
+      tag:e
+    })
+    console.log(e, '选择')
   }
 
   render() {
-    const { loading, instrumentTypeList, reagentTypeList, goodsList, productsList, bottleData, regionData } = this.state;
+    const { loading, instrumentTypeList, reagentTypeList, goodsList, productsList, bottleData, regionData, tag } = this.state;
     const { form: { getFieldDecorator } } = this.props;
+    console.log(tag, Number(tag)===999);
     console.log(instrumentTypeList, 'instrumentTypeList')
     const proSelId = this.props.form.getFieldValue('productSeries');
     return <Spin spinning={loading}>
@@ -362,7 +368,10 @@ class Home extends React.Component {
                         <Form.Item>
                           {getFieldDecorator('name', {
                             initialValue: item.name
-                          })(<h3 className="proTitle">{item.name ? item.name : ''}<span style={{display:'inline-block',paddingLeft:10}}>{item.specifications?item.specifications:''}</span></h3>)}
+                          })(
+                          <h3 className="proTitle">{item.name ? item.name : ''}
+                            <span style={{display:'inline-block',paddingLeft:10}}>{item.specifications?item.specifications:''}</span>
+                          </h3>)}
                         </Form.Item>
                         <Form.Item>
                           {getFieldDecorator('instrumentTypeId2', {
@@ -379,30 +388,34 @@ class Home extends React.Component {
                             </Radio.Group>
                           )}
                         </Form.Item>
-                        <Form.Item className='homeFlexStyle'>
-                          <Form.Item style={{ width: '47%' }}>
-                            {getFieldDecorator('bottleType', {
-                              initialValue: item.bottleType
-                            })(<span>瓶型：{item.bottleType ? bottleData.find(b => b.dictValue === item.bottleType).dictLabel : ''}</span>)}
-                          </Form.Item>
-                          <Form.Item>
-                            {getFieldDecorator('regionCode', {
-                              initialValue: item.regionCode
-                            })(<span>地域：{item.regionCode ? regionData.find(r => r.dictValue === item.regionCode).dictLabel : ''}</span>)}
-                          </Form.Item>
-                        </Form.Item>
 
-                        <Form.Item className='for-form' label="医院名称:" required={false}>
-                          {getFieldDecorator('hospitalId' + uuid)(
-                            <Select size={"default"} style={{ width: '100%' }} placeholder="请选择">
-                              {
-                                (item.hospitalList && item.hospitalList.length > 0) ? item.hospitalList.map(hItem => {
-                                  return <Option key={hItem.hospitalId}>{hItem.hospitalName}</Option>
-                                }) : null
-                              }
-                            </Select>
-                          )}
-                        </Form.Item>
+                        {Number(tag) !== 999 ? 
+                          <Fragment>
+                            <Form.Item className='homeFlexStyle'>
+                              <Form.Item style={{ width: '47%' }}>
+                                {getFieldDecorator('bottleType', {
+                                  initialValue: item.bottleType
+                                })(<span>瓶型：{item.bottleType ? bottleData.find(b => b.dictValue === item.bottleType).dictLabel : ''}</span>)}
+                              </Form.Item>
+                              <Form.Item>
+                                {getFieldDecorator('regionCode', {
+                                  initialValue: item.regionCode
+                                })(<span>地域：{item.regionCode ? regionData.find(r => r.dictValue === item.regionCode).dictLabel : ''}</span>)}
+                              </Form.Item>
+                            </Form.Item>
+                            <Form.Item className='for-form' label="医院名称:" required={false}>
+                              {getFieldDecorator('hospitalId' + uuid)(
+                                <Select size={"default"} style={{ width: '100%' }} placeholder="请选择">
+                                  {
+                                    (item.hospitalList && item.hospitalList.length > 0) ? item.hospitalList.map(hItem => {
+                                      return <Option key={hItem.hospitalId}>{hItem.hospitalName}</Option>
+                                    }) : null
+                                  }
+                                </Select>
+                              )}
+                            </Form.Item>
+                          </Fragment>
+                        : null}
                         <div className="cart_btn">
                           <div className='cart_hope'>
                             <div style={{ paddingLeft: 0, paddingRight: 0 }}>
