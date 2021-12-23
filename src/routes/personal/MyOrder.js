@@ -11,21 +11,25 @@ class MyOrder extends React.Component{
     {
       title: '订单编号',
       dataIndex: 'orderId',
+      align:'center',
     },
     {
       title: '金额',
       dataIndex: 'payMoney',
+      align:'center',
     },
     {
       title: '下单时间',
       dataIndex: 'orderTime',
+      align:'center',
       render: (text,record)=>{
-        return <span>{text? text.slice(0,11) : ''}</span>
+        return <span>{text? moment(text.slice(0,11)).format('YYYY/MM/DD') : ''}</span>
       }
     },
     {
       title: '状态',
       dataIndex: 'status',
+      align:'center',
       render: (text,record)=>{
         let statusLabel = '';
         if(text==='1'){ statusLabel = '已订货' }
@@ -39,6 +43,7 @@ class MyOrder extends React.Component{
     {
       title:'操作',
       dataIndex:'operation',
+      align:'center',
       render: (text,record)=>{
         return(
           <div>
@@ -296,7 +301,7 @@ class MyOrder extends React.Component{
                   <Col md={5}>
                     <DatePicker
                       disabledDate={this.disabledStartDate}
-                      format="YYYY-MM-DD"
+                      format="YYYY/MM/DD"
                       value={startValue}
                       placeholder="开始日期"
                       onChange={this.onStartChange}
@@ -307,7 +312,7 @@ class MyOrder extends React.Component{
                   <Col md={5}>
                     <DatePicker
                       disabledDate={this.disabledEndDate}
-                      format="YYYY-MM-DD"
+                      format="YYYY/MM/DD"
                       value={endValue}
                       placeholder="结束日期"
                       onChange={this.onEndChange}

@@ -34,6 +34,44 @@ class UpdatePassword extends React.Component{
     })
   }
 
+  checkPassword = (rule, value, callback) => {
+    const { visible, confirmDirty } = this.state;
+    if (!value) {
+      this.setState({
+        help: '请输入密码！',
+        visible: !!value,
+      });
+      callback('密码不能为空');
+    } else {
+      this.setState({
+        help: '',
+      });
+      if (!visible) {
+        this.setState({
+          visible: !!value,
+        });
+      }
+      if (value.length < 6) {
+        callback('密码长度不能小于6');
+      } else {
+        const { form } = this.props;
+        if (value && confirmDirty) {
+          form.validateFields(['confirm'], { force: true });
+        }
+        callback();
+      }
+    }
+  };
+
+  checkConfirm = (rule, value, callback) => {
+    const { form } = this.props;
+    if (value && value !== form.getFieldValue('password')) {
+      callback('两次输入的密码不匹配!');
+    } else {
+      callback();
+    }
+  };
+
   render(){
     const { form } = this.props;
     return (
@@ -55,6 +93,7 @@ class UpdatePassword extends React.Component{
           <Form.Item label={'新密码'}>
             {form.getFieldDecorator('password',{
               rules: [
+                { required: true, message: '请输入!' },
                 {
                   validator: this.checkPassword,
                 },

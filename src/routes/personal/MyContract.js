@@ -14,10 +14,12 @@ class MyContract extends React.Component{
       title: '序号',
       dataIndex: 'seq',
       render: (text, record, index) => `${index + 1}`,
+      align:'center',
     },
     {
       title: '类型',
       dataIndex: 'contractType',
+      align:'center',
       render: (text,record)=>{
         const { contractTypeList } = this.state;
         const type = contractTypeList.length>0 ?contractTypeList.find(item=>item.dictValue === String(text)).dictLabel : '';
@@ -26,16 +28,20 @@ class MyContract extends React.Component{
     },
     {
       title: '编号',
-      dataIndex: 'contractId'
+      dataIndex: 'contractId',
+      align:'center',
     },
     {
       title: '有效期',
       dataIndex: 'signDate',
+      align:'center',
       render: (text,record)=>{
-        const sTime = record.signDate ? record.signDate.slice(0,11) : '';
-        const eTime = record.endDate ? record.endDate.slice(0,11) : '';
+        const sTime = record.signDate ? moment(record.signDate.slice(0,11)).format('YYYY/MM/DD') : '';
+        const eTime = record.endDate ? moment(record.endDate.slice(0,11)).format('YYYY/MM/DD') : '';
         let dates = '';
-        if(sTime || (sTime&&eTime)){
+        if(sTime&&!eTime){
+          dates = sTime;
+        }else if(sTime || (sTime&&eTime)){
           dates = `${sTime} - ${eTime}`
         }else if(eTime){
           dates = eTime
@@ -46,6 +52,7 @@ class MyContract extends React.Component{
     {
       title: '状态',
       dataIndex: 'contractStatus',
+      align:'center',
       render: (text,record)=>{
         const {contractStatusList} = this.state;
         const status = contractStatusList.length>0 ?contractStatusList.find(item=>item.dictValue === String(text)).dictLabel : '';
@@ -55,6 +62,7 @@ class MyContract extends React.Component{
     {
       title: '文件',
       dataIndex: 'attachmentPath ',
+      align:'center',
       render(text,record){
         const path = record.attachmentPath;
         const name=path ? path.substring(path.lastIndexOf("/")+1) :'';
@@ -64,6 +72,7 @@ class MyContract extends React.Component{
     {
       title: '操作',
       dataIndex: 'operation',
+      align:'center',
       render: (text, record)=>{
         return (
           <div>
@@ -235,7 +244,7 @@ class MyContract extends React.Component{
                     {form.getFieldDecorator('startTime')(
                       <DatePicker
                         disabledDate={this.disabledStartDate}
-                        format="YYYY-MM-DD"
+                        format="YYYY/MM/DD"
                         // value={startValue}
                         placeholder="开始日期"
                         onChange={this.onStartChange}
@@ -248,7 +257,7 @@ class MyContract extends React.Component{
                     {form.getFieldDecorator('endTime')(
                       <DatePicker
                         disabledDate={this.disabledEndDate}
-                        format="YYYY-MM-DD"
+                        format="YYYY/MM/DD"
                         // value={endValue}
                         placeholder="结束日期"
                         onChange={this.onEndChange}

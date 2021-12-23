@@ -13,10 +13,12 @@ class MyDiscount extends React.Component{
     {
       title: '折扣券编号',
       dataIndex: 'discountIssueId',
+      align:'center',
     },
     {
       title: '已使用金额',
       dataIndex: 'usedMoney',
+      align:'center',
       render: (text,record)=>{
         let usedPay = 0;
         const discount = record.discount ? record.discount : 0;
@@ -30,17 +32,37 @@ class MyDiscount extends React.Component{
     {
       title: '剩余金额',
       dataIndex: 'balance',
+      align:'center',
+      render: (text)=>{
+        return (
+          <div>{text?text:0}</div>
+        )
+      }
     },
     {
       title: '期限',
       dataIndex: 'dateTime',
+      align:'center',
       render: (test,record)=>{
-        return (<div>{record.startTime.slice(0,11)}-{record.endTime.slice(0,11)}</div>)
+        const sTime = record.startTime ? moment(record.startTime.slice(0,11)).format('YYYY/MM/DD') : '';
+        const eTime = record.endTime ? moment(record.endTime.slice(0,11)).format('YYYY/MM/DD') : '';
+        let dates = '';
+        if(sTime&&!eTime){
+          dates = sTime;
+        }else if(sTime || (sTime&&eTime)){
+          dates = `${sTime} - ${eTime}`
+        }else if(eTime){
+          dates = eTime
+        }
+        return (
+          <div>{dates}</div>
+        )
       }
     },
     {
       title: '状态',
       dataIndex: 'status',
+      align:'center',
       render: (text,record)=>{
         const {statusList} = this.state;
         // if(statusList.length>0){
@@ -52,6 +74,7 @@ class MyDiscount extends React.Component{
     {
       title: '操作',
       dataIndex: 'options',
+      align:'center',
       render: (text,record)=>{
         return (<span style={{color:"#004EA2",cursor:'pointer'}} onClick={()=>this.handleCheckDetail(true, record.discountIssueId)}>查看详情</span>)
       }
@@ -62,23 +85,31 @@ class MyDiscount extends React.Component{
     {
       title: '序号',
       dataIndex: 'seq',
+      align:'center',
       render: (text, record, index) => `${index + 1}`,
     },
     {
       title: '订单编号',
       dataIndex: 'orderId',
+      align:'center',
     },
     {
       title: '时间',
       dataIndex: 'useTime',
+      align:'center',
+      render: (text)=>{
+        return <span>{text? moment(text.slice(0,11)).format('YYYY/MM/DD') : ''}</span>
+      }
     },
     {
       title: '使用金额',
       dataIndex: 'useDiscount',
+      align:'center',
     },
     {
       title: '操作',
       dataIndex: 'option',
+      align:'center',
       render: (text,record)=>{
         return (<Link to={{pathname: '/orderDetail',search:'?id='+record.orderId }}>查看订单</Link>)
       }
@@ -229,6 +260,7 @@ class MyDiscount extends React.Component{
       pageSize: this.state.pageSize,
       total: this.state.total
     }
+    const dateFormat = 'YYYY/MM/DD';
     return (
       // loading （Spin）
       <Spin spinning={loading}>
@@ -282,7 +314,7 @@ class MyDiscount extends React.Component{
                   <Col md={5}>
                     <DatePicker
                       disabledDate={this.disabledStartDate}
-                      format="YYYY-MM-DD"
+                      format={dateFormat}
                       value={startValue}
                       placeholder="开始日期"
                       onChange={this.onStartChange}
@@ -293,7 +325,7 @@ class MyDiscount extends React.Component{
                   <Col md={5}>
                     <DatePicker
                       disabledDate={this.disabledEndDate}
-                      format="YYYY-MM-DD"
+                      format={dateFormat}
                       value={endValue}
                       placeholder="结束日期"
                       onChange={this.onEndChange}
@@ -324,7 +356,7 @@ class MyDiscount extends React.Component{
                 <Row>
                   <Col md={12} className="colStyle">折扣编号：{disDetail&&disDetail.discountDetail&&disDetail.discountDetail.discountIssueId ? disDetail.discountDetail.discountIssueId : ''}</Col>
                   <Col md={6} className="colStyle">折扣总额：<span>￥{disDetail&&disDetail.discountDetail&&disDetail.discountDetail.discount ? disDetail.discountDetail.discount : ''}</span></Col>
-                  <Col md={6} className="colStyle">剩余金额：<span>￥{disDetail&&disDetail.discountDetail&&disDetail.discountDetail.balance ? disDetail.discountDetail.balance : ''}</span></Col>
+                  <Col md={6} className="colStyle">剩余金额：<span>￥{disDetail&&disDetail.discountDetail&&disDetail.discountDetail.balance ? disDetail.discountDetail.balance : 0}</span></Col>
                 </Row>
                 <h2>使用商品</h2>
                 <div className="detailTable">

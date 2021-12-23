@@ -121,6 +121,7 @@ class PersonalSetting extends React.Component{
             <Form.Item label={'新密码'}>
               {form.getFieldDecorator('password',{
                 rules: [
+                  { required: true, message: '请输入!' },
                   {
                     validator: this.checkPassword,
                   },

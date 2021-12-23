@@ -115,7 +115,7 @@ class OrderDetail extends React.Component{
                       return (
                         <li className="proList">
                           <div className="proDiv">
-                            <div className="col-md-7 cartLeft">
+                            <div className="col-md-10 cartLeft">
                               <div className="imgBox">
                                 <img src={item.url?item.url:''} alt={''} style={{width:'98%'}} />
                               </div>
@@ -125,19 +125,25 @@ class OrderDetail extends React.Component{
                                     <span style={{display:'inline-block',paddingLeft:10}}>{item.specifications?item.specifications:''}</span>
                                   </p>
                                   {item.type&&item.type!==2 ? <p className="proType">医院名称：{item.hospitalName?item.hospitalName:''}</p> : null}
-                                  <p className="proType">{item.instrumentTypeName?item.instrumentTypeName:''}</p>
+                                  <p className="proType">
+                                    <span style={{display:'inline-block',marginRight:20}}>{item.instrumentTypeName?item.instrumentTypeName:''}</span>
+                                    {item.type&&item.type!==2 ? <Fragment>
+                                      <span style={{marginRight:15,minWidth:50,display:'inline-block'}}>瓶型：{(item.bottleType&&bottleData.length>0)?bottleData.find(b=>b.dictValue===item.bottleType).dictLabel : ''}</span>
+                                      <span>地域：{(item.regionCode&&regionData.length>0)?regionData.find(r=>r.dictValue===item.regionCode).dictLabel:''}</span>
+                                    </Fragment> : null}
+                                  </p>
                                   <p className="proPrice">开票价：<span>￥{item.price?item.price:''}</span></p>
                                 </div>
                               </div>
                             </div>
-                            <div className="col-md-3">
+                            {/* <div className="col-md-3">
                               {item.type&&item.type!==2 ? 
                               <Fragment>
                                 <p>瓶型：{(item.bottleType&&bottleData.length>0)?bottleData.find(b=>b.dictValue===item.bottleType).dictLabel : ''}</p>
                                 <p>地域：{(item.regionCode&&regionData.length>0)?regionData.find(r=>r.dictValue===item.regionCode).dictLabel:''}</p>
                               </Fragment>
                               : null}
-                            </div>
+                            </div> */}
                             <div className="col-md-1">
                               X{item.num?item.num:0}
                             </div>
