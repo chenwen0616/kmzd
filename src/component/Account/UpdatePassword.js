@@ -7,9 +7,13 @@ import { updatePassword } from '../../api/common'
 import './login.less';
 
 class UpdatePassword extends React.Component{
-  // constructor(props){
-  //   super(props);
-  // }
+  constructor(props){
+    super(props);
+
+    this.state = {
+      editVisible: false,
+    }
+  }
 
   handleUpdatePass=()=>{
     const { form } = this.props;
@@ -35,29 +39,16 @@ class UpdatePassword extends React.Component{
   }
 
   checkPassword = (rule, value, callback) => {
-    const { visible, confirmDirty } = this.state;
-    if (!value) {
-      this.setState({
-        help: '请输入密码！',
-        visible: !!value,
-      });
-      callback('密码不能为空');
-    } else {
-      this.setState({
-        help: '',
-      });
-      if (!visible) {
-        this.setState({
-          visible: !!value,
-        });
-      }
-      if (value.length < 6) {
-        callback('密码长度不能小于6');
-      } else {
-        const { form } = this.props;
-        if (value && confirmDirty) {
-          form.validateFields(['confirm'], { force: true });
-        }
+    if(!value){
+      callback('请输入！')
+    }else{
+      if(value && value.length < 6){
+        callback('密码长度不能小于6！');
+      }else {
+        // const { form } = this.props;
+        // if (value) {
+        //   form.validateFields(['confirm'], { force: true });
+        // }
         callback();
       }
     }
@@ -90,10 +81,10 @@ class UpdatePassword extends React.Component{
               ]
             })(<Input.Password placeholder='请输入' />)}
           </Form.Item>
-          <Form.Item label={'新密码'}>
+          <Form.Item label={'新密码'} required={true}>
             {form.getFieldDecorator('password',{
               rules: [
-                { required: true, message: '请输入!' },
+                // { required: true, message: '请输入!' },
                 {
                   validator: this.checkPassword,
                 },

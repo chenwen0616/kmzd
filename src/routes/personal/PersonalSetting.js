@@ -59,29 +59,16 @@ class PersonalSetting extends React.Component{
   };
 
   checkPassword = (rule, value, callback) => {
-    const { visible, confirmDirty } = this.state;
-    if (!value) {
-      this.setState({
-        help: '请输入密码！',
-        visible: !!value,
-      });
-      callback('密码不能为空');
-    } else {
-      this.setState({
-        help: '',
-      });
-      if (!visible) {
-        this.setState({
-          visible: !!value,
-        });
-      }
-      if (value.length < 6) {
-        callback('密码长度不能小于6');
-      } else {
-        const { form } = this.props;
-        if (value && confirmDirty) {
-          form.validateFields(['confirm'], { force: true });
-        }
+    if(!value){
+      callback('请输入！')
+    }else{
+      if(value && value.length < 6){
+        callback('密码长度不能小于6！');
+      }else {
+        // const { form } = this.props;
+        // if (value) {
+        //   form.validateFields(['confirm'], { force: true });
+        // }
         callback();
       }
     }
@@ -121,7 +108,6 @@ class PersonalSetting extends React.Component{
             <Form.Item label={'新密码'}>
               {form.getFieldDecorator('password',{
                 rules: [
-                  { required: true, message: '请输入!' },
                   {
                     validator: this.checkPassword,
                   },

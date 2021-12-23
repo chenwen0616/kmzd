@@ -8,7 +8,6 @@ import { agentAddrUpdate, agentAddrDel } from '../api/person';
 import { getDict } from '../api/common';  // 调用字典接口
 
 import '../assets/css/cart.less';
-import { strictEqual } from 'assert';
 
 class PlaceOrder extends React.Component {
   columns = [
