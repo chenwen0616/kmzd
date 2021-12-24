@@ -105,7 +105,7 @@ class PersonalSetting extends React.Component{
                 ]
               })(<Input.Password placeholder='请输入' />)}
             </Form.Item>
-            <Form.Item label={'新密码'}>
+            <Form.Item label={'新密码'} required={true}>
               {form.getFieldDecorator('password',{
                 rules: [
                   {
