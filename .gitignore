@@ -24,3 +24,5 @@ yarn-error.log*
 
 node_modules.rar
 node_modules.zip
+/.rar
+/.zip

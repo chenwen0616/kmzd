@@ -4,7 +4,7 @@ import { Button, Table, Input, Form, message, Modal, Popconfirm } from 'antd';
 import { confirmOrderInfo, orderAdd, cartList } from '../api/cart'
 import { Link } from 'react-router-dom';
 import action from '../store/action'
-import { agentAddrUpdate, agentAddrDel } from '../api/person';
+import { agentAddrUpdate, agentAddrDel, agentAddrAdd } from '../api/person';
 import { getDict } from '../api/common';  // 调用字典接口
 
 import '../assets/css/cart.less';
@@ -198,7 +198,11 @@ class PlaceOrder extends React.Component {
     if (someD) {
       return;
     }
-    console.log(requestVo, 'requestVo 下单提交')
+    if((requestVo.goodAddress&&!requestVo.goodAddress.address) || (requestVo.invoiceAddress&&!requestVo.invoiceAddress.address)){
+      message.warning('收货地址和发票地址不能为空')
+      return;
+    }
+    // console.log(requestVo, 'requestVo 下单提交')
     form.validateFields((err,values)=>{
       if(err) {return}
       orderAdd(requestVo).then(res=>{
@@ -245,14 +249,25 @@ class PlaceOrder extends React.Component {
       requestVo.agentId = uInfo.roleId;
       requestVo.def = '1';
       requestVo.addressId = this.state.addressId;
-      agentAddrUpdate(requestVo).then(res => {
-        this.setState({ addrLoading: false })
-        if (res && res.result && res.result.code === 200) {
-          message.success('成功！');
-          this.handleCancelAddr();
-          this.getOrderInfo();
-        }
-      })
+      if(this.state.addressId){
+        agentAddrUpdate(requestVo).then(res => {
+          this.setState({ addrLoading: false })
+          if (res && res.result && res.result.code === 200) {
+            message.success('成功！');
+            this.handleCancelAddr();
+            this.getOrderInfo();
+          }
+        })
+      }else{
+        agentAddrAdd(requestVo).then(res=>{
+          if(res&&res.result&&res.result.code ===200){
+            message.success('成功！');
+            this.handleCancelAddr();
+            this.getOrderInfo();
+          }
+        })
+      }
+      
     })
   }
 
@@ -354,24 +369,24 @@ class PlaceOrder extends React.Component {
                 </li>
               )
             }) : null}
-
           </ul>
-          <div className="orderTable">
+
+          {orderInfo&&orderInfo.discountList&&orderInfo.discountList.length ? <div className="orderTable">
             <Table
               columns={this.columns}
               dataSource={orderInfo.discountList ? orderInfo.discountList : []}
               pagination={false}
               bordered={true}
             />
-          </div>
+          </div> : null}
 
           <div className="totalBox">
-            {discountPrice ?
+            {/* {discountPrice ? */}
               <p>
                 <span>{`使用优惠券，一共优惠${discountPrice}元，`}</span>
                 <span className="totalNum">共{this.state.totalNum}件商品，一共￥{this.state.afterPrice}元</span>
               </p>
-              : null}
+              {/* : null} */}
             <Button type="primary" onClick={this.handleOrderAdd}>提交</Button>
           </div>
 

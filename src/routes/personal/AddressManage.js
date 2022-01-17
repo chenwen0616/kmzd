@@ -159,6 +159,7 @@ class AddressManage extends React.Component{
       // requestVo.address = values.area.length>0 ? values.area[0]+values.area[1]+values.area[2]+values.detailAddr : '';
       requestVo.address = values.detailAddr;
       requestVo.agentId = uInfo.roleId;
+      console.log(requestVo, '新增地址')
       if(addrTitle === '新增地址'){
         agentAddrAdd(requestVo).then(res=>{
           if(res&&res.result&&res.result.code ===200){

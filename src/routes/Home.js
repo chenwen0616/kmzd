@@ -55,7 +55,7 @@ class Home extends React.Component {
 
   // 获取货品列表数据
   getGoodsList = (pNum, param) => {
-    console.log(param, 'param')
+    // console.log(param, 'param')
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
     this.setState({ loading: true })
@@ -172,7 +172,7 @@ class Home extends React.Component {
   // 获取地域字典
   getRegionData = () => {
     getDict({ dictType: 'crm_reagent_region' }).then(res => {
-      console.log(res, '地域')
+      // console.log(res, '地域')
       if (res && res.data) {
         if (res.data.dictList && res.data.dictList.length > 0) {
           this.setState({ regionData: res.data.dictList })
@@ -213,7 +213,8 @@ class Home extends React.Component {
           productSeries: values.productSeries,
           testItemId: values.testItemId,
         }
-        console.log(objectVo, 'objectVo')
+        this.setState({ tag:values.productSeries })
+        // console.log(objectVo, 'objectVo')
         this.getGoodsList(pageNum, objectVo);
         // form.resetFields();
       }
@@ -230,7 +231,6 @@ class Home extends React.Component {
     const userInfo = localStorage.getItem('userInfo');
     const uInfo = JSON.parse(userInfo);
     form.validateFields((err, values) => {
-      console.log(values, 'valuess')
       if (!err) {
         const requestVo = {
           agentId: Number(uInfo.roleId),
@@ -248,7 +248,7 @@ class Home extends React.Component {
           type: item.type,
           instrumentTypeName: item.instrumentTypeName,
         }
-        console.log(requestVo, '添加购物车参数')
+        // console.log(requestVo, '添加购物车参数')
         addCart(requestVo).then(res=>{
           if(res&&res.result&&res.result.code===200){
             message.success('添加成功');
@@ -272,17 +272,11 @@ class Home extends React.Component {
 
   productsSelect = (e) => {
     this.props.form.resetFields(['testItemId','instrumentTypeId']);
-    this.setState({
-      tag:e
-    })
-    console.log(e, '选择')
   }
 
   render() {
     const { loading, instrumentTypeList, reagentTypeList, goodsList, productsList, bottleData, regionData, tag } = this.state;
     const { form: { getFieldDecorator } } = this.props;
-    console.log(tag, Number(tag)===999);
-    console.log(instrumentTypeList, 'instrumentTypeList')
     const proSelId = this.props.form.getFieldValue('productSeries');
     return <Spin spinning={loading}>
       <div className='navBreadTitle'>
@@ -384,7 +378,7 @@ class Home extends React.Component {
                           })(
                             <Radio.Group>
                               <Radio value={2}>开票价：<span className="price">￥{item.fare ? item.fare : 0}</span></Radio>
-                              <Radio value={1}>LP价：<span className="price">￥{item.lp ? item.lp : 0}</span></Radio>
+                              <Radio value={1}>第二票面价：<span className="price">￥{item.lp ? item.lp : 0}</span></Radio>
                             </Radio.Group>
                           )}
                         </Form.Item>

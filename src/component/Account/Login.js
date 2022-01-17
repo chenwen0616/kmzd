@@ -167,7 +167,7 @@ class Login extends React.Component {
           password
         }).then(res => {
           this.setState({ loading: false })
-          if (res.data) {
+          if (res&&res.data) {
             // 跳转到home页
             const data = {
               userId: res.data.userId,
@@ -179,8 +179,8 @@ class Login extends React.Component {
             localStorage.setItem('token', res.data.token);
             axios.defaults.headers.common["token"] = res.data.token;
             message.success('成功！')
-            const flag = window.localStorage.getItem('firstLogin');
-            if(flag){
+            // const flag = window.localStorage.getItem('firstLogin');
+            if(res.data.updatePassword==='0'){
               this.props.history.push('/home');
             }else{
               this.props.history.push('/updatePassword');

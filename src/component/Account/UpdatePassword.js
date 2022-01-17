@@ -27,7 +27,7 @@ class UpdatePassword extends React.Component{
             message.success('成功');
             localStorage.removeItem('token');
             localStorage.removeItem('userInfo');
-            localStorage.setItem('firstLogin', true)
+            // localStorage.setItem('firstLogin', true)
             window.location.href = '/#/login';
             window.location.reload();
           }else{
