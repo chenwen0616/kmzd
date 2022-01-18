@@ -79,7 +79,7 @@ class UpdatePassword extends React.Component{
               rules: [
                 { required: true, message: '请输入!' },
               ]
-            })(<Input.Password placeholder='请输入' />)}
+            })(<Input.Password placeholder='请输入' autoComplete={"off"} />)}
           </Form.Item>
           <Form.Item label={'新密码'} required={true}>
             {form.getFieldDecorator('password',{
@@ -89,7 +89,7 @@ class UpdatePassword extends React.Component{
                   validator: this.checkPassword,
                 },
               ]
-            })(<Input.Password placeholder='请输入' />)}
+            })(<Input.Password placeholder='请输入' autoComplete={"off"} />)}
           </Form.Item>
           <Form.Item label={'确认新密码'}>
             {form.getFieldDecorator('confirm',{
@@ -99,7 +99,7 @@ class UpdatePassword extends React.Component{
                   validator: this.checkConfirm,
                 },
               ]
-            })(<Input.Password placeholder='请输入' />)}
+            })(<Input.Password placeholder='请输入' autoComplete={"off"} />)}
           </Form.Item>
           <div style={{display:'flex',justifyContent:'flex-end'}}>
             <Button type='primary' onClick={this.handleUpdatePass}>确认修改</Button>

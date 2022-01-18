@@ -238,7 +238,13 @@ class Cart extends React.Component{
                               <span className="txt"><Icon type="minus" style={{fontSize:14}} /></span>
                             </div>
                             <Col xs={4} md={4} className="numInput centerStyle inputW">
-                              <Input value={item.num} onChange={e=>this.handleChangeNumber(e,index)} onPressEnter={e=>this.handleChangeNumber(e,index,'flag')} onBlur={e=>this.handleChangeNumber(e,index,'flag')} />
+                              <Input 
+                                value={item.num} 
+                                onChange={e=>this.handleChangeNumber(e,index)} 
+                                onPressEnter={e=>this.handleChangeNumber(e,index,'flag')} 
+                                onBlur={e=>this.handleChangeNumber(e,index,'flag')} 
+                                autoComplete={"off"}
+                              />
                             </Col>
                             <div className="centerStyle cBox" onClick={(e)=>this.handleAdd(e,index)}>
                               <span className="txt"><Icon type="plus" /></span>

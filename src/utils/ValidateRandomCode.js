@@ -193,6 +193,7 @@ class ValidateRandomCode extends React.Component{
               suffix={suffix}
               onChange={this.changeCode}
               placeholder="请输入校验码"
+              autoComplete={"off"}
             />,
           )}
       </Form.Item>

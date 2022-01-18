@@ -3,12 +3,22 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 class Footer extends React.Component{
-    // constructor(props){
-    //     super(props);
-    // }
+    constructor(props){
+      super(props);
+
+      this.state={
+        hidden:window.location.hash.includes('/login')
+      }
+    }
+
+    componentDidMount(){
+      window.addEventListener("hashchange",() => {
+        this.setState({hidden:window.location.hash.includes('/login')})
+      })
+    }
 
     render(){
-        return <div className="bottom">
+        return <div className="bottom" style={{display:this.state.hidden?'none':'block'}}>
             <p className="bottomTitle">copy right© 2018 kemeizhenduan</p>
         </div>;
     }

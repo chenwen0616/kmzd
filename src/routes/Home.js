@@ -422,7 +422,7 @@ class Home extends React.Component {
                                       <Icon type="minus" style={{ fontSize: 14 }} />
                                     </Button>
                                     <div className="cartBg">
-                                      <Input placeholder="" defaultValue={1} value={item.num} />
+                                      <Input placeholder="" defaultValue={1} value={item.num} autoComplete={"off"} />
                                     </div>
                                     <Button type='default' className="cartNumBg" onClick={() => this.handleClickPlus(index)}>
                                       <Icon type="plus" style={{ fontSize: 14 }} />

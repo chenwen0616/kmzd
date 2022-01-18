@@ -12,6 +12,7 @@ class Navs extends React.Component{
 
     this.state={
       cartLen: 0,
+      hidden: window.location.hash.includes('/login'),
     }
   }
 
@@ -21,6 +22,15 @@ class Navs extends React.Component{
     if(uInfo){
       this.reduxGetCartData(uInfo)
     }
+    console.log(window.location.hash, 'hash')
+    console.log(this.props, 'props')
+    console.log(this.state.hidden, 'hidden');
+    window.addEventListener("hashchange", () => {
+      this.setState({hidden:window.location.hash.includes('/login')})
+    })
+    // window.onhashchange = () => {
+    //   this.setState({hidden:window.location.hash.includes('/login')})
+    // }
   }
 
   // 存入redux
@@ -33,7 +43,7 @@ class Navs extends React.Component{
   }
 
   render(){
-    return <div className='sNav'>
+    return <div className='sNav' style={{display:this.state.hidden?'none':'block'}}>
       <div className='nav container'>
         <Col md={2} sm={12} style={{height:'80px',display:'flex'}}>
           <img src={process.env.PUBLIC_URL + '/img/logo2.png'} alt='logo' />

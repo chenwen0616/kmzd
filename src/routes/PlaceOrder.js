@@ -46,7 +46,7 @@ class PlaceOrder extends React.Component {
                 },
               ],
               initialValue: record.useDiscount ? record.useDiscount : 0
-            })(<Input placeholder="请输入" onChange={(e) => this.changeUseDiscount(e, record.discountIssueId)} />)}
+            })(<Input placeholder="请输入" onChange={(e) => this.changeUseDiscount(e, record.discountIssueId)} autoComplete={"off"} />)}
           </Form.Item>
         )
       }
@@ -110,6 +110,7 @@ class PlaceOrder extends React.Component {
     const totalNum = data.orderItemList && data.orderItemList.length > 0 ? data.orderItemList.reduce((cur, next) => {
       return cur + next.num
     }, 0) : 0
+    console.log(data, 'data')
     this.setState({
       afterPrice: ((parseFloat(data.sumMoney) * 100000 - parseFloat(disPrice) * 100000 - data.fullReductionMoney * 100000) / 100000).toFixed(2),
       discountPrice: disPrice,
@@ -381,12 +382,10 @@ class PlaceOrder extends React.Component {
           </div> : null}
 
           <div className="totalBox">
-            {/* {discountPrice ? */}
-              <p>
-                <span>{`使用优惠券，一共优惠${discountPrice}元，`}</span>
-                <span className="totalNum">共{this.state.totalNum}件商品，一共￥{this.state.afterPrice}元</span>
-              </p>
-              {/* : null} */}
+            <p>
+              {discountPrice ? <span>{`使用优惠券，一共优惠${discountPrice}元，`}</span> : null}
+              <span className="totalNum">共{this.state.totalNum}件商品，一共￥{this.state.afterPrice}元</span>
+            </p>
             <Button type="primary" onClick={this.handleOrderAdd}>提交</Button>
           </div>
 
@@ -408,7 +407,7 @@ class PlaceOrder extends React.Component {
                   { required: true, message: '请输入收货人!' },
                 ],
                 initialValue: consignee
-              })(<Input placeholder='请输入' />)}
+              })(<Input placeholder='请输入' autoComplete={"off"} />)}
             </Form.Item>
             <Form.Item label={'详细地址'}>
               {form.getFieldDecorator('detailAddr', {
@@ -416,7 +415,7 @@ class PlaceOrder extends React.Component {
                   { required: true, message: '请输入详细地址!' },
                 ],
                 initialValue: address
-              })(<Input placeholder='请输入' />)}
+              })(<Input placeholder='请输入' autoComplete={"off"} />)}
             </Form.Item>
             <Form.Item label={'手机号码'}>
               {form.getFieldDecorator('phone', {
@@ -428,7 +427,7 @@ class PlaceOrder extends React.Component {
                   },
                 ],
                 initialValue: phone
-              })(<Input placeholder='请输入' />)}
+              })(<Input placeholder='请输入' autoComplete={"off"} />)}
             </Form.Item>
             {/* <Form.Item label={'固定电话'}>
               {form.getFieldDecorator('telephone',{

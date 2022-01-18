@@ -33,11 +33,16 @@ class Login extends React.Component {
 
   UNSAFE_componentWillMount() {
     this.canvas = React.createRef()
+    // if(localStorage.getItem('token')){
+    //   localStorage.removeItem('token');
+    //   window.location.reload();
+    // }
   }
 
   componentDidMount() {
     // this.canvas = React.createRef()
     this.drawPic()
+
   }
 
   // 生成一个随机数
@@ -182,6 +187,7 @@ class Login extends React.Component {
             // const flag = window.localStorage.getItem('firstLogin');
             if(res.data.updatePassword==='0'){
               this.props.history.push('/home');
+              // window.location.reload();
             }else{
               this.props.history.push('/updatePassword');
             }
@@ -227,6 +233,7 @@ class Login extends React.Component {
                   size="large"
                   onChange={this.changeCode}
                   placeholder="请输入账号"
+                  autoComplete={"off"}
                 />,
               )}
             </Form.Item>
@@ -240,6 +247,7 @@ class Login extends React.Component {
                   size="large"
                   onChange={this.changeCode}
                   placeholder="请输入密码"
+                  autoComplete={"off"}
                 />,
               )}
             </Form.Item>
@@ -276,16 +284,19 @@ class Login extends React.Component {
                   suffix={suffix}
                   onChange={this.changeCode}
                   placeholder="请输入校验码"
+                  autoComplete={"off"}
                 />,
               )}
             </Form.Item>
-
-            <Button
-              loading={loading}
-              type='primary'
-              onClick={this.handleLoginClick}
-              style={{ width: '100%', height: '40px', background: '#004EA2', border: "1px solid #004EA2" }}
-            >登录</Button>
+            <div className="loginBtn">
+              <Button
+                loading={loading}
+                type='primary'
+                onClick={this.handleLoginClick}
+                style={{ width: '100%', height: '40px', background: '#004EA2', border: "1px solid #004EA2" }}
+              >登录</Button>
+            </div>
+            
           </Form>
           
         </div>

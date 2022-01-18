@@ -382,7 +382,7 @@ class AddressManage extends React.Component{
                   { required: true, message: '请输入收货人!' },
                 ],
                 initialValue: addrItem&&addrItem.consignee ? addrItem.consignee : '',
-              })(<Input placeholder='请输入' />)}
+              })(<Input placeholder='请输入' autoComplete={"off"} />)}
             </Form.Item>
             {/* <Form.Item label={'所在地区'}>
               {form.getFieldDecorator('area',{
@@ -400,7 +400,7 @@ class AddressManage extends React.Component{
                   { required: true, message: '请输入详细地址!' },
                 ],
                 initialValue: addrItem&&addrItem.address ? addrItem.address : '',
-              })(<Input placeholder='请输入' />)}
+              })(<Input placeholder='请输入' autoComplete={"off"} />)}
             </Form.Item>
             <Form.Item label={'手机号码'}>
               {form.getFieldDecorator('phone',{
@@ -412,7 +412,7 @@ class AddressManage extends React.Component{
                   },
                 ],
                 initialValue: addrItem&&addrItem.phone ? addrItem.phone : '',
-              })(<Input placeholder='请输入' />)}
+              })(<Input placeholder='请输入' autoComplete={"off"} />)}
             </Form.Item>
             <Form.Item label={'固定电话'}>
               {form.getFieldDecorator('telephone',{
@@ -421,7 +421,7 @@ class AddressManage extends React.Component{
                 ],
                 initialValue: addrItem&&addrItem.telephone ? addrItem.telephone : '',
               })(
-                <Input placeholder='请输入' />
+                <Input placeholder='请输入' autoComplete={"off"} />
               )}
             </Form.Item>
             <Form.Item label={'邮箱编码'}>
@@ -431,7 +431,7 @@ class AddressManage extends React.Component{
                 ],
                 initialValue: addrItem&&addrItem.email ? addrItem.email : '',
               })(
-                <Input placeholder='请输入' />
+                <Input placeholder='请输入' autoComplete={"off"} />
               )}
             </Form.Item>
           </Modal> : null}
