@@ -218,7 +218,9 @@ class Cart extends React.Component{
                             <p className="proTitle">{item.name ? item.name : ''}
                               <span style={{display:'inline-block',paddingLeft:10}}>{item.specifications?item.specifications:''}</span>
                             </p>
-                            {item.type&&item.type!==2 ? <p className="proType">医院名称：{item.hospitalName?item.hospitalName:''}</p> : null}
+                            {/* {item.type&&item.type!==2 ?  */}
+                            <p className="proType">医院名称：{item.hospitalName?item.hospitalName:''}</p> 
+                            {/* : null} */}
                             
                             <p className="proType">
                               {item.instrumentTypeName?<span style={{display:'inline-block',marginRight:20}}>{item.instrumentTypeName}</span>: ''}

@@ -12,7 +12,7 @@ class Navs extends React.Component{
 
     this.state={
       cartLen: 0,
-      hidden: window.location.hash.includes('/login'),
+      hidden: window.location.hash.includes('/login')||window.location.hash.includes('/updatePassword'),
     }
   }
 
@@ -22,11 +22,8 @@ class Navs extends React.Component{
     if(uInfo){
       this.reduxGetCartData(uInfo)
     }
-    console.log(window.location.hash, 'hash')
-    console.log(this.props, 'props')
-    console.log(this.state.hidden, 'hidden');
     window.addEventListener("hashchange", () => {
-      this.setState({hidden:window.location.hash.includes('/login')})
+      this.setState({hidden:window.location.hash.includes('/login')||window.location.hash.includes('/updatePassword')})
     })
     // window.onhashchange = () => {
     //   this.setState({hidden:window.location.hash.includes('/login')})

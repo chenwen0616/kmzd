@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-bootstrap';
-import { Form, Input, Spin} from 'antd';
+import { Form, Input, Spin, Modal} from 'antd';
 
 import {agentDetail, getLicenceList, getThirdLicenceList} from '../../api/person';
 
@@ -13,6 +13,8 @@ class BaseInfo extends React.Component{
       licenceListData:[], // 许可证列表
       thirdLicenceData: [],// 第三方资质
       loading: false,
+      imgVisible: false,
+      curImgUrl:'',
     }
   }
 
@@ -49,9 +51,20 @@ class BaseInfo extends React.Component{
       }
     })
   }
+
+  handleClickImgVisible=(flag, imgurl)=>{
+    this.setState({
+      imgVisible: !!flag,
+      curImgUrl:imgurl
+    })
+  }
+
+  handleCancel = ()=>{
+    this.handleClickImgVisible(false, '')
+  }
   
   render(){
-    const {agentDetail, loading, licenceListData, thirdLicenceData} = this.state;
+    const {agentDetail, loading, licenceListData, thirdLicenceData, imgVisible} = this.state;
     return (
       <Spin spinning={loading}>
         <div className='personBread'>
@@ -127,9 +140,9 @@ class BaseInfo extends React.Component{
             <Row className="uploadBox">
               <p>许可证</p>
               <div style={{height:'70px'}}>
-                {licenceListData.length>0 ? licenceListData.map((item,index)=>{
-                  return (<span key={index} style={{width:'102px',height:'102px', display:'inline-block',marginRight:5,overflow:'hidden'}}>
-                    <img src={item.picUrl} alt='' style={{height:'100px'}} />
+                {licenceListData&&licenceListData.length ? licenceListData.map((item,index)=>{
+                  return (<span key={index} onClick={()=>this.handleClickImgVisible(true,item.picUrl)} style={{width:'102px',height:'102px', display:'inline-block',marginRight:5,overflow:'hidden'}}>
+                    <img src={item.picUrl} alt='' style={{height:'100px',cursor:'pointer'}} />
                   </span>)
                 }) : null}
                 {/* <Upload listType="picture-card" >
@@ -143,8 +156,8 @@ class BaseInfo extends React.Component{
             <Row className="uploadBox" style={{marginTop:'60px'}}>
               <p>三方资质</p>
               <div>
-                {thirdLicenceData.length>0 ? thirdLicenceData.map((item,index)=>{
-                  return (<span key={index} style={{width:'102px',height:'102px', display:'inline-block',marginRight:5,overflow:'hidden'}}>
+                {thirdLicenceData&&thirdLicenceData.length ? thirdLicenceData.map((item,index)=>{
+                  return (<span key={index} onClick={()=>this.handleClickImgVisible(true,item.picUrl)} style={{width:'102px',height:'102px', display:'inline-block',marginRight:5,overflow:'hidden'}}>
                     <img src={item.picUrl} alt='' style={{height:'100px'}} />
                   </span>)
                 }) : null}
@@ -192,6 +205,18 @@ class BaseInfo extends React.Component{
             </Row>
           </form>
         </div>
+
+        {imgVisible ? <Modal
+          title=""
+          visible={imgVisible}
+          onCancel={this.handleCancel}
+          footer={null}
+          maskClosable={false}
+        >
+          <div style={{marginTop:'15px'}}>
+            <img src={this.state.curImgUrl} alt='' style={{width:"100%"}}  />
+          </div>
+        </Modal> : null}
       </Spin>
     )
   }

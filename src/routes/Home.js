@@ -274,6 +274,32 @@ class Home extends React.Component {
     this.props.form.resetFields(['testItemId','instrumentTypeId']);
   }
 
+  handleChangeNumber=(e, index, flag)=>{
+    e.preventDefault();
+    const list = [...this.state.goodsList];
+    list[index].num = e.target.value < 1 ? 1 : e.target.value;
+    this.setState({goodsList:list})
+    // if(flag){
+    //   this.updateNum(index)
+    // }else{
+    //   this.setState({goodsList:list})
+    // }
+  }
+
+  // updateNum = (index)=>{
+  //   const list = [...this.state.cartLists];
+  //   updateGoodsNum({
+  //     num: list[index].num,
+  //     shoppingCartId: list[index].shoppingCartId
+  //   }).then(res=>{
+  //     // this.setState({numLoading: false})
+  //     if(res&&res.result&&res.result.code===200){
+  //       // this.getCartList();
+  //       this.setState({cartLists:list})
+  //     }
+  //   })
+  // }
+
   render() {
     const { loading, instrumentTypeList, reagentTypeList, goodsList, productsList, bottleData, regionData, tag } = this.state;
     const { form: { getFieldDecorator } } = this.props;
@@ -397,19 +423,19 @@ class Home extends React.Component {
                                 })(<span>地域：{item.regionCode ? regionData.find(r => r.dictValue === item.regionCode).dictLabel : ''}</span>)}
                               </Form.Item>
                             </Form.Item>
-                            <Form.Item className='for-form' label="医院名称:" required={false}>
-                              {getFieldDecorator('hospitalId' + uuid)(
-                                <Select size={"default"} style={{ width: '100%' }} placeholder="请选择">
-                                  {
-                                    (item.hospitalList && item.hospitalList.length > 0) ? item.hospitalList.map(hItem => {
-                                      return <Option key={hItem.hospitalId}>{hItem.hospitalName}</Option>
-                                    }) : null
-                                  }
-                                </Select>
-                              )}
-                            </Form.Item>
-                          </Fragment>
+                          </Fragment> 
                         : null}
+                          <Form.Item className='for-form' label="医院名称:" required={false}>
+                            {getFieldDecorator('hospitalId' + uuid)(
+                              <Select size={"default"} style={{ width: '100%' }} placeholder="请选择">
+                                {
+                                  (item.hospitalList && item.hospitalList.length > 0) ? item.hospitalList.map(hItem => {
+                                    return <Option key={hItem.hospitalId}>{hItem.hospitalName}</Option>
+                                  }) : null
+                                }
+                              </Select>
+                            )}
+                          </Form.Item>
                         <div className="cart_btn">
                           <div className='cart_hope'>
                             <div style={{ paddingLeft: 0, paddingRight: 0 }}>
@@ -422,7 +448,19 @@ class Home extends React.Component {
                                       <Icon type="minus" style={{ fontSize: 14 }} />
                                     </Button>
                                     <div className="cartBg">
-                                      <Input placeholder="" defaultValue={1} value={item.num} autoComplete={"off"} />
+                                      {/* <Input 
+                                        placeholder="" 
+                                        defaultValue={1} 
+                                        value={item.num} autoComplete={"off"} 
+                                      /> */}
+
+                                      <Input 
+                                        value={item.num} 
+                                        onChange={e=>this.handleChangeNumber(e,index)} 
+                                        onPressEnter={e=>this.handleChangeNumber(e,index,'flag')} 
+                                        onBlur={e=>this.handleChangeNumber(e,index,'flag')} 
+                                        autoComplete={"off"}
+                                      />
                                     </div>
                                     <Button type='default' className="cartNumBg" onClick={() => this.handleClickPlus(index)}>
                                       <Icon type="plus" style={{ fontSize: 14 }} />

@@ -42,7 +42,11 @@ class Login extends React.Component {
   componentDidMount() {
     // this.canvas = React.createRef()
     this.drawPic()
-
+    window.addEventListener('keydown',(e)=>{
+      if(e.keyCode===13){
+        this.handleLoginClick(e)
+      }
+    })
   }
 
   // 生成一个随机数
@@ -240,7 +244,7 @@ class Login extends React.Component {
             <Form.Item className='for-form' label="密码" required={false}>
               {getFieldDecorator('password', {
                 rules: [
-                  { required: false, message: '请输入密码!' },
+                  { required: true, message: '请输入密码!' },
                 ]
               })(
                 <Input.Password
